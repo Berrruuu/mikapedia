@@ -10,16 +10,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameIndex(
-            model_name='sopwarning',
-            new_name='sop_warning_user_id_0037d5_idx',
-            old_name='sop_warn_user_idx',
-        ),
-        migrations.RenameIndex(
-            model_name='sopwarning',
-            new_name='sop_warning_violati_e21a21_idx',
-            old_name='sop_warn_type_idx',
-        ),
         migrations.AddField(
             model_name='complianceresult',
             name='entry1_ticket',

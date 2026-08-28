@@ -94,13 +94,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
+DB_ENGINE = config('DB_ENGINE', default='django.db.backends.postgresql')
 DB_NAME = config('DB_NAME', default='db.sqlite3')
-if DB_NAME and not Path(DB_NAME).is_absolute():
-    DB_NAME = BASE_DIR / DB_NAME
+
+if 'sqlite' in DB_ENGINE.lower() and DB_NAME and not Path(DB_NAME).is_absolute():
+    DB_NAME = str(BASE_DIR / DB_NAME)
+else:
+    DB_NAME = str(DB_NAME)
 
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
+        'ENGINE': DB_ENGINE,
         'NAME': DB_NAME,
         'USER': config('DB_USER', default='postgres'),
         'PASSWORD': config('DB_PASSWORD', default=''),

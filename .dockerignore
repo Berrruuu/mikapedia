@@ -38,6 +38,7 @@ npm-debug.log*
 *.txt
 *.json
 !package.json
+!package-lock.json
 !tsconfig.json
 !components.json
 !bunfig.toml
