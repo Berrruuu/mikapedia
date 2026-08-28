@@ -1,0 +1,41 @@
+# ── Stage 1: Install & build ─────────────────────────────────────────────────
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy dependency manifests
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm ci --ignore-scripts
+
+# Copy source code
+COPY . .
+
+# Build the production bundle (Vite + TanStack Start / Nitro SSR)
+RUN npm run build
+
+# ── Stage 2: Runtime ─────────────────────────────────────────────────────────
+FROM node:20-alpine
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+WORKDIR /app
+
+# Copy the built output (Nitro / .output)
+COPY --from=builder /app/.output ./.output
+
+# If there is a dist folder needed as well
+COPY --from=builder /app/dist ./dist 2>/dev/null || true
+
+# Copy package.json for any runtime needs
+COPY --from=builder /app/package.json ./
+
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
+EXPOSE 3000
+
+# Nitro SSR server
+CMD ["node", ".output/server/index.mjs"]

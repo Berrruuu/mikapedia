@@ -1,0 +1,84 @@
+# Dependencies
+node_modules
+.venv
+.venv-1
+.venv313
+backend/venv
+
+# Build outputs
+dist
+.output
+.vinxi
+.tanstack
+.nitro
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+
+# Database files
+*.sqlite3
+db.sqlite3
+
+# IDE
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs & temp
+*.log
+logs
+npm-debug.log*
+*.txt
+*.json
+!package.json
+!tsconfig.json
+!components.json
+!bunfig.toml
+!bun.lock
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docker
+.dockerignore
+
+# Env files (will be mounted, not baked in)
+backend/.env
+backend/.env.production
+
+# Dev tools
+tools
+backend/scripts
+backend/tmp_*
+backend/create_demo_users.py
+backend/clear_migrations.py
+backend/drop_mt5.py
+diff.txt
+eslint_out.txt
+status.txt
+ts_errors.txt
+ts_errors_full.txt
+config.txt
+response.json
+
+# Media (mounted as volume)
+backend/media
+
+# Wrangler
+.wrangler
+.dev.vars
+
+# Lovable
+.lovable

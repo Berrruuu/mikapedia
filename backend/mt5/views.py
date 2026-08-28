@@ -1,0 +1,346 @@
+from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import action, api_view, permission_classes, parser_classes
+from rest_framework.parsers import JSONParser
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from .models import MT5Account, MT5Position, MT5Deal, Trade
+from .serializers import (
+    MT5AccountSerializer, MT5CredentialsSerializer,
+    MT5PositionSerializer, MT5OrderSerializer, MT5DealSerializer,
+)
+from .services import MT5Service
+from common.api import StandardizedModelViewSet
+from common.response import success_response, error_response
+from .manager import manager as mt5_manager
+from django.conf import settings as django_settings
+import logging
+
+logger = logging.getLogger('mt5.views')
+
+
+class IsAdminRole(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role == 'admin'
+
+
+class MT5AccountViewSet(StandardizedModelViewSet):
+    service = MT5Service()
+    serializer_class = MT5AccountSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
+    filterset_fields = ['status', 'broker', 'is_demo']
+    search_fields = ['login', 'account_number', 'broker', 'company']
+    ordering_fields = ['created_at', 'balance', 'equity']
+
+    def get_permissions(self):
+        if self.action in ('list', 'summary'):
+            return [IsAdminRole()]
+        return [permissions.IsAuthenticated()]
+
+    def get_queryset(self):
+        return self.service.get_queryset_for_user(self.request.user)
+
+    # ── GET /api/mt5/me/ ─────────────────────────────────────────────────────
+    @action(detail=False, methods=['get'], url_path='me')
+    def me(self, request):
+        """Trader's own account"""
+        account = self.service.get_account_for_user(request.user)
+        if account is None:
+            return error_response('No MT5 account configured.', status=status.HTTP_404_NOT_FOUND, code='not_found')
+        return success_response(MT5AccountSerializer(account).data)
+
+    # ── POST /api/mt5/credentials/ ────────────────────────────────────────────
+    @action(detail=False, methods=['post'], url_path='credentials')
+    def set_credentials(self, request):
+        """
+        Trader sets/updates their MT5 login credentials.
+        Password is encrypted before storage.
+        Then immediately connects to verify.
+        """
+        serializer = MT5CredentialsSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        account = self.service.set_credentials(request.user, serializer.validated_data)
+        return Response(MT5AccountSerializer(account).data)
+
+    # ── POST /api/mt5/{id}/sync/ ──────────────────────────────────────────────
+    @action(detail=True, methods=['post'], url_path='sync')
+    def sync(self, request, pk=None):
+        """Manually trigger sync for an account"""
+        account = self.get_object()
+        if request.user.role != 'admin' and account.user != request.user:
+            return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+        account = self.service.sync_account(account)
+        return Response(MT5AccountSerializer(account).data)
+
+    # ── POST /api/mt5/sync-all/ ───────────────────────────────────────────────
+    @action(detail=False, methods=['post'], permission_classes=[IsAdminRole], url_path='sync-all')
+    def sync_all(self, request):
+        """Admin syncs all accounts"""
+        accounts = MT5Account.objects.all()
+        results = []
+        for acc in accounts:
+            acc = self.service.sync_account(acc)
+            results.append({'id': acc.id, 'login': acc.login, 'status': acc.status})
+        return Response({'synced': len(results), 'accounts': results})
+
+    # ── GET /api/mt5/{id}/deals/ ──────────────────────────────────────────────
+    @action(detail=True, methods=['get'], url_path='deals')
+    def deals(self, request, pk=None):
+        account = self.get_object()
+        if request.user.role != 'admin' and account.user != request.user:
+            return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
+        qs = self.service.get_deals(account)
+        return success_response(MT5DealSerializer(qs, many=True).data)
+
+    @action(detail=True, methods=['get'], url_path='status')
+    def status(self, request, pk=None):
+        account = self.get_object()
+        if request.user.role != 'admin' and account.user != request.user:
+            return error_response('Forbidden', status=status.HTTP_403_FORBIDDEN, code='permission_denied')
+        st = mt5_manager.get_status(account.login)
+        return success_response(st)
+
+    # ── GET /api/mt5/summary/ ─────────────────────────────────────────────────
+    @action(detail=False, methods=['get'], permission_classes=[IsAdminRole], url_path='summary')
+    def summary(self, request):
+        """Admin summary of all accounts"""
+        summary = self.service.get_summary()
+        return success_response(summary)
+
+
+# ─── EA Reporter Endpoint ─────────────────────────────────────────────────────
+# MT5 EA (Expert Advisor) calls this to push live position data to backend.
+# Secured by EA_INTEGRATION_TOKEN in .env
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@parser_classes([JSONParser])
+def ea_report(request):
+    """
+    POST /api/mt5/ea-report/
+    Called by MT5 EA on each tick/bar to report open positions.
+
+    Payload:
+    {
+      "token": "<EA_INTEGRATION_TOKEN>",
+      "login": 12345678,
+      "server": "ICMarkets-Live01",
+      "broker": "ICMarkets",
+      "balance": 10250.00,
+      "equity": 10180.50,
+      "floating_pnl": -69.50,
+      "positions": [
+        {
+          "ticket": 987654,
+          "symbol": "XAUUSD",
+          "type": "BUY",
+          "volume": 0.10,
+          "price_open": 4041.35,
+          "price_current": 4038.20,
+          "sl": 4037.83,
+          "tp": 4050.60,
+          "profit": -31.50,
+          "time_open": "2026-07-24T12:30:00+07:00"
+        }
+      ],
+      "deals": []
+    }
+    """
+    # Validate token
+    expected_token = getattr(django_settings, 'EA_INTEGRATION_TOKEN', '')
+    provided_token = request.data.get('token', '')
+    if expected_token and provided_token != expected_token:
+        return error_response('Invalid EA token.', status=status.HTTP_403_FORBIDDEN, code='forbidden')
+
+    login = request.data.get('login')
+    server = request.data.get('server', '')
+    broker = request.data.get('broker', '')
+
+    if not login:
+        return error_response('login is required.', status=status.HTTP_400_BAD_REQUEST, code='validation_error')
+
+    # Find MT5 account by login
+    try:
+        account = MT5Account.objects.get(login=login)
+    except MT5Account.DoesNotExist:
+        return error_response(
+            f'No MT5 account found for login {login}.',
+            status=status.HTTP_404_NOT_FOUND,
+            code='not_found'
+        )
+
+    from django.utils import timezone as tz
+    from datetime import datetime
+
+    # Update account financials
+    account.balance = request.data.get('balance', account.balance)
+    account.equity = request.data.get('equity', account.equity)
+    account.floating_pnl = request.data.get('floating_pnl', account.floating_pnl)
+    account.status = 'connected'
+    account.last_sync = tz.now()
+    account.open_positions = len(request.data.get('positions', []))
+    account.save(update_fields=['balance', 'equity', 'floating_pnl', 'status', 'last_sync', 'open_positions'])
+
+    # Sync positions from EA payload
+    positions_data = request.data.get('positions', [])
+    tickets_seen = set()
+    for pos in positions_data:
+        ticket = pos.get('ticket')
+        if not ticket:
+            continue
+        tickets_seen.add(ticket)
+
+        time_open = None
+        if pos.get('time_open'):
+            try:
+                time_open = datetime.fromisoformat(str(pos['time_open']).replace('Z', '+00:00'))
+            except Exception:
+                pass
+
+        MT5Position.objects.update_or_create(
+            account=account,
+            ticket=ticket,
+            defaults={
+                'symbol': pos.get('symbol', ''),
+                'type': pos.get('type', 'BUY'),
+                'volume': pos.get('volume', 0),
+                'price_open': pos.get('price_open', 0),
+                'price_current': pos.get('price_current', 0),
+                'sl': pos.get('sl'),
+                'tp': pos.get('tp'),
+                'profit': pos.get('profit', 0),
+                'swap': pos.get('swap', 0),
+                'comment': pos.get('comment', ''),
+                'magic': pos.get('magic', 0),
+                'time_open': time_open,
+            }
+        )
+
+        # Also upsert into Trade model for compliance evaluation
+        Trade.objects.update_or_create(
+            account=account,
+            ticket=ticket,
+            defaults={
+                'user': account.user,
+                'symbol': pos.get('symbol', ''),
+                'direction': pos.get('type', 'BUY'),
+                'order_type': 'market',  # open position = market already executed
+                'volume': pos.get('volume', 0),
+                'entry_price': pos.get('price_open', 0),
+                'stop_loss': pos.get('sl'),
+                'take_profit': pos.get('tp'),
+                'open_time': time_open,
+                'status': 'open',
+                'pnl': pos.get('profit', 0),
+            }
+        )
+
+    # Remove positions no longer open
+    if tickets_seen:
+        account.positions.exclude(ticket__in=tickets_seen).delete()
+
+    # Sync deals
+    deals_data = request.data.get('deals', [])
+    for deal in deals_data:
+        ticket = deal.get('ticket')
+        if not ticket:
+            continue
+        time_deal = None
+        if deal.get('time'):
+            try:
+                time_deal = datetime.fromisoformat(str(deal['time']).replace('Z', '+00:00'))
+            except Exception:
+                pass
+        from mt5.models import MT5Deal
+        MT5Deal.objects.update_or_create(
+            account=account,
+            ticket=ticket,
+            defaults={
+                'order': deal.get('order', 0),
+                'symbol': deal.get('symbol', ''),
+                'type': deal.get('type', 'BUY'),
+                'entry': deal.get('entry', 'IN'),
+                'volume': deal.get('volume', 0),
+                'price': deal.get('price', 0),
+                'profit': deal.get('profit', 0),
+                'swap': deal.get('swap', 0),
+                'commission': deal.get('commission', 0),
+                'comment': deal.get('comment', ''),
+                'magic': deal.get('magic', 0),
+                'time': time_deal,
+            }
+        )
+
+    # Sync pending orders (limit/stop orders belum tersentuh)
+    pending_orders_data = request.data.get('pending_orders', [])
+    pending_tickets_seen = set()
+    order_type_map = {
+        'BUY LIMIT': 'buy_limit', 'SELL LIMIT': 'sell_limit',
+        'BUY STOP': 'buy_stop', 'SELL STOP': 'sell_stop',
+    }
+    for order in pending_orders_data:
+        ticket = order.get('ticket')
+        if not ticket:
+            continue
+        pending_tickets_seen.add(ticket)
+        time_setup = None
+        if order.get('time_setup'):
+            try:
+                time_setup = datetime.fromisoformat(str(order['time_setup']).replace('Z', '+00:00'))
+            except Exception:
+                pass
+
+        raw_type = str(order.get('type', '')).upper()
+        otype = order_type_map.get(raw_type, 'buy_limit' if 'BUY' in raw_type else 'sell_limit')
+        direction = 'BUY' if 'BUY' in raw_type else 'SELL'
+
+        Trade.objects.update_or_create(
+            account=account,
+            ticket=ticket,
+            defaults={
+                'user': account.user,
+                'symbol': order.get('symbol', ''),
+                'direction': direction,
+                'order_type': otype,
+                'volume': order.get('volume', 0),
+                'entry_price': order.get('price_open', 0),
+                'stop_loss': order.get('sl'),
+                'take_profit': order.get('tp'),
+                'open_time': time_setup,
+                'status': 'pending',
+                'pnl': 0,
+            }
+        )
+
+    # Mark pending orders that disappeared (cancelled or expired) as cancelled
+    from django.utils import timezone as tz
+    if pending_orders_data:  # only if EA sent orders data
+        Trade.objects.filter(
+            account=account,
+            status='pending',
+        ).exclude(ticket__in=pending_tickets_seen).update(
+            status='cancelled',
+            cancelled_at=tz.now(),
+        )
+
+    # Run signal matcher
+    matched = 0
+    try:
+        from .signal_matcher import match_account_to_signals
+        matched = match_account_to_signals(account)
+    except Exception:
+        logger.exception('Signal matcher failed in ea_report for account %s', account.pk)
+
+    # Broadcast update
+    try:
+        from config.ws_broadcast import broadcast_mt5
+        from .serializers import MT5AccountSerializer
+        broadcast_mt5(str(account.user.id), MT5AccountSerializer(account).data)
+    except Exception:
+        pass
+
+    return success_response({
+        'status': 'ok',
+        'login': login,
+        'positions_synced': len(tickets_seen),
+        'signals_matched': matched,
+    }, status=status.HTTP_200_OK)

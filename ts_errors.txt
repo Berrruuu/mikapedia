@@ -1,0 +1,32 @@
+﻿src/routes/admin.index.tsx(84,77): error TS2339: Property 'data' does not exist on type 'never'.
+src/routes/admin.notifications.tsx(77,64): error TS2339: Property 'data' does not exist on type 'never'.
+src/routes/admin.reports.tsx(315,80): error TS2322: Type '{}' is not assignable to type 'ReactNode'.
+src/routes/admin.traders.tsx(108,76): error TS2339: Property 'results' does not exist on type 'never'.
+src/routes/admin.traders.tsx(125,45): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+src/routes/trader.index.tsx(139,20): error TS2345: Argument of type '(prev: TraderDashboardData | null) => { mt5: { accountNumber: string | undefined; status: string | undefined; balance: number | undefined; equity: number | undefined; floating: number | undefined; marginLevel: number | undefined; drawdown: number | undefined; openPositions: number | undefined; }; ... 5 more ...; bas...' is not assignable to parameter of type 'SetStateAction<TraderDashboardData | null>'.
+  Type '(prev: TraderDashboardData | null) => { mt5: { accountNumber: string | undefined; status: string | undefined; balance: number | undefined; equity: number | undefined; floating: number | undefined; marginLevel: number | undefined; drawdown: number | undefined; openPositions: number | undefined; }; ... 5 more ...; bas...' is not assignable to type '(prevState: TraderDashboardData | null) => TraderDashboardData | null'.
+    Type '{ mt5: { accountNumber: string | undefined; status: string | undefined; balance: number | undefined; equity: number | undefined; floating: number | undefined; marginLevel: number | undefined; drawdown: number | undefined; openPositions: number | undefined; }; ... 5 more ...; baseSchedule?: { ...; } | ... 1 more ... ...' is not assignable to type 'TraderDashboardData | null'.
+      Type '{ mt5: { accountNumber: string | undefined; status: string | undefined; balance: number | undefined; equity: number | undefined; floating: number | undefined; marginLevel: number | undefined; drawdown: number | undefined; openPositions: number | undefined; }; ... 5 more ...; baseSchedule?: { id: number; shift?: { id...' is not assignable to type 'TraderDashboardData'.
+        The types of 'mt5.accountNumber' are incompatible between these types.
+          Type 'string | undefined' is not assignable to type 'string'.
+            Type 'undefined' is not assignable to type 'string'.
+src/routes/trader.index.tsx(369,62): error TS18049: 'dashboard.schedule.shift' is possibly 'null' or 'undefined'.
+src/routes/trader.index.tsx(371,20): error TS18049: 'dashboard.schedule.shift' is possibly 'null' or 'undefined'.
+src/routes/trader.index.tsx(371,59): error TS18049: 'dashboard.schedule.shift' is possibly 'null' or 'undefined'.
+src/routes/trader.index.tsx(374,27): error TS18049: 'dashboard.schedule.shift' is possibly 'null' or 'undefined'.
+src/routes/trader.index.tsx(582,130): error TS2551: Property 'floatingPnl' does not exist on type '{ balance: number; equity: number; floating: number; marginLevel: number; drawdown: number; openPositions: number; accountNumber: string; status: string; }'. Did you mean 'floating'?
+src/routes/trader.index.tsx(584,60): error TS2551: Property 'floatingPnl' does not exist on type '{ balance: number; equity: number; floating: number; marginLevel: number; drawdown: number; openPositions: number; accountNumber: string; status: string; }'. Did you mean 'floating'?
+src/routes/trader.index.tsx(592,53): error TS2551: Property 'floatingPnl' does not exist on type '{ balance: number; equity: number; floating: number; marginLevel: number; drawdown: number; openPositions: number; accountNumber: string; status: string; }'. Did you mean 'floating'?
+src/routes/trader.index.tsx(630,31): error TS2339: Property 'ticket' does not exist on type 'MT5Position'.
+src/routes/trader.index.tsx(637,31): error TS2339: Property 'type' does not exist on type 'MT5Position'.
+src/routes/trader.index.tsx(642,30): error TS2339: Property 'type' does not exist on type 'MT5Position'.
+src/routes/trader.mt5.tsx(76,18): error TS2345: Argument of type 'MT5Account' is not assignable to parameter of type 'SetStateAction<MT5Account | null>'.
+  Type 'MT5Account' is missing the following properties from type 'MT5Account': login, server, isDemo, currency, and 7 more.
+src/routes/trader.mt5.tsx(92,16): error TS2345: Argument of type 'unknown[]' is not assignable to parameter of type 'SetStateAction<MT5Deal[]>'.
+  Type 'unknown[]' is not assignable to type 'MT5Deal[]'.
+    Type 'unknown' is not assignable to type 'MT5Deal'.
+src/routes/trader.mt5.tsx(126,18): error TS2345: Argument of type 'MT5Account' is not assignable to parameter of type 'SetStateAction<MT5Account | null>'.
+  Type 'MT5Account' is missing the following properties from type 'MT5Account': login, server, isDemo, currency, and 7 more.
+src/routes/trader.mt5.tsx(158,18): error TS2345: Argument of type 'MT5Account' is not assignable to parameter of type 'SetStateAction<MT5Account | null>'.
+  Type 'MT5Account' is missing the following properties from type 'MT5Account': login, server, isDemo, currency, and 7 more.
+src/routes/trader.mt5.tsx(162,64): error TS2339: Property 'server' does not exist on type 'MT5Account'.

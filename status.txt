@@ -1,0 +1,1728 @@
+﻿A  ../../dashboard_api-eigar/.vscode/settings.json
+M  ../../dashboard_api-eigar/dashboard_api-eigar/.env.example
+MM ../../dashboard_api-eigar/dashboard_api-eigar/carfix_api/settings.py
+M  ../../dashboard_api-eigar/dashboard_api-eigar/carfix_api/urls.py
+A  ../../dashboard_api-eigar/dashboard_api-eigar/dummy_carfix_user_db.sql
+A  ../../dashboard_api-eigar/dashboard_api-eigar/dummy_odoo_db.sql
+M  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/migrations/0001_initial.py
+D  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/migrations/0002_alter_company_id.py
+D  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/migrations/0003_alter_companyuser_options.py
+D  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/migrations/0004_alter_company_options_alter_companyuser_options.py
+A  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/ml/__init__.py
+A  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/ml/classifier.py
+A  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/ml/label_encoder.pkl
+A  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/ml/model.pkl
+A  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/ml/train.py
+M  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/serializers.py
+M  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/service/globalvariable_service.py
+M  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/service/target_service.py
+M  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/urls.py
+M  ../../dashboard_api-eigar/dashboard_api-eigar/kpi/views.py
+M  ../../dashboard_api-eigar/dashboard_api-eigar/requirements.txt
+?? ../../../-1.14-windows.xml
+?? ../../../.TurboVPN/
+?? ../../../.VirtualBox/
+?? ../../../.android/
+?? ../../../.arduinoIDE/
+?? ../../../.avm/
+?? ../../../.cache/
+?? ../../../.cargo/
+?? ../../../.claude.json
+?? ../../../.claude/
+?? ../../../.config/
+?? ../../../.copilot/
+?? ../../../.cursor/
+?? ../../../.emulator_console_auth_token
+?? ../../../.gitconfig
+?? ../../../.gradle/
+?? ../../../.kiro/
+?? ../../../.lesshst
+?? ../../../.m2/
+?? ../../../.nbi/
+?? ../../../.ollama/
+?? ../../../.packettracer
+?? ../../../.rustup/
+?? ../../../.skiko/
+?? ../../../.ssh/
+?? ../../../.thumbnails/
+?? ../../../.vscode-shared/
+?? ../../../.vscode/
+?? ../../../.zenmap/
+?? ../../../AndroidStudioProjects/
+?? ../../../AppData/
+?? "../../../Cisco Packet Tracer 8.2.2/"
+?? ../../../Contacts/
+?? "../../../Creative Cloud Files Personal Account eigarzhafif508@gmail.com 5F196BF75D99B5CA0A495FD5@AdobeID/"
+?? ../../../Desktop/
+?? ../../../Documents/
+?? "../../#reaction #kiss #reactionmeme.jpeg"
+?? "../../(23) SURAT IZIN PANITIA (1).docx"
+?? "../../(5) Instagram.html"
+?? "../../(5) Instagram_files/"
+?? "../../(Buat Banyak 1) PIAGAM PENGHARGAAN.pdf"
+?? "../../(ESAI)Desain dan Spesifikasi Antarmuka Aplikasi MyDaily sebagai Alat Bantu Pengelolaan Aktivitas Harian.pdf"
+?? ../../.34c891649802945251e92451ffb946b1b62ce853.parts
+?? "../../020 Pak pur 07 03 2025.docx"
+?? "../../020 Pak pur 07 03 2025.pdf"
+?? "../../020 Pak pur 27 02 2025 (1).pdf"
+?? "../../020 Pak pur 27 02 2025.docx"
+?? "../../020 Pak pur 27 02 2025.pdf"
+?? ../../05f91bf9-709d-4b3c-b376-da505e5949c3.jpeg
+?? ../../07.pdf
+?? "../../07032025 NOTA.docx"
+?? "../../07032025 NOTA.pdf"
+?? ../../0c2573d917afddaf501b6f2186441c22.jpg
+?? "../../1 Kontrak-Kuliah WEB Lanjut.pdf"
+?? "../../1 PRAKTIKUM 1  (LEMBAR UPLOAD).rtf"
+?? ../../1-s2.0-S157495412400428X-main.pdf
+?? "../../1. koversi dengan koma.pptx"
+?? "../../1. kuis LATIHAN soal sistem digital online.docx"
+?? ../../1.Pendahuluan.pdf
+?? "../../10.1.4 Packet Tracer - Configure Initial Router Settings (1).pka"
+?? "../../10.1.4 Packet Tracer - Configure Initial Router Settings.pka"
+?? "../../10.3.4 Packet Tracer - Connect a Router to a LAN (1).pka"
+?? "../../10.3.4 Packet Tracer - Connect a Router to a LAN.pka"
+?? "../../11-Article Text-46-1-10-20220421 (1).pdf"
+?? "../../11-Article Text-46-1-10-20220421 (2).pdf"
+?? "../../11-Article Text-46-1-10-20220421.pdf"
+?? "../../11.10.1 Packet Tracer - Design and Implement a VLSM Addressing Scheme.pka"
+?? "../../11.5.5 Packet Tracer - Subnet an IPv4 Network.pka"
+?? "../../11.7.5 Packet Tracer - Subnetting Scenario.pka"
+?? "../../11.9.3 Packet Tracer - VLSM Design and Implementation Practice.pka"
+?? "../../11752-Article Text-32933-2-10-20231219.pdf"
+?? "../../12.6.6 Packet Tracer - Configure IPv6 Addressing.pka"
+?? "../../12.9.1 Packet Tracer - Implement a Subnetted IPv6 Addressing Scheme.pka"
+?? ../../12.Standar_ISO_Kualitas_Software.pdf
+?? ../../1257-3320-1-SM.docx
+?? ../../1257-3335-1-SP.pdf
+?? ../../1257-3336-1-RV.docx
+?? ../../1257-3804-2-RV.docx
+?? "../../1257_Eigar Zhafif Noerlenta.docx"
+?? ../../127_0_0_1.sql
+?? ../../1308.6208v1.pdf
+?? ../../13593_2016_Article_364.pdf
+?? ../../146-155.pdf
+?? ../../1525-3776-2-PB.pdf
+?? ../../16-56-1-PB.pdf
+?? "../../16. UAS IMK teori.pdf"
+?? ../../17096-64944-1-PB.pdf
+?? "../../17256-Article Text-67776-2-10-20230410.pdf"
+?? ../../17923d88-676f-45df-ae13-d334a6e6c565.jpg
+?? ../../1912.03356v1.pdf
+?? ../../1bf4c8f9-f13c-48e9-9f56-7261378c44bc.jpg
+?? ../../2007.06022v2.pdf
+?? ../../200d55f4-e1c6-4e6c-ad20-0a603545e08c.jpeg
+?? ../../2014-issnip-mqtt-coap.pdf
+?? ../../2015_survey.pdf
+?? "../../27092-Article Text-78343-1-10-20230715.pdf"
+?? ../../2823_open3dmodel.zip
+?? ../../2823_open3dmodel/
+?? ../../2d742285-3734-47e3-8d93-4e5aec42b7a6.jpg
+?? ../../2e60ba3966e44c6581a2b40feaadcaa6..pdf
+?? "../../3.Testing throughout the SDLC.pptx"
+?? ../../350321.jpg
+?? ../../37782ff1-dc1e-4a4c-a37b-f756ec0f84ac.jpg
+?? ../../379548c5-08d5-4185-9150-3e80edaadbef.jpg
+?? ../../3uTools_v3.18.006_Setup_x86.exe
+?? ../../4.+Naskah+PDF.pdf
+?? "../../406-Article Text-1368-1-10-20180314.pdf"
+?? ../../41a705e3-1e53-45d2-b57e-55cd64610f39.jpg
+?? ../../42ef03902a3c11f084094b31ed7c1cb5.map.png
+?? ../../452835320-Company-profile-CARfix-pdf.pdf
+?? ../../4560-181-14299-1-10-20220912.pdf
+?? ../../467208450_1627689091515408_4376859818591008374_n.webp
+?? ../../4a23f3a9-689b-4820-9506-cc00b80b3c51.jpg
+?? ../../4c017b6e-cbc7-407b-a6f7-1f1e1f0ea654.jpg
+?? "../../5. Pengenalan Pemrograman Berorientasi Objek (OOP) (1).pptx"
+?? "../../5. Pengenalan Pemrograman Berorientasi Objek (OOP).pptx"
+?? "../../5. kmap 2 variabel.pptx"
+?? "../../5. kmap.pptx"
+?? "../../5.+Naskah+PDF (1).pdf"
+?? ../../5.+Naskah+PDF.pdf
+?? "../../5.3.3.5 Packet Tracer - Configure Layer 3 Switches (1).pka"
+?? "../../5.3.3.5 Packet Tracer - Configure Layer 3 Switches.pka"
+?? "../../50+ Green Screen Effects Pack - YouTube.mp4"
+?? ../../50c2f7fc-dc34-46cf-b104-5b97942b7f33.jpeg
+?? ../../512_form_img.zip
+?? ../../51ca38a2-1a44-484a-838d-89fb61362ec6.jpg
+?? ../../5427201228_9788848685_1757261062286.png
+?? ../../5a3c10e7-f7e8-43ba-9be7-d77b1dd16c37.jpg
+?? "../../6 - Keamanan Virus Komputer  Firewall.ppt"
+?? "../../6. Encapsulation dalam Java.pptx"
+?? "../../6. Inheritance.pdf"
+?? "../../6020-Article Text-18498-1-10-20220930.pdf"
+?? ../../60_modul4.rar
+?? ../../60_modul4/
+?? "../../6690-Article Text-34795-1-10-20240507.pdf"
+?? "../../6928-Article Text-28681-1-10-20230309.pdf"
+?? ../../7.+Maulana+Yusuf_262+(90-92).pdf
+?? "../../7.Penanganan Form.pdf"
+?? ../../734-1407-1-SM.pdf
+?? "../../739-File Utama Naskah-2704-1-10-20241216.pdf"
+?? ../../7893_open3dmodel.zip
+?? ../../7893_open3dmodel/
+?? ../../7dbdc281-ac89-4daa-8bbd-bacd32fbbeae.jpeg
+?? ../../7f016ba9-aba5-47a2-8e20-5d20c07ea12d.jpg
+?? "../../8. UTS imk.pdf"
+?? ../../8086.ppt
+?? "../../815-Article Text-1222-1-10-20201109.pdf"
+?? ../../820b8846-5f87-4f2c-a234-cd455c464212.jpg
+?? ../../85c56345-d1e5-4c5e-97a0-5eb0cb5206fc.jpg
+?? ../../91-anime_character.rar
+?? "../../9821-Article Text-38980-1-10-20240618.pdf"
+?? ../../9d405ac1-e586-4557-8c62-07aa2831701f.jpg
+?? ../../ACLib/
+?? "../../AJAZZ_ AJ199 No backlight (two modes)_ PAW3395_ Mouse Drive.zip"
+?? "../../APBO 2.mp4"
+?? "../../APLIKASI LAYANAN YANG MENDUKUNG CLOUD COMPUTING Antony Putra Utomo (1) (1).docx"
+?? "../../APLIKASI LAYANAN YANG MENDUKUNG CLOUD COMPUTING Antony Putra Utomo (1).docx"
+?? "../../APLIKASI LAYANAN YANG MENDUKUNG CLOUD COMPUTING Antony Putra Utomo (1).pdf"
+?? "../../APLIKASI LAYANAN YANG MENDUKUNG CLOUD COMPUTING Antony Putra Utomo.pdf"
+?? ../../A_Random_Forest_Guided_Tour.pdf
+?? ../../A_View_of_Cloud_Computing.pdf
+?? "../../Acumalaka slow  sound effect.mp3"
+?? "../../Alif Nur Satria G.211.23.0036(revisi) (1).docx"
+?? "../../Alif Nur Satria G.211.23.0036(revisi).docx"
+?? "../../Ambatukam Sound Effect.mp3"
+?? ../../Analisis_Sentimen_dalam_NLP.pptx
+?? "../../Android Medium - 2.png"
+?? "../../Antigravity IDE.exe"
+?? ../../Apache-NetBeans-22-bin-windows-x64.exe
+?? "../../Apocalypse Survival Guide by Slidesgo.pptx"
+?? "../../Artboard 1.png"
+?? "../../Article (OS Transfer Software) - Muhammad Younus.docx"
+?? "../../Article (OS Transfer Software) - Muhammad Younus.pdf"
+?? ../../Article-Template-IN-FEST2023.docx
+?? ../../Article-Template-IN-FEST2026.docx
+?? "../../Artificial Intelligence Index Report 2024, Stanford University.pdf"
+?? ../../Artikel_SINATTI_TraceChain_UMKM_Draft.docx
+?? ../../Artikel_Sinnati2026_WebSecurity.docx
+?? "../../Artikel_TraceChain_UMKM_RINGKAS_SINATTI (1).docx"
+?? "../../Artikel_TraceChain_UMKM_RINGKAS_SINATTI (2).docx"
+?? ../../Artikel_TraceChain_UMKM_RINGKAS_SINATTI.docx
+?? "../../Astyaning Setia Budi - Skill Test.xlsx"
+?? ../../Audacity_Installer_via_MuseHub.exe
+?? "../../AutoClicker-3.0 (1).exe"
+?? ../../AutoClicker-3.1.1.exe
+?? ../../AutoHotkey_1.1.37.02_setup.exe
+?? "../../BASIS DATA-3 (1) (1).pptx"
+?? "../../BASIS DATA-3 (1) (2).pptx"
+?? "../../BASIS DATA-3 (1).pptx"
+?? ../../BIOS.docx
+?? ../../BOETDReviseUploadTemplate-20250806200213936.xlsx
+?? ../../BOETDReviseUploadTemplate-20250806200736079.xlsx
+?? ../../BOETDReviseUploadTemplate-202508062007360791.xlsx
+?? ../../Bagimu_Negeri_Instrumental_-_Backsound_Cinematic_Semangat_No_Copyright_Koceak_Music_(youconvert.net).mp3
+?? "../../Basis Data -Kontrak Perkuliahan (1).pptx"
+?? "../../Basis Data -Kontrak Perkuliahan (2).pptx"
+?? "../../Basis Data -Kontrak Perkuliahan.pptx"
+?? "../../Bintang Billah P.W (G.211.23.0013) Kelompok A1.docx"
+?? "../../Bintang Billah P.W (G.211.23.0013) Kelompok A1.pdf"
+?? ../../Biodata.pdf
+?? ../../Blender_3D_Jurnal_SINTA_4.docx
+?? ../../Blender_3D_Spesifikasi_dan_Fitur.docx
+?? ../../BlueStacksInstaller_5.21.661.1002_native_4cf41d86d875aac818f53748c10abb65_MzsxNSwwOzUsMTsxNSw0OzE1LA==.exe
+?? ../../BlueStacksInstaller_5.22.125.1001_native_d1db8a1cddcc2c46a812c5864d050859_MzsxNSwwOzUsMTsxNSw0OzE1LDU7MTU=.exe
+?? ../../BlueStacksInstaller_5.22.162.1016_native_1907a84a485b550bb018424afd94a575_MzsxNSwwOzUsMTsxNSw0OzE1LDU7MTU=.exe
+?? "../../Bravo Coffee POS - App Showcase.png"
+?? "../../Bridging Human Intelligence and Artificial Intelligence.pdf"
+?? "../../Brown Illustrative Cookies Logo.png"
+?? "../../Buat normalisasi dari tabel berikut sampai tabel normal.docx"
+?? "../../Bukti transfer @krp100_mxshop hanya ke rek atas nama Diky ahmad f,diluar itu bukan tanggung jaw (1).heic"
+?? "../../Bukti transfer @krp100_mxshop hanya ke rek atas nama Diky ahmad f,diluar itu bukan tanggung jaw.heic"
+?? "../../Buku Praktikum IoT - Arduino IDE (1).pdf"
+?? "../../Buku Praktikum IoT - Arduino IDE.pdf"
+?? "../../Business Model Whiteboard (1).pdf"
+?? "../../Business Model Whiteboard.pdf"
+?? ../../CH341SER_WINDOWS.zip
+?? ../../CH341SER_WINDOWS/
+?? ../../CP210x_Universal_Windows_Driver.zip
+?? ../../CP210x_Universal_Windows_Driver/
+?? "../../CV ANTONY PUTRA UTOMO.pdf"
+?? "../../CV Eigar Zhafif Noerlenta.pdf"
+?? "../../CamScanner 13-05-2024 11.00.pdf"
+?? "../../CamScanner 30-06-2026 11.33.pdf"
+?? "../../CamScanner 30-06-2026 11.43.pdf"
+?? "../../Canvas model untuk sistem kasir kopi.png"
+?? ../../CapCut_7267140873131950085_installer.exe
+?? ../../CarPrice_Assignment.csv
+?? "../../ChatGPT Image 16 Nov 2025, 20.45.28.png"
+?? "../../ChatGPT Image 16 Nov 2025, 20.50.12.png"
+?? "../../ChatGPT Image 18 Apr 2025, 23.51.14.png"
+?? "../../ChatGPT Image 18 Apr 2025, 23.53.58.png"
+?? "../../ChatGPT Image 21 Apr 2025, 20.10.53.png"
+?? "../../ChatGPT Image 25 Agu 2025, 08.40.36.png"
+?? "../../ChatGPT Image 25 Agu 2025, 08.40.37.png"
+?? "../../ChatGPT Image 25 Agu 2025, 08.40.38.png"
+?? "../../ChatGPT Image 30 Sep 2025, 09.23.32.png"
+?? "../../ChatGPT Image 7 Jun 2025, 16.42.33.png"
+?? "../../ChatGPT Image 7 Jun 2025, 16.51.44.png"
+?? "../../ChatGPT Image 7 Jun 2025, 23.50.32.png"
+?? "../../ChatGPT Image 8 Jun 2025, 00.11.39.png"
+?? "../../ChatGPT Image Dec 1, 2025, 08_00_43 PM.png"
+?? "../../ChatGPT Image Feb 16, 2026, 10_26_17 AM.png"
+?? "../../ChatGPT Image Feb 16, 2026, 10_49_39 AM.png"
+?? "../../ChatGPT Image Jun 2, 2026, 08_08_09 PM.png"
+?? "../../ChatGPT Image Jun 2, 2026, 08_11_21 PM.png"
+?? "../../ChatGPT Image Jun 2, 2026, 08_16_18 PM.png"
+?? "../../CheatEngine75 (1).exe"
+?? "../../CheatEngine75 (3).exe"
+?? ../../CheatEngine75.exe
+?? ../../CiscoPacketTracer822_64bit_setup_signed.exe
+?? ../../City-Buildings-Business-PowerPoint-Template.pptx
+?? ../../Composer-Setup.exe
+?? ../../CoolEditPro.2.1.3097.0.NesabaMedia.exe
+?? "../../Cupcake App.pdf"
+?? ../../Cupcake2.zip
+?? ../../Cupcake2/
+?? ../../CursorUserSetup-x64-3.1.17.exe
+?? "../../DALL\302\267E 2024-12-12 23.15.11 - A UML class diagram illustrating an object-oriented program structure for vehicle types, including inheritance, polymorphism, abstract classes, and me.webp"
+?? "../../DJ CLBK - CINTAKU PADAMU BERSEMI KEMBALI SLOW TIKTOK VIRAL FULL SONG  MAMAN FVNDY 2025.mp3"
+?? "../../DJ MAMA MUDA STELY LAMBADA (Slowed & Reverb).mp3"
+?? "../../DOKUMENTASI TEKNIS SOURCE CODE (1).docx"
+?? "../../DOKUMENTASI TEKNIS SOURCE CODE.docx"
+?? ../../DS_Store
+?? ../../DVWA-master.zip
+?? ../../DVWA-master/
+?? "../../Dasprog_rev (1).pdf"
+?? ../../Dasprog_rev.pdf
+?? "../../Data kontak Darurat FD Semarang.xlsx"
+?? ../../Data_Driven_Intelligent_Systems.pdf
+?? "../../Decentralized Village Governance (1) (1).pdf"
+?? "../../Decentralized Village Governance (1).pdf"
+?? "../../Decentralized Village Governance.pdf"
+?? "../../Decentralized_Village_Governance_KapitaSelekta (1).pptx"
+?? ../../Decentralized_Village_Governance_KapitaSelekta.pdf
+?? ../../Decentralized_Village_Governance_KapitaSelekta.pptx
+?? "../../Desain dan Spesifikasi Antarmuka Aplikasi MyDaily sebagai Alat Bantu Pengelolaan Aktivitas Harian.pdf"
+?? ../../Deteksi_Objek_YOLOv5_Presentasi.pptx
+?? "../../Devil May Cry 5 [FitGirl Repack].torrent"
+?? ../../DiscordSetup.exe
+?? "../../Distorsi Gambar.jpg"
+?? ../../Doc3.pdf
+?? "../../Dokumen 3.pdf"
+?? ../../Dokumentasi_Endpoint_Dashboard_API.docx
+?? ../../Dokumentasi_Sensor_MQ2.docx
+?? ../../Dokumentasi_Sensor_MQ2.pdf
+?? "../../Download (1).mp4"
+?? ../../Download.mp4
+?? "../../Draft INFEST.docx"
+?? ../../DroidCam.Client.7.1.0.exe
+?? ../../DroidCam.Client.7.2.1.exe
+?? ../../DroidCam.Client.New.7.0.4.exe
+?? ../../EAappInstaller.exe
+?? ../../EMU8086.4.08.NesabaMedia.zip
+?? ../../EMU8086.4.08.NesabaMedia/
+?? "../../EN Intro to Iteration by Slidesgo.pptx"
+?? "../../ETDRevised_20250806060520839_D8 (1).xlsx"
+?? "../../ETDRevised_20250806060520839_D8 (2).xlsx"
+?? ../../ETDRevised_20250806060520839_D8.xlsx
+?? "../../Edited clip .mp4"
+?? "../../Edited clip 2.mp4"
+?? "../../Edited clip4 .mp4"
+?? "../../Edited clip5 .mp4"
+?? "../../Eigar Zhafif N G.211.23.0056 tugas skill 9-12.pdf"
+?? "../../Eigar Zhafif N G.211.23.0056.pdf"
+?? "../../Eigar Zhafif N TI Pagi (1).pdf"
+?? "../../Eigar Zhafif N TI Pagi (2).pdf"
+?? "../../Eigar Zhafif N TI Pagi.pdf"
+?? "../../Eigar Zhafif N.pdf"
+?? "../../Eigar Zhafif Noerlenta (1).pdf"
+?? "../../Eigar Zhafif Noerlenta G.211.23.0056  tugas pertemuan ke 11.pdf"
+?? "../../Eigar Zhafif Noerlenta G.211.23.0056 (1).pdf"
+?? "../../Eigar Zhafif Noerlenta G.211.23.0056 Basis Data Tugas Pratikum (1).pdf"
+?? "../../Eigar Zhafif Noerlenta G.211.23.0056 Basis Data Tugas Pratikum (2).pdf"
+?? "../../Eigar Zhafif Noerlenta G.211.23.0056 Basis Data Tugas Pratikum.pdf"
+?? "../../Eigar Zhafif Noerlenta G.211.23.0056 Logika Matematika.pdf"
+?? "../../Eigar Zhafif Noerlenta G.211.23.0056 Olahraga.pdf"
+?? "../../Eigar Zhafif Noerlenta G.211.23.0056 teknologi informasi.docx"
+?? "../../Eigar Zhafif Noerlenta G.211.23.0056 teknologi informasi.pdf"
+?? "../../Eigar Zhafif Noerlenta G.211.23.0056 tugas pratikum.pdf"
+?? "../../Eigar Zhafif Noerlenta G.211.23.0056.pdf"
+?? "../../Eigar Zhafif Noerlenta, Lutfi Braja Munirozaman, Naufal Ijlal Ariz, Bernadus Very Christioko.pdf"
+?? "../../Eigar Zhafif Noerlenta.pdf"
+?? "../../Eigar Zhafif Noerlenta_G.211.23.0056 (1).docx"
+?? "../../Eigar Zhafif Noerlenta_G.211.23.0056.docx"
+?? "../../Eigar Zhafif Noerlenta_G.211.23.0056.pdf"
+?? "../../Electronic Work Bench 5.12 (1).zip"
+?? "../../Electronic Work Bench 5.12.zip"
+?? "../../Employee_Schedule_Upl (7)_.xlsx"
+?? "../../Employee_Schedule_Upl new_.xlsm"
+?? ../../Emu8086.exe
+?? ../../EpicInstaller-15.17.1-174fa44e6c174b8094816870308e50d6.msi
+?? "../../FORMAT LAPORAN PROYEK AKHIR.docx"
+?? "../../FORMAT PENULISAN ARTIKEL JURNAL BAHASA INDONESIA.docx"
+?? "../../FORMULIR PERMOHONAN KERJA PRAKTEK - Copy.docx"
+?? "../../Features data set.csv"
+?? ../../FileZilla_3.68.1_win64_sponsored2-setup.exe
+?? ../../FileZilla_3.69.1_win64_sponsored2-setup.exe
+?? ../../Fisch-Macro-Config.zip
+?? ../../Fisch-Macro-Config/
+?? ../../FolderSize.exe
+?? "../../Form Magang (1).docx"
+?? "../../Form Magang.docx"
+?? "../../Format Tugas Metopen (1).docx"
+?? "../../Format Tugas Metopen_rev.docx"
+?? ../../Format-Laporan-TA-Jurusan-TI_Output-Sistem-atau-Aplikasi.docx
+?? "../../Format-Proposal-TA (1).docx"
+?? "../../Format-Proposal-TA (2).docx"
+?? ../../Format-Proposal-TA.docx
+?? "../../Formulir tanpa judul (Jawaban).xlsx"
+?? ../../Free_Backsound_-_Noesantara_Orchestra_(youconvert.net).mp3
+?? ../../FurMark_2.8.0.0_Win64_Setup.exe
+?? "../../Futuristic Background _ by Slidesgo.pptx"
+?? "../../G.111.23.0046_Novita_UAS_Pemrograman Berbasis Kerangka Kerja.pdf"
+?? "../../G.211.23.0004_Dian Purbo Wicaksono (1).xlsx"
+?? "../../G.211.23.0036 Alif Nur Satria Pertemuan ke 3.docx"
+?? "../../G.211.23.0056_Eigar Zhafif Noerlenta.docx"
+?? ../../G111220009_110212320250717100921.docx
+?? ../../G111220009_110212320250717100921.pdf
+?? "../../GENETIC 25 Inovasi System - Bentar Mikir Dulu - Seimbang.in - Rama Syailana.pdf"
+?? "../../GENETIC 25 \342\200\223 Inovasi System - Bebas Tim - Skinovation - azhara.pdf"
+?? "../../GENETIC 25 \342\200\223 Inovasi System - Newbie Blaster- NutriSnap - Akmal Yaasir.pdf"
+?? "../../GENETIC 25-Business Plan-Deg Pioneers-Aplikasi Glam & Co - Hanindita Fernanda Elsharini.pdf"
+?? "../../GENETIC X SIBLING'S.png"
+?? "../../GENETIC25 - BusinessPlan - Tim WinWin Solution -  (PLATFORM INOVATIF) PENGEMBANGAN APLIKASI BERBASIS WEB ON DEMAND DENGAN STUDI KASUS PADA LAYANAN  PENYEWAAN BERBAGAI MACAM  ALAT BERAT (2) - Muhamad Luthfi Maulana.pdf"
+?? "../../GENETIC25-BusinessPlan-ACSJaya-TemanTumbuh - Alip Cinta Sion.pdf"
+?? "../../GENETIC25-BusinessPlan-BIMA CREW-BENDI PRIMA INDONESIA Bisnis Pemanfaatan Okra Berkelanjutan Sebagai Produk Teh dan Kopi di Kabupaten Jember - Muhammad Syafa'atur Rahmandani.pdf"
+?? "../../GENETIC25-BusinessPlan-Bule Dau-KRAMBS - Zuhair Hafizh.pdf"
+?? "../../GENETIC25-BusinessPlan-Gas Wes-Fixer - Ridhwan Fadly Saputra.pdf"
+?? "../../GENETIC25-BusinessPlan-RogerTembalang-CerdasFinansialDenganKekuatanArtificialIntelligenceDalamPenggunaanPlatformFinanceArtificialIntelligence - Yesaya Rudolf Susanto Widyanto.pdf"
+?? "../../GENETIC25-BusinessPlan-TURI Team-Mentora Education Industries - Muhammad Nur Irfan.pdf"
+?? "../../GENETIC25-BusinessPlan-Volunteerin-VOLUNTEERIN.ID - Praditus Egi Danuarta.pdf"
+?? "../../GENETIC25-BussinessPlan-PHP Group-ReKopi_ Inovasi Briket dari Ampas Kopi - Hani Aliya.pdf"
+?? "../../GENETIC25_DesignUIUX_Catalysta_TaniHub_proposal - M Handy Sebastian.pdf"
+?? "../../GENETIC25_DesignUIUX_Malati_Curion_proposal - Araechpaet.R. Gading (Papoy) (1).pdf"
+?? "../../GENETIC25_DesignUIUX_Malati_Curion_proposal - Araechpaet.R. Gading (Papoy).pdf"
+?? "../../GENETIC25_DesignUIUX_RemajaMasjid_IMPACT_proposal. - Darul Ahyar.pdf"
+?? "../../GENETIC25_DesignUIUX_TimShine_GREENBIN_proposal - Nanda Ali Rianto.pdf"
+?? "../../GENETIC25_DesignUIUX_UTRIX_Tunas_ - Galang Surya Admaja.pdf"
+?? "../../GENETIC25_DesignUI_UX_Aesthera_MisiHarian_ proposal - Putri Nur'aini.pdf"
+?? "../../GENETIC25_DesignUI_UX_Takjil Hunter_I-Hear_ proposal - Kamfing Kamdem Nadine.pdf"
+?? "../../GENETIC25_DesignUI_UX_Tim ALASKASKUSKISKAS_CapyCare_proposal - Iqbal Bayuaji.pdf"
+?? "../../GENETIC_25_\342\200\223_Inovasi_System_-_VIRAF_-_Inovasi_Pemantauan_Gizi_Anak_Dalam_Upaya_Deteksi_Malnutrisi - Feby Kurnia Putri.pdf"
+?? "../../Game Desain.pptx"
+?? ../../GeForce_Experience_v3.27.0.112.exe
+?? ../../Gemini_Generated_Image_9sv97b9sv97b9sv9.png
+?? "../../Genetic Fix 2 - epan epan.pdf"
+?? ../../Git-2.51.0-64-bit.exe
+?? ../../IMG-20240421-WA0135.jpg
+?? ../../IMG-20240421-WA0136.jpg
+?? ../../IMG-20240421-WA0137.jpg
+?? ../../IMG-20240421-WA0138.jpg
+?? ../../IMG-20240421-WA0139.jpg
+?? ../../IMG-20240421-WA0140.jpg
+?? ../../IMG-20240505-WA0058.jpg
+?? ../../IMG-20240505-WA0075.jpg
+?? ../../IMG-20240505-WA0076.jpg
+?? ../../IMG-20240505-WA0077.jpg
+?? ../../IMG-20240505-WA0078.jpg
+?? ../../IMG-20240519-WA0067.jpg
+?? ../../IMG-20240519-WA0068.jpg
+?? ../../IMG-20240519-WA0069.jpg
+?? ../../IMG-20240519-WA0070.jpg
+?? ../../IMG-20240609-WA0053.jpg
+?? ../../IMG-20240609-WA0054.jpg
+?? ../../IMG-20240609-WA0055.jpg
+?? ../../IMG-20240609-WA0056.jpg
+?? ../../IMG-20240609-WA0057.jpg
+?? ../../IMG-20240609-WA0058.jpg
+?? ../../IMG-20240609-WA0060.jpg
+?? ../../IMG-20240609-WA0061.jpg
+?? ../../IMG-20240609-WA0062.jpg
+?? ../../IMG-20240609-WA0063.jpg
+?? ../../IMG-20240609-WA0064.jpg
+?? ../../IMG-20240609-WA0065.jpg
+?? ../../IMG-20240609-WA0066.jpg
+?? "../../IMG-20240811-WA0033 - Copy.jpg"
+?? ../../IMG-20240811-WA0033.jpg
+?? ../../IMG-20240811-WA0088.jpg
+?? ../../IMG-20240811-WA0151.jpg
+?? ../../IMG-20240811-WA0152.jpg
+?? ../../IMG-20240811-WA0156.jpg
+?? ../../IMG-20240811-WA0212.jpg
+?? ../../IMG-20240811-WA0236.jpg
+?? ../../IMG-20240811-WA0242.jpg
+?? ../../IMG-20240811-WA0254.jpg
+?? ../../IMG-20240811-WA0285.jpg
+?? ../../IMG-20241218-WA0004.jpg
+?? ../../IMG-20241218-WA0005.jpg
+?? ../../IMG-20241218-WA0006.jpg
+?? ../../IMG-20241218-WA0007.jpg
+?? ../../IMG-20241218-WA0008.jpg
+?? ../../IMG-20241218-WA0009.jpg
+?? ../../IMG-20241218-WA0010.jpg
+?? ../../IMG-20241218-WA0011.jpg
+?? ../../IMG-20241218-WA0012.jpg
+?? ../../IMG-20241218-WA0013.jpg
+?? ../../IMG-20250409-WA0112.jpg
+?? ../../IMG-20250409-WA0113.jpg
+?? ../../IMG-20250409-WA0114.jpg
+?? ../../IMG-20250409-WA0115.jpg
+?? ../../IMG-20250409-WA0116.jpg
+?? ../../IMG-20250409-WA0117.jpg
+?? ../../IMG-20250409-WA0118.jpg
+?? ../../IMG-20250409-WA0119.jpg
+?? ../../IMG-20250409-WA0120.jpg
+?? ../../IMG20240617090511.jpg
+?? ../../IMG20240617092857.jpg
+?? ../../IMG20240617094450.jpg
+?? "../../IMG20240617102911 (1).jpg"
+?? ../../IMG20240617102911.jpg
+?? ../../IMG20240617102932.jpg
+?? ../../IMG20240617102955.jpg
+?? ../../IMG20240617103020.jpg
+?? ../../IMG20240617103034.jpg
+?? ../../IMG20240617103059.jpg
+?? ../../IMG_1598.JPEG.jpg
+?? ../../IMG_2126.MOV
+?? ../../IMG_2127.MOV
+?? ../../IMG_6441.HEIC
+?? "../../IMG_6445 (1).HEIC"
+?? ../../IMG_6445.HEIC
+?? ../../IMG_6447.HEIC
+?? ../../IMG_6744.JPG
+?? ../../IMG_7702.MOV
+?? "../../Implementasi Sistem Cerdas Penerjemah Bahasa menggunakan Python.pdf"
+?? "../../Install VALORANT (1).exe"
+?? "../../Install VALORANT.exe"
+?? ../../Install-TheoTown-GooglePlayGames.exe
+?? ../../IoT_Messaging_Protocols_Naik.pdf
+?? "../../JADWAL TAKJIL-1.xlsx"
+?? ../../JADWAL_TAKJIL_Format_Tanggal_Indonesia.xlsx
+?? "../../JADWAL_TAKJIL_Hari_Indonesia (1).xlsx"
+?? ../../JADWAL_TAKJIL_Hari_Indonesia.xlsx
+?? "../../JT - Pertemuan 09.pdf"
+?? "../../JT - Pertemuan 10_compressed.pdf"
+?? "../../JT - Pertemuan 11.pdf"
+?? "../../JT - Pertemuan 12.pdf"
+?? "../../JT - Pertemuan 13.pdf"
+?? "../../JT - Pertemuan 14.pdf"
+?? "../../JURNAL rangkuman blender.pdf"
+?? "../../Jadwal_Semester_6 (2).xlsx"
+?? "../../Jaringan Terapan SINATTI.docx"
+?? ../../Javascript.pptx
+?? ../../Jeksen_2025_IOP_Conf._Ser.__Earth_Environ._Sci._1438_012003.pdf
+?? "../../Journal of Electrical and Computer Engineering - 2017 - Sethi - Internet of Things  Architectures  Protocols  and.pdf"
+?? ../../KINTARO-126-1-00-1709206766.rar
+?? ../../KINTARO-126-1-00-1709206766/
+?? "../../KONTRAK KULIAH DAN CARA MEREVEW BUKU TUGAS MAKUL PAI.docx"
+?? "../../KP-G.211.23.0003 - BAB 4.docx"
+?? "../../KPI_RandomForest_INFEST2026 (1).pptx"
+?? ../../KPI_RandomForest_INFEST2026.pptx
+?? ../../KRS_G211230056_20241_23102024.pdf
+?? "../../KRS_G211230056_20252_30062026 (1).pdf"
+?? ../../KRS_G211230056_20252_30062026.pdf
+?? "../../KUESIONER-DUDI-UCAC-Terbaru-2022-Update (1).pdf"
+?? "../../KUIS 2_HIMPUNAN.ppt"
+?? "../../KUIS 2_MATRIKS 1.pptx"
+?? "../../KUIS 3_HIMPUNAN.ppt"
+?? "../../KUIS 3_MATRIKS 2.pptx"
+?? "../../KUIS 4_KALKULUS PROPORSI 1.pptx"
+?? "../../KUIS 4_MATRIKS 3 (1).ppt"
+?? "../../KUIS 4_MATRIKS 3.ppt"
+?? "../../KUIS 9_FUNGSI MADIS NEW.docx"
+?? ../../KUIS.docx
+?? "../../KUIZ HTML(1-20) (1).xlsx"
+?? "../../KUIZ HTML(1-20) (2).xlsx"
+?? "../../KUIZ HTML(1-20).xlsx"
+?? ../../Kerja-PRaktek-main.zip
+?? "../../Klasifikasi Pencapaian KPI Perusahaan Menggunakan Algoritma Random Forest Berbasis Data Target dan Realisasi Kinerja.docx"
+?? "../../Kontrak kuliah.pptx"
+?? "../../LAPORAN AKHIR COMPUTER GAMINGdocx (1).pdf"
+?? "../../LAPORAN AKHIR COMPUTER GAMINGdocx.pdf"
+?? "../../LAPORAN ANALISA PENGGUNAAN API .docx"
+?? "../../LAPORAN DAFTAR API requestpart.docx"
+?? "../../LAPORAN DAFTAR API.docx"
+?? "../../LAPORAN PRAKTIKUM.docx"
+?? "../../LAPORAN SENIN 02.docx"
+?? "../../LAPORAN TUGAS AKHIR PRAKTIKUM.pdf"
+?? "../../LAPORAN UTS cloud (1).pdf"
+?? "../../LAPORAN UTS cloud.pdf"
+?? "../../LEMBAR KERJA PRAKTIKUM  (LEMBAR UPLOAD) OKE (1).rtf"
+?? "../../LEMBAR KERJA PRAKTIKUM  (LEMBAR UPLOAD) OKE.rtf"
+?? "../../LEMBAR KERJA PRAKTIKUM  (LEMBAR UPLOAD).rtf"
+?? "../../LEMBAR KERJA PRAKTIKUM 4 (LEMBAR UPLOAD).rtf"
+?? "../../LEMBAR KERJA PRAKTIKUM ABSTRACTION (LEMBAR UPLOAD KE 7).pdf"
+?? "../../LEMBAR KERJA PRAKTIKUM ABSTRACTION (LEMBAR UPLOAD KE 7).rtf"
+?? "../../LEMBAR KERJA PRAKTIKUM ENCAPULASI (LEMBAR UPLOAD KE 6) (1).pdf"
+?? "../../LEMBAR KERJA PRAKTIKUM ENCAPULASI (LEMBAR UPLOAD KE 6).pdf"
+?? "../../LEMBAR KERJA PRAKTIKUM ENCAPULASI (LEMBAR UPLOAD KE 6).rtf"
+?? "../../LEMBAR KERJA PRAKTIKUM POLYMORPHISM (LEMBAR UPLOAD KE 5) (1).pdf"
+?? "../../LEMBAR KERJA PRAKTIKUM POLYMORPHISM (LEMBAR UPLOAD KE 5).pdf"
+?? "../../LEMBAR KERJA PRAKTIKUM POLYMORPHISM (LEMBAR UPLOAD KE 5).rtf"
+?? "../../LOGO USMJAYA.png"
+?? "../../Lampiran-LOG-HARIAN (1).docx"
+?? "../../Lampiran-LOG-HARIAN (1).pdf"
+?? "../../Lampiran-LOG-HARIAN new.docx"
+?? ../../Lampiran-LOG-HARIAN.pdf
+?? "../../Laporan Akhir Mahasiswa KKN PMM.pdf"
+?? "../../Laporan Kerja Praktik-Revisi1.docx"
+?? "../../Laporan Mobile Application Alif Nur Satria_G.211.23.0036_Teknik Informatika.docx"
+?? "../../Laporan Praktikum Pengukuran (1) salinan.docx"
+?? "../../Laporan Praktikum Pengukuran (1).docx"
+?? "../../Laporan Praktikum Pengukuran.docx"
+?? "../../Laporan Ujicoba Notebook.docx"
+?? ../../Laporan.docx
+?? ../../Laporan_KP_CARfix_Bab3_Bab4.docx
+?? "../../Laporan_KP_Pangan_Pintar_USM new v 2.docx"
+?? "../../Laporan_KP_Pangan_Pintar_USM new v 2.pdf"
+?? ../../Laporan_Kerja_Praktek_Carfix_Caption_Diperbaiki.docx
+?? ../../Laporan_Kerja_Praktek_Carfix_Daftar_Gambar_Tabel_Diperbaiki.docx
+?? "../../Laporan_Kerja_Praktek_Carfix_Eigar (1).docx"
+?? "../../Laporan_Kerja_Praktek_Carfix_Eigar (2).docx"
+?? ../../Laporan_Kerja_Praktek_Carfix_Eigar.docx
+?? ../../Laporan_Kerja_Praktek_Carfix_Eigar_Revisi_Awal.docx
+?? ../../Laporan_Kerja_Praktek_Carfix_Eigar_dengan_Gambar.docx
+?? ../../Laporan_Kerja_Praktek_Carfix_Eigar_final.docx
+?? ../../Laporan_Kerja_Praktek_Carfix_Eigar_italic.docx
+?? ../../Laporan_Kerja_Praktek_Carfix_Eigar_penomoran_tabel.docx
+?? ../../Laporan_Kerja_Praktek_Carfix_Penomoran_Gambar_Tabel.docx
+?? ../../Laporan_Pengujian_Blackbox.docx
+?? ../../Laporan_Profesi_IT.docx
+?? ../../Laporan_Profesi_IT.pdf
+?? ../../Laporan_Tugas_Multimedia_AlifNurSatria.docx
+?? "../../Latihan UAS Diskrit G.211.23.0056 .pdf"
+?? ../../Latihan.docx
+?? "../../Latihan_SKPL (1).docx"
+?? ../../Latihan_SKPL.docx
+?? "../../Lembar kerja praktikum SISTEM DIGITAL ( untuk di upload ) (1).rtf"
+?? "../../Lembar kerja praktikum SISTEM DIGITAL ( untuk di upload ).rtf"
+?? ../../Log_Harian_Kerja_Praktek_PT_Global_CARfix_2Feb-2Apr.docx
+?? ../../Log_Harian_Kerja_Praktek_PT_Global_CARfix_2Feb-2Apr_Revisi.docx
+?? ../../Lovepik_com-401482908-man-sitting-at-work-in-front-of-computer.png
+?? "../../MODUL EBIS.pdf"
+?? ../../MONEV_1_G.211.23.0060.pdf
+?? ../../MSIAfterburnerSetup.zip
+?? ../../Macro-Virus-Kenali-10-Jenis-Virus-Komputer-beserta-Cara-Pencegahannya.jpg
+?? ../../MagicChessGoGo_PC_Setup_v1.1.94.exe
+?? ../../Makalah_Aplikasi_Layanan_Cloud_Computing.pdf
+?? ../../Makalah_Cloud_Computing.docx
+?? ../../Makalah_Pancasila_Eigar.docx
+?? ../../Makalah_Pancasila_Eigar.pdf
+?? "../../Maling Pangsit Sound Effect Meme ABSURD MEME SOUND EFFECT (1).mp3"
+?? "../../Maling Pangsit Sound Effect Meme ABSURD MEME SOUND EFFECT.mp3"
+?? "../../Materi & Tugas 5.docx"
+?? "../../Materi 1 Pengertian Etika.ppt"
+?? ../../McAfee_Installer_serial_N-njrYFuOwIqNcZYRGcg0g2_key_affid_1406_akey.exe
+?? "../../Meluruskan Gambar.jpg"
+?? ../../Mendeley-Desktop-1.19.5-win32.exe
+?? "../../Monev 3 - Technical Writing.pdf"
+?? "../../Monev 4 - Technical Writing.pdf"
+?? ../../MuMu_5.0.7_w9QfruC.exe
+?? ../../Multipartite-Virus-Kenali-10-Jenis-Virus-Komputer-beserta-Cara-Pencegahannya.jpg
+?? ../../NIM.pdf
+?? ../../NIM2.pdf
+?? "../../NOTA KOSONG.docx"
+?? "../../NPWP-ELEKTRONIK-GLOBAL CARFIX INDONESIA.pdf"
+?? "../../NURMALA DWI AMALINA_G.111.23.0001_SISTEM INFORMASI.docx"
+?? ../../Nikita_Willy_jerawat.jpg
+?? ../../OBS-Studio-29.1.3-Full-Installer-x64.exe
+?? ../../OIP.jfif
+?? ../../OLX-logo-2048x1173.png
+?? ../../Object_Detection_YOLOv5_Presentation.pptx
+?? "../../Omg Merlin.zip"
+?? "../../Omg Merlin/"
+?? "../../OperaInstaller (1).exe"
+?? "../../OperaInstaller (2).exe"
+?? "../../OperaInstaller (3).exe"
+?? "../../OperaInstaller (4).exe"
+?? "../../OperaInstaller (5).exe"
+?? "../../OperaInstaller (6).exe"
+?? "../../OperaInstaller (7).exe"
+?? ../../OperaInstaller.exe
+?? ../../Origin.dmg
+?? ../../Otakudesu.wiki_JK.S2--14_Mkv480p.mkv
+?? "../../P3-PEMROGRAMAN MODE CONTINUOUS dan KENDALI PROGRAM.pdf"
+?? ../../PANDUAN-DAN-PENGENALAN-FITUR-O365.pdf
+?? ../../PCRemoteReceiverSetup_7_7_2.exe
+?? "../../PEDOMAN-PELAKSANAAN-KP-ed-17-2026 (1).pdf"
+?? "../../PEDOMAN-PELAKSANAAN-KP-ed-17-2026 (2).pdf"
+?? ../../PEDOMAN-PELAKSANAAN-KP-ed-17-2026.pdf
+?? "../../PERTEMUAN 11_ALJABAR BOOLEAN_1 (1).ppt"
+?? "../../PERTEMUAN 11_ALJABAR BOOLEAN_1.ppt"
+?? "../../PERTEMUAN 12_ALJABAR BOOLEAN 2.ppt"
+?? "../../PERTEMUAN 14_POHON KOMPLIT.ppt"
+?? "../../PERTEMUAN 15 BASIS DATA.pdf"
+?? "../../PERTEMUAN 15_SOAL LATIHAN UAS 2023.docx"
+?? "../../PERTEMUAN 15_SOAL LATIHAN UAS_MATDIS.docx"
+?? "../../PERTEMUAN 1_KONTRAK KULIAH MATEMATIKA DISKRIT.ppt"
+?? "../../PERTEMUAN 2_MATRIKS 1.pptx"
+?? "../../PERTEMUAN 8_UTS MATDIS 2025.pdf"
+?? "../../PL DEALER - 27 DESEMBER 2023 - 10 (1).pdf"
+?? "../../PL DEALER - 27 DESEMBER 2023 - 10 (2).pdf"
+?? "../../PL DEALER - 27 DESEMBER 2023 - 10.pdf"
+?? ../../PPT_Klasifikasi_KPI_RandomForest_INFEST2026.pptx
+?? ../../PPT_MTK_DISKRIT.pptx
+?? "../../PRAKTEK Gerak Jatuh Bebas (shafaa x3).docx"
+?? "../../PRAKTIKKUM 56.pkt"
+?? "../../PRAKTIKUM 6  (1).pdf"
+?? "../../PRAKTIKUM BASIS DATA-3.pdf"
+?? "../../PRAKTIKUM BASIS DATA-4 (1) (1).pdf"
+?? "../../PRAKTIKUM BASIS DATA-4 (1).pdf"
+?? "../../PRATIKUM PERTEMUAN KE 3.pdf"
+?? "../../PRESENTASI LOGIKA MATEMATIKA.pdf"
+?? "../../PROPOSAL GENETIC2_merged - HALIM AZIZ.pdf"
+?? "../../PROPOSAL_HALOSTAR_WITHSHAPE_ERNA RIYANTI - Rio Baskoro.pdf"
+?? ../../Paraphraz.it.txt
+?? "../../Paste Content.txt"
+?? ../../Paudel+et+al.pdf
+?? "../../Pemilihan Mapel.pdf"
+?? "../../Penerapan Cloud Computing di Berbagai Sektor (1).pdf"
+?? "../../Penerapan Cloud Computing di Berbagai Sektor (2).pdf"
+?? "../../Penerapan Cloud Computing di Berbagai Sektor revisi (1).docx"
+?? "../../Penerapan Cloud Computing di Berbagai Sektor revisi.docx"
+?? "../../Penerapan Cloud Computing di Berbagai Sektor.docx"
+?? "../../Penerapan Cloud Computing di Berbagai Sektor.pdf"
+?? "../../Pengenalan Figma.pdf"
+?? "../../Pengujian Statis (1).pptx"
+?? "../../Pengujian Statis.pptx"
+?? "../../Penjelasan_Methodes_InformationGain_ForwardSelection_TreeBased (1).docx"
+?? ../../Penjelasan_Methodes_InformationGain_ForwardSelection_TreeBased.docx
+?? ../../Penjelasan_Methodes_InformationGain_ForwardSelection_TreeBased.pdf
+?? "../../Penyajian data (1) (1).pptx"
+?? "../../Penyajian data (1).pptx"
+?? ../../Perbandingan_Konstitusi_Indonesia_Swiss.docx
+?? "../../Perbandingan_Konstitusi_Indonesia_vs_Swiss (1).docx"
+?? ../../Perbandingan_Konstitusi_Indonesia_vs_Swiss.docx
+?? ../../Perbandingan_Konstitusi_Indonesia_vs_Swiss_Tabel.docx
+?? ../../Perspektif.jpg
+?? "../../Pertemuan 05-Tipe Data Basis Data.pptx"
+?? "../../Pertemuan 06-Dasar MySQL (1).pptx"
+?? "../../Pertemuan 06-Dasar MySQL (2).pptx"
+?? "../../Pertemuan 06-Dasar MySQL.pptx"
+?? "../../Pertemuan 07-Entity Relationship Diagram (1).pptx"
+?? "../../Pertemuan 07-Entity Relationship Diagram.pptx"
+?? "../../Pertemuan 09-Model Data.pptx"
+?? "../../Pertemuan 1-Kontrak Perkuliahan dan Pengantar Teknologi Informasi.pptx"
+?? "../../Pertemuan 13_Tugas 3_Metode Numerik_Pagi-A_261124.pdf"
+?? "../../Pertemuan 15_Kisi-Kisi UAS_101224.pdf"
+?? "../../Pertemuan 15_Tugas 4_Metode Numerik_Pagi-A_101224.pdf"
+?? "../../Pertemuan 1_Kontrak Kuliah_Logika Matematika_2023.ppt"
+?? "../../Pertemuan 2- Sistem Basis Data (1).pptx"
+?? "../../Pertemuan 2_Bab 1_Himpunan_2023 (1).ppt"
+?? "../../Pertemuan 2_Bab 1_Himpunan_2023.ppt"
+?? "../../Pertemuan 3_Bab 1_Himpunan_300922.ppt"
+?? "../../Pertemuan 4 Ukuran Pemusatan Data Tungal dan Majemuk (1) (1).pptx"
+?? "../../Pertemuan 4 Ukuran Pemusatan Data Tungal dan Majemuk (1).pptx"
+?? "../../Pertemuan 4_Bab 2_Kalkulus Proposisi_2023 new.ppt"
+?? "../../Pertemuan 5 Ukuran Penyebaran Data untuk pdf.pdf"
+?? "../../Pertemuan 5_Bab 2_Kalkulus Proposisi_2023.pptx"
+?? "../../Pertemuan 5_Tugas 1_Metode Numerik_Pagi-A_011024.pdf"
+?? "../../Pertemuan 6_Bab 5_Persamaan Non Linier_081024.pdf"
+?? "../../Pertemuan 8 Ujian Tengah Semester Jaringan Terapan (SRN).pdf"
+?? "../../Pertemuan Ke-1 ok.pptx"
+?? "../../Pertemuan1-Nota Kuliah  Silabus.pptx"
+?? "../../Pertemuan1-Nota Kuliah Silabus.pptx"
+?? "../../Pertemuan10-Resource Allocation in Mobile Cloud Computing.pptx"
+?? ../../Pertemuan10-SNMP.pptx
+?? ../../Pertemuan11-RMON.pptx
+?? "../../Pertemuan11-Sensor Mobile Cloud Computing.pptx"
+?? "../../Pertemuan12-Internet Protocol Version 6.pptx"
+?? "../../Pertemuan12-Mobile Social Cloud Computing.pptx"
+?? "../../Pertemuan12-sql (1).pptx"
+?? "../../Pertemuan13-NM Tools  Systems.pptx"
+?? "../../Pertemuan13-Trust in Mobile Cloud Computing.pptx"
+?? "../../Pertemuan14-Vehicular Mobile Cloud Computing.pptx"
+?? "../../Pertemuan14Pemrosesan Query-sql.ppt"
+?? "../../Pertemuan15-Application of Mobile Cloud Computing.pptx"
+?? "../../Pertemuan2-NM Overview.pptx"
+?? "../../Pertemuan2-Pengantar Grid  Cloud Computing.pptx"
+?? "../../Pertemuan3-Internet Protocol Version 4 (1).pptx"
+?? "../../Pertemuan3-Internet Protocol Version 4 (2).pptx"
+?? "../../Pertemuan3-Internet Protocol Version 4.pptx"
+?? "../../Pertemuan3-Model Cloud Computing.pptx"
+?? "../../Pertemuan4-Latihan Subnetting.pptx"
+?? "../../Pertemuan4-Mobile Computing.pptx"
+?? "../../Pertemuan5-Proteksi Data Cloud Computing.pptx"
+?? "../../Pertemuan6-Mobile Technology Cloud Computing.pptx"
+?? ../../Pertemuan6-VLSM.pptx
+?? "../../Pertemuan7-Offloading in Mobile Cloud Computing.pptx"
+?? "../../Pertemuan7-Teknologi Jaringan Komputer.pptx"
+?? "../../Pertemuan9-Green Mobile Cloud Computing.pptx"
+?? ../../Pertemuan9-Routing.pptx
+?? ../../Photoshop2019_apc19_installer/
+?? "../../Polines Jurusan Akuntansi (@polines_akuntansi) \342\200\242 Foto dan video Instagram.html"
+?? "../../Polines Jurusan Akuntansi (@polines_akuntansi) \342\200\242 Foto dan video Instagram_files/"
+?? ../../PolymorphicVirus-0447a4bc3b4140b7847fc7edec672d8f.jpg
+?? "../../Portfolio Akhir Kapita Selekta.docx"
+?? ../../Portfolio.pdf
+?? ../../Portfolio_Rapih.docx
+?? "../../Portofolio (1).xlsx"
+?? "../../Portofolio (2).xlsx"
+?? ../../Portofolio.xlsx
+?? ../../Position_Salaries.csv
+?? ../../Poster-Digifest.jpeg
+?? "../../Postman (x64).exe"
+?? "../../Pr toefl 25 maret 2024 Alif Nur Satria G.211.23.0036.pdf"
+?? "../../Prak5-Class _ Object.pdf"
+?? "../../Praktikum Basis data_lenny (1).docx"
+?? "../../Praktikum Basis data_lenny.docx"
+?? "../../Praktikum Framework Laravel 9 Full.pdf"
+?? ../../Praktikum1.pdf
+?? ../../Praktikum10.html
+?? ../../Presentasi_Panen_RF.pptx
+?? ../../Presentasi_Panen_RF_AI_Theme.pptx
+?? ../../Presentasi_Panen_RF_AI_Theme_Fixed.pptx
+?? ../../Presentasi_Panen_RF_Eigar.pptx
+?? ../../Presentasi_Panen_RF_Styled.pptx
+?? "../../Profil (1).zip"
+?? "../../Profil (1)/"
+?? ../../Profil.zip
+?? ../../ProjectPlanning.mpp
+?? "../../Proposal Gagasan Riset Informatika \342\200\223 Prediksi Hasil Panen Padi.docx"
+?? ../../Proposal_TA_MQTT_CoAP_HTTP_IoT.docx
+?? ../../Proposal_TA_Rapi.docx
+?? "../../Proyek 1 (proposal) Kapita Selekta.pdf"
+?? ../../Pvz-RH-2.1.3.zip
+?? "../../QC (1).xlsx"
+?? "../../QC (2).xlsx"
+?? "../../QC (3).xlsx"
+?? ../../QC.xlsx
+?? "../../QuickCount (1).xlsx"
+?? ../../QuickCount.xlsx
+?? "../../REKAYASA SMART DRYING SYSTEM PKWU copy.docx paling baru (1).docx"
+?? "../../RENCANA PENGEMBANGAN WEBSITE MUSIC MENGGUNAKAN CLOUD COMPUTING MENGGUNAKAN HOSTINGER (1).pdf"
+?? "../../RENCANA PENGEMBANGAN WEBSITE MUSIC MENGGUNAKAN CLOUD COMPUTING MENGGUNAKAN HOSTINGER.pdf"
+?? "../../REVIEW BUKU ETOS DAGANG DIAN PURBO WICAKSONO G.211.23.0004.docx"
+?? "../../REVIEW ETOS BERRU.docx"
+?? "../../RINGKASAN MATERI KULIAH  P.A.I  KE  2.docx"
+?? ../../Random_Forest_KPI_Classification.pptx
+?? ../../Regresi_Linier_Berganda_Nilai_Ujian.xlsx
+?? ../../Regresi_Output_Format_SPSS.xlsx
+?? "../../Rekayasa Bioplastik Biodegradabel Berbasis Selulosa Pelepah Pisang copy.docx paling baru.docx"
+?? ../../Remotely_Sensed_Prediction_of_Rice_Yield_at_Differ.pdf
+?? "../../Results for quiz would we be friends.jpeg"
+?? "../../Retato Slideshow by Slidesgo (1).pptx"
+?? "../../Retato Slideshow by Slidesgo.pptx"
+?? "../../Revenue_All (1).xlsx"
+?? ../../Revenue_All.xlsx
+?? "../../Review Buku.docx"
+?? "../../RobloxPlayerInstaller (1).exe"
+?? "../../RobloxPlayerInstaller (2).exe"
+?? ../../RobloxPlayerInstaller.exe
+?? ../../Roboto.zip
+?? ../../SIMA_Mobile_2_0.apk
+?? "../../SINATTI Jaringan Terapan Final.docx"
+?? "../../SINATTI Jaringan Terapan Final.pdf"
+?? "../../SINATTI data mining 0.2.docx"
+?? "../../SINATTI data mining 0.3[1].docx"
+?? ../../SKL.pdf
+?? "../../SKPL_Eigar Zhafif Noerlenta (1).docx"
+?? "../../SKPL_Eigar Zhafif Noerlenta.docx"
+?? "../../SOAL UAS MATEMATIKA DISKRIT_YULINDA_2025.pdf"
+?? "../../SOAL-UAS-Pancasila-9 juni 2026.pdf"
+?? "../../SURAT PENARIKAN UANG KATALOG.pdf"
+?? "../../Salinan Social_Network_Ads.csv"
+?? "../../Sample Daftar Isi.docx"
+?? "../../Sample Daftar Isi.pdf"
+?? "../../Screenshot 2025-10-07 001132.png"
+?? "../../Screenshot 2025-10-07 054647.png"
+?? "../../Screenshot 2025-10-07 055129.png"
+?? "../../Screenshot 2026-06-22 123653.png"
+?? "../../Screenshot 2026-06-22 123704.png"
+?? ../../Screenshot_2026-02-12_085235.png
+?? "../../Sem 2.pdf"
+?? "../../Sem 4 (1).pdf"
+?? "../../Shhhh_.. im mewing"
+?? "../../Sidebar Menu RE-CODE.zip"
+?? "../../Simple Exponential Smoothing Forecast.xlsx"
+?? "../../Simple Linear Regression-20250502T071212Z-1-001.zip"
+?? "../../Simple Linear Regression-20250502T071212Z-1-001/"
+?? ../../SnapTik_App_7369124923622624518-HD.mp4
+?? "../../Soal Tugas Use Case Diagram (1).pdf"
+?? "../../Soal Tugas Use Case Diagram.pdf"
+?? ../../Soal_whitebox.docx
+?? ../../Social-Media-Marketing-PowerPoint-Templates.pptx
+?? ../../Social_Network_Ads.csv
+?? "../../StarUML Setup 6.1.0.exe"
+?? "../../StarUML Setup 6.3.2 (1).exe"
+?? "../../StarUML Setup 6.3.2.exe"
+?? ../../SteamSetup.exe
+?? "../../Suervey Game Online(1-2).xlsx"
+?? "../../Superteam Indonesia - Lesson 1 (1).pptx"
+?? "../../Superteam Indonesia - Lesson 1 (2).pptx"
+?? "../../Superteam Indonesia - Lesson 1 (3).pptx"
+?? "../../Superteam Indonesia - Lesson 1.pptx"
+?? "../../Surat Pengajuan Magang.pdf"
+?? "../../Surat Pernyataan.docx"
+?? "../../Surat jalan (1).pdf"
+?? "../../Surat jalan (2).pdf"
+?? "../../Surat jalan.docx"
+?? "../../Surat jalan.pdf"
+?? "../../Surat pengajuan.pdf"
+?? "../../Surat pernyataan .pdf"
+?? "../../Surat pernyataan Izin Orang tua  .docx"
+?? "../../TEAM FOMO_SATU DESA APP - abayyy.pdf"
+?? "../../TEKS ULASAN BARU.pptx"
+?? "../../TLauncher-2.885-Installer-1.1.3 (1).exe"
+?? ../../TLauncher-2.885-Installer-1.1.3.exe
+?? ../../TLauncher-PE-0.4.8.apk
+?? "../../TUGAS 1 G.211.23.0056 (1).pdf"
+?? "../../TUGAS 1 G.211.23.0056.docx"
+?? "../../TUGAS 1 G.211.23.0056.pdf"
+?? "../../TUGAS PERANCANGAN GAME DINO LONDO RUSH.pdf"
+?? "../../TUGAS SDLC.pdf"
+?? "../../TUGAS TEKNOLOG INFORMASI.pdf"
+?? "../../TUGAS-Pancasila-2juni 2026.pdf"
+?? ../../Tampilan-Project-CRUD-Mahasiswa.png
+?? "../../Technical_Writing_Eigar_Zhafif (1).docx"
+?? ../../Technical_Writing_Eigar_Zhafif.docx
+?? "../../Teknologi Cloud Computing dan Sensor pada Kendaraan  (1).docx"
+?? "../../Teknologi Cloud Computing dan Sensor pada Kendaraan (1).docx"
+?? "../../Teknologi Cloud Computing dan Sensor pada Kendaraan (1).pdf"
+?? "../../Teknologi Cloud Computing dan Sensor pada Kendaraan .docx"
+?? "../../Teknologi Cloud Computing dan Sensor pada Kendaraan.pdf"
+?? "../../Telegram Desktop/"
+?? "../../Template Pemakalah Seminar Nasional INFEST 2026.pptx"
+?? "../../Template SINATTI 2026 (1).docx"
+?? "../../Template SINATTI 2026.docx"
+?? ../../Template_AUTO_GENERATE_SHEET_HR.xlsx
+?? ../../Template_Jadwal_Auto_Final.xlsx
+?? ../../Template_Jadwal_Auto_Final_Compatible.xlsx
+?? ../../TeraBox_sl_b_1.40.0.132.exe
+?? ../../Tftpd64-4.64-setup.exe
+?? "../../The Power Of TeamWork- Good TeamWork - YouTube.mp4"
+?? "../../Thesis Defense .pptx"
+?? ../../Timber-master.zip
+?? ../../Timber-master/
+?? ../../TraceChain_UMKM_PitchDeck.pptx
+?? "../../Track 10.mp3"
+?? "../../Track 11.mp3"
+?? "../../Track 4.mp3"
+?? "../../Track 6.mp3"
+?? "../../Track 7.mp3"
+?? "../../Track 9.mp3"
+?? "../../Tugas 1 Kapita Selekta (1).pdf"
+?? "../../Tugas 1 Kapita Selekta (2).pdf"
+?? "../../Tugas 1 Kapita Selekta (3).pdf"
+?? "../../Tugas 1 Kapita Selekta.pdf"
+?? "../../Tugas 1.pdf"
+?? "../../Tugas 2 Metode Numerik Eigar Zhafig NoerlentaG.211.23.0056.pdf"
+?? "../../Tugas 4_Metode Numerik_ Eigar Zhafif Noerlenta_G.211.23.0056_TI-A PAGI.pdf"
+?? "../../Tugas Blockchain.pdf"
+?? "../../Tugas Dana Desa.docx"
+?? "../../Tugas Dana Desa.pdf"
+?? "../../Tugas Data Driven Intelligent Systems (1).pdf"
+?? "../../Tugas Data Driven Intelligent Systems.pdf"
+?? "../../Tugas Etika Profesi (1).pdf"
+?? "../../Tugas Etika Profesi.pdf"
+?? "../../Tugas MetoPen (1).docx"
+?? "../../Tugas MetoPen.docx"
+?? "../../Tugas MetoPen.pdf"
+?? "../../Tugas Pertemuan ke 5 27-3-24.pdf"
+?? "../../Tugas Pertemuan ke 6 (1).docx"
+?? "../../Tugas Pertemuan ke 6.docx"
+?? "../../Tugas Pratikum.pdf"
+?? "../../Tugas Proposal Metodologi Peneletian 0.1.docx"
+?? "../../Tugas Proposal Metodologi Penelitian .pdf"
+?? "../../Tugas StarUML1 (1).pdf"
+?? "../../Tugas StarUML1.pdf"
+?? "../../Tugas Statistika Eigar Zhafif Noerlenta G.211.23.0056.pdf"
+?? "../../Tugas Teknologi dan informasi penjelasan memory(Lutfi Braja.M)(G.211.23.0008).docx"
+?? "../../Tugas Teknologi dan informasi penjelasan memory(Lutfi Braja.M)(G.211.23.0008).pdf"
+?? "../../Tugas sound.pdf"
+?? "../../Tugas3 SISTEmOperasi Dian Purbo Wicaksono G.211.23.0004.docx"
+?? "../../Tugas3 SISTEmOperasi Dian Purbo Wicaksono G.211.23.0004.pdf"
+?? ../../Tugas3.docx
+?? ../../TugasMM_0036.pdf
+?? "../../Tugas_Capstone_cybersecurity_sinnati (1).pdf"
+?? ../../Tugas_Capstone_cybersecurity_sinnati.pdf
+?? ../../Tugas_Data_Driven_Intelligent_Systems.docx
+?? ../../Tugas_Multimedia_Sound_Baru.docx
+?? ../../Tugas_Multimedia_Sound_Font_Putih.docx
+?? "../../Tugas_Peluang_Statiska_dan_Probabilitas_Irfan_Pramono_Aryosetyo (1).pdf"
+?? ../../Tugas_Peluang_Statiska_dan_Probabilitas_Irfan_Pramono_Aryosetyo.pdf
+?? "../../TurboScribe Export 57949534.zip"
+?? ../../TurboVPN_setup.exe
+?? "../../UAS Eigar Zhafif.pdf"
+?? "../../UAS Machine Learning.docx"
+?? "../../UAS Mobile Programming.pdf"
+?? ../../UASPBO.JPG
+?? ../../UASREKWEB-main.zip
+?? ../../UAS_DISKRIT_G.211.23.0056.pdf
+?? "../../UAS_PBO (1).pdf"
+?? ../../UAS_PBO.pdf
+?? "../../UAS_Pancasila_Eigar (1).pdf"
+?? ../../UAS_Pancasila_Eigar.pdf
+?? ../../UAS_Pancasila_Eigar_Zhafif_Noerlenta_G.211.23.0056.pdf
+?? "../../UTS Metode Penelitian(G.211.23.0056) (1).docx"
+?? "../../UTS Metode Penelitian(G.211.23.0056).docx"
+?? "../../UTS Statistika 2024.pdf"
+?? ../../UTS_DISKRIT_G.211.23.0056.pdf
+?? "../../UTS_Eigar Zhafif.pdf"
+?? "../../UTS_Smart Room Monitoring Pemantauan Kondisi Ruang Server Berbasis IoT dan Bot Telegram.pdf"
+?? "../../Unggah Laporan Akhir Mahasiswa KKN PMM (1).pdf"
+?? "../../Unggah Laporan Akhir Mahasiswa KKN PMM (2).pdf"
+?? "../../Unggah Laporan Akhir Mahasiswa KKN PMM.pdf"
+?? ../../Unit_Entry.xlsx
+?? ../../UnityHubSetup.exe
+?? ../../Untitled-1.png
+?? ../../Untitled-2.png
+?? ../../Untitled-3.jpg
+?? ../../Untitled.png
+?? ../../Untitled2.png
+?? "../../Upload ETD Template (1).xlsx"
+?? "../../Upload ETD Template.xlsx"
+?? "../../VID-20240811-WA0311 - Copy (2).mp4"
+?? "../../VID-20240811-WA0311 - Copy - Copy.mp4"
+?? "../../VID-20240811-WA0311 - Copy.mp4"
+?? ../../VID-20240811-WA0311.mp4
+?? "../../VID-20240811-WA0312 - Copy.mp4"
+?? ../../VID-20240811-WA0312.mp4
+?? ../../VID-20250604-WA0025.mp4
+?? ../../VID20240617090758.mp4
+?? ../../VID20240617091744.mp4
+?? "../../VID20240804082810 - Copy.mp4"
+?? ../../VID20240804082810.mp4
+?? "../../VID20240804083520 - Copy.mp4"
+?? ../../VID20240804083520.mp4
+?? "../../VID20240804105750 - Copy.mp4"
+?? ../../VID20240804105750.mp4
+?? "../../VPT (1).xlsx"
+?? ../../VPT.xlsx
+?? ../../VSCodeUserSetup-x64-1.82.2.exe
+?? ../../VehicleController.php.swp
+?? "../../Village_DAO_Governance (1) (1).pptx"
+?? "../../Village_DAO_Governance (1).pdf"
+?? "../../Village_DAO_Governance (1).pptx"
+?? ../../Village_DAO_Governance.pdf
+?? ../../Village_DAO_Governance.pptx
+?? "../../Virtual Background SINATTI.jpg"
+?? "../../Virtual Background Seminar Nasional INFEST 2026.jpeg"
+?? "../../Virtual Metaverse Project Proposal by Slidesgo.pptx"
+?? ../../VirtualBox-7.0.22-165102-Win.exe
+?? "../../VirtualBox-7.1.4-165100-Win (1).exe"
+?? ../../VirtualBox-7.1.4-165100-Win.exe
+?? ../../Voice.ai-Downloader-alphaver-9b0f103235774c00b61b5db1c70d5d6f.exe
+?? ../../VoicemeeterSetup_v2119.zip
+?? ../../VoicemeeterSetup_v2119/
+?? ../../WSQ_5804.JPG
+?? "../../WeMod CarX Street Setup.exe"
+?? "../../WhatsApp Chat - Upi.zip"
+?? "../../WhatsApp Chat - Upi/"
+?? "../../WhatsApp Chat - Yupiiii\360\237\253\266\360\237\217\273.zip"
+?? "../../WhatsApp Chat - Yupiiii\360\237\253\266\360\237\217\273/"
+?? "../../WhatsApp Image 2023-09-20 at 19.25.17.jpeg"
+?? "../../WhatsApp Image 2023-09-20 at 19.25.29.jpeg"
+?? "../../WhatsApp Image 2023-09-20 at 19.25.30.jpeg"
+?? "../../WhatsApp Image 2023-09-20 at 19.25.49.jpeg"
+?? "../../WhatsApp Image 2023-09-27 at 23.47.45.jpeg"
+?? "../../WhatsApp Image 2023-09-27 at 23.47.47.jpeg"
+?? "../../WhatsApp Image 2023-10-02 at 08.40.43.jpeg"
+?? "../../WhatsApp Image 2023-10-02 at 08.40.50.jpeg"
+?? "../../WhatsApp Image 2023-10-06 at 10.17.29.jpeg"
+?? "../../WhatsApp Image 2023-10-11 at 19.37.11.jpeg"
+?? "../../WhatsApp Image 2023-10-11 at 19.37.13.jpeg"
+?? "../../WhatsApp Image 2023-10-19 at 16.08.48 (1).jpeg"
+?? "../../WhatsApp Image 2023-10-19 at 16.08.48.jpeg"
+?? "../../WhatsApp Image 2023-10-22 at 11.50.06.jpeg"
+?? "../../WhatsApp Image 2023-10-23 at 21.26.45.jpeg"
+?? "../../WhatsApp Image 2023-10-23 at 21.26.47.jpeg"
+?? "../../WhatsApp Image 2023-10-29 at 18.08.01.jpeg"
+?? "../../WhatsApp Image 2023-10-30 at 22.57.31.jpeg"
+?? "../../WhatsApp Image 2023-10-30 at 22.57.33.jpeg"
+?? "../../WhatsApp Image 2023-10-30 at 22.57.34.jpeg"
+?? "../../WhatsApp Image 2023-10-31 at 14.41.10 (1).jpeg"
+?? "../../WhatsApp Image 2023-10-31 at 14.41.10.jpeg"
+?? "../../WhatsApp Image 2023-11-13 at 23.10.57.jpeg"
+?? "../../WhatsApp Image 2023-11-19 at 23.25.55.jpeg"
+?? "../../WhatsApp Image 2023-11-20 at 23.34.17.jpeg"
+?? "../../WhatsApp Image 2023-11-20 at 23.38.42.jpeg"
+?? "../../WhatsApp Image 2024-01-01 at 01.37.23.jpeg"
+?? "../../WhatsApp Image 2024-02-17 at 21.03.23_9c1ac597.jpg"
+?? "../../WhatsApp Image 2024-02-17 at 21.06.17_f5a18f17.jpg"
+?? "../../WhatsApp Image 2024-03-05 at 11.16.24_94547ab5.jpg"
+?? "../../WhatsApp Image 2024-03-05 at 11.16.25_c30b2e4c.jpg"
+?? "../../WhatsApp Image 2024-03-17 at 03.13.35_04ba488b.jpg"
+?? "../../WhatsApp Image 2024-03-20 at 12.09.26_f02cc736.jpg"
+?? "../../WhatsApp Image 2024-04-16 at 21.14.23_59c8924f.jpg"
+?? "../../WhatsApp Image 2024-04-16 at 21.14.25_aaad4f58.jpg"
+?? "../../WhatsApp Image 2024-04-17 at 17.49.44_f7b14ba2.jpg"
+?? "../../WhatsApp Image 2024-04-17 at 17.49.46_f49bff16.jpg"
+?? "../../WhatsApp Image 2024-05-02 at 14.29.37_fa9b9df4.jpg"
+?? "../../WhatsApp Image 2024-05-07 at 20.56.48_419a619c.jpg"
+?? "../../WhatsApp Image 2024-05-07 at 20.56.48_fd6cdd9c.jpg"
+?? "../../WhatsApp Image 2024-05-26 at 22.39.13_9e4ce304.jpg"
+?? "../../WhatsApp Image 2024-05-29 at 22.03.47_ac9d85a7.jpg"
+?? "../../WhatsApp Image 2024-06-03 at 12.09.45_913f7c9a.jpg"
+?? "../../WhatsApp Image 2024-06-26 at 01.16.25_71167c0d.jpg"
+?? "../../WhatsApp Image 2024-08-15 at 10.01.08_8b9ce7b3.jpg"
+?? "../../WhatsApp Image 2024-08-16 at 12.51.16_ce9c3703.jpg"
+?? "../../WhatsApp Image 2024-08-16 at 12.51.16_ce9c3703.png"
+?? "../../WhatsApp Image 2024-08-16 at 13.35.10_550f86f9.jpg"
+?? "../../WhatsApp Image 2024-08-16 at 13.35.10_5dd1725f.jpg"
+?? "../../WhatsApp Image 2024-08-16 at 13.35.10_6ea3cf5a.jpg"
+?? "../../WhatsApp Image 2024-08-16 at 13.49.08_816c2055.jpg"
+?? "../../WhatsApp Image 2024-08-16 at 13.53.49_ad8d6b69.jpg"
+?? "../../WhatsApp Image 2024-10-05 at 20.48.46_1af36af0.jpg"
+?? "../../WhatsApp Image 2024-10-05 at 20.49.13_d722283c.jpg"
+?? "../../WhatsApp Image 2024-10-05 at 20.49.14_96625736.jpg"
+?? "../../WhatsApp Image 2024-10-10 at 11.57.46_072639e8.jpg"
+?? "../../WhatsApp Image 2024-10-10 at 12.13.52_10a8f988 (1).jpg"
+?? "../../WhatsApp Image 2024-10-10 at 12.13.52_10a8f988.jpg"
+?? "../../WhatsApp Image 2024-11-18 at 16.01.29_14987f93.jpg"
+?? "../../WhatsApp Image 2024-11-18 at 16.01.29_6d290049.jpg"
+?? "../../WhatsApp Image 2024-11-18 at 16.01.29_e24d9f6e.jpg"
+?? "../../WhatsApp Image 2024-11-30 at 15.37.14_462ce48d.jpg"
+?? "../../WhatsApp Image 2024-11-30 at 15.37.14_d6a39d7e.jpg"
+?? "../../WhatsApp Image 2024-12-01 at 22.47.03_2f3c8fab.jpg"
+?? "../../WhatsApp Image 2024-12-01 at 22.47.04_86f2be84.jpg"
+?? "../../WhatsApp Image 2024-12-03 at 19.19.13_f6d48b7d.jpg"
+?? "../../WhatsApp Image 2025-01-01 at 20.30.20_dc3b9bdc.jpg"
+?? "../../WhatsApp Image 2025-01-16 at 01.38.31_cc6ae2ec.jpg"
+?? "../../WhatsApp Image 2025-02-09 at 17.00.22_24099022.jpg"
+?? "../../WhatsApp Image 2025-02-11 at 07.36.12_4516cc5b.jpg"
+?? "../../WhatsApp Image 2025-02-13 at 20.17.00_230cf562.jpg"
+?? "../../WhatsApp Image 2025-02-16 at 12.11.13_a64c0183.jpg"
+?? "../../WhatsApp Image 2025-02-16 at 12.11.13_a64c0183.png"
+?? "../../WhatsApp Image 2025-02-16 at 12.11.13_a64c0183.psd"
+?? "../../WhatsApp Image 2025-02-16 at 13.35.03_80aa4e37.jpg"
+?? "../../WhatsApp Image 2025-02-17 at 14.43.03_884ec374.jpg"
+?? "../../WhatsApp Image 2025-02-17 at 14.43.03_884ec374.png"
+?? "../../WhatsApp Image 2025-02-17 at 14.43.03_884ec374.psd"
+?? "../../WhatsApp Image 2025-02-17 at 14.47.27_dbb674e6-assets/"
+?? "../../WhatsApp Image 2025-02-17 at 14.47.27_dbb674e6.jpg"
+?? "../../WhatsApp Image 2025-02-17 at 14.47.27_dbb674e6.png"
+?? "../../WhatsApp Image 2025-02-17 at 14.47.27_dbb674e6.psd"
+?? "../../WhatsApp Image 2025-02-27 at 11.20.39.jpeg"
+?? "../../WhatsApp Image 2025-03-15 at 14.57.22_d9289379.jpg"
+?? "../../WhatsApp Image 2025-03-16 at 23.47.14_bbfcc9aa.jpg"
+?? "../../WhatsApp Image 2025-03-16 at 23.47.15_b63d58f7.jpg"
+?? "../../WhatsApp Image 2025-03-24 at 22.55.39_8b781f60.jpg"
+?? "../../WhatsApp Image 2025-03-24 at 22.55.41_cd11051b.jpg"
+?? "../../WhatsApp Image 2025-04-07 at 21.08.25_6ce0d1bf.jpg"
+?? "../../WhatsApp Image 2025-04-07 at 21.08.26_2f53e043.jpg"
+?? "../../WhatsApp Image 2025-04-07 at 21.08.26_48fcaec9.jpg"
+?? "../../WhatsApp Image 2025-04-07 at 21.32.30_1cc6f096.jpg"
+?? "../../WhatsApp Image 2025-04-09 at 22.46.10_c93cd7d8.jpg"
+?? "../../WhatsApp Image 2025-04-09 at 22.46.11_514415aa.jpg"
+?? "../../WhatsApp Image 2025-04-15 at 15.28.25_1cddcd51.jpg"
+?? "../../WhatsApp Image 2025-04-17 at 10.36.08_a1cf314e.jpg"
+?? "../../WhatsApp Image 2025-04-17 at 11.11.39_38fd9a44.jpg"
+?? "../../WhatsApp Image 2025-04-18 at 22.56.43_012fc1dc.jpg"
+?? "../../WhatsApp Image 2025-04-18 at 23.44.47_2b2131cf.jpg"
+?? "../../WhatsApp Image 2025-04-21 at 09.18.59_3b7b1fe5.jpg"
+?? "../../WhatsApp Image 2025-04-21 at 13.16.24_5c15854c.jpg"
+?? "../../WhatsApp Image 2025-05-07 at 11.21.33_90cf7e38.jpg"
+?? "../../WhatsApp Image 2025-06-07 at 12.10.40_765372b6.jpg"
+?? "../../WhatsApp Image 2025-06-22 at 20.38.51_3d5a416f.jpg"
+?? "../../WhatsApp Image 2025-07-02 at 23.25.57_4c906935.jpg"
+?? "../../WhatsApp Image 2025-07-19 at 11.04.09_1d49c2ea.jpg"
+?? "../../WhatsApp Image 2025-07-19 at 14.28.11_c872edd2.jpg"
+?? "../../WhatsApp Image 2025-07-19 at 14.28.11_cb4bb098.jpg"
+?? "../../WhatsApp Image 2025-07-19 at 14.56.25_62b66e1d.jpg"
+?? "../../WhatsApp Image 2025-08-25 at 08.29.09_64219469.jpg"
+?? "../../WhatsApp Image 2025-08-25 at 11.03.07_a7c99f0d.jpg"
+?? "../../WhatsApp Image 2025-08-25 at 11.07.22_90a9b359-assets/"
+?? "../../WhatsApp Image 2025-08-25 at 11.07.22_90a9b359.jpg"
+?? "../../WhatsApp Image 2025-08-25 at 11.07.22_90a9b359.psd"
+?? "../../WhatsApp Image 2025-08-25 at 11.27.47_8beca424.jpg"
+?? "../../WhatsApp Image 2025-08-25 at 11.42.40_32c5b7d9.jpg"
+?? "../../WhatsApp Image 2025-09-01 at 20.50.02_eb5fa730.jpg"
+?? "../../WhatsApp Image 2025-10-05 at 14.12.48_378396ab.jpg"
+?? "../../WhatsApp Image 2025-11-02 at 10.47.04 AM.jpeg"
+?? "../../WhatsApp Image 2025-11-02 at 4.10.01 PM (1).jpeg"
+?? "../../WhatsApp Image 2025-11-02 at 4.10.01 PM.jpeg"
+?? "../../WhatsApp Image 2025-11-02 at 4.10.02 PM.jpeg"
+?? "../../WhatsApp Image 2025-11-02 at 4.10.03 PM.jpeg"
+?? "../../WhatsApp Image 2025-11-11 at 7.54.12 PM (1).jpeg"
+?? "../../WhatsApp Image 2025-11-11 at 7.54.12 PM (2).jpeg"
+?? "../../WhatsApp Image 2025-11-11 at 7.54.12 PM.jpeg"
+?? "../../WhatsApp Image 2025-11-21 at 2.07.46 PM.jpeg"
+?? "../../WhatsApp Image 2025-11-21 at 2.07.57 PM.jpeg"
+?? "../../WhatsApp Image 2025-11-21 at 2.08.05 PM.jpeg"
+?? "../../WhatsApp Image 2025-11-21 at 2.08.16 PM.jpeg"
+?? "../../WhatsApp Image 2025-11-21 at 2.08.26 PM.jpeg"
+?? "../../WhatsApp Image 2025-11-21 at 2.08.33 PM.jpeg"
+?? "../../WhatsApp Image 2025-11-21 at 2.08.40 PM.jpeg"
+?? "../../WhatsApp Image 2025-11-21 at 2.08.47 PM.jpeg"
+?? "../../WhatsApp Image 2025-12-25 at 5.10.04 PM.jpeg"
+?? "../../WhatsApp Image 2025-12-25 at 5.10.05 PM.jpeg"
+?? "../../WhatsApp Image 2026-01-04 at 10.23.51 AM (1).jpeg"
+?? "../../WhatsApp Image 2026-01-04 at 10.23.51 AM.jpeg"
+?? "../../WhatsApp Image 2026-01-04 at 10.26.26 AM (1).jpeg"
+?? "../../WhatsApp Image 2026-01-04 at 10.26.26 AM.jpeg"
+?? "../../WhatsApp Image 2026-01-06 at 8.19.01 AM.jpeg"
+?? "../../WhatsApp Image 2026-01-06 at 8.19.02 AM.jpeg"
+?? "../../WhatsApp Image 2026-01-06 at 8.19.03 AM (1).jpeg"
+?? "../../WhatsApp Image 2026-01-06 at 8.19.03 AM.jpeg"
+?? "../../WhatsApp Image 2026-02-12 at 9.34.52 AM.jpeg"
+?? "../../WhatsApp Image 2026-02-25 at 10.24.31 AM.jpeg"
+?? "../../WhatsApp Image 2026-02-25 at 10.25.40 AM.jpeg"
+?? "../../WhatsApp Image 2026-02-25 at 10.50.47 AM.jpeg"
+?? "../../WhatsApp Image 2026-02-26 at 1.26.08 PM.jpeg"
+?? "../../WhatsApp Image 2026-04-10 at 10.16.40 AM.jpeg"
+?? "../../WhatsApp Image 2026-04-13 at 12.33.37 PM.jpeg"
+?? "../../WhatsApp Image 2026-04-15 at 2.14.27 PM.jpeg"
+?? "../../WhatsApp Image 2026-04-27 at 9.08.35 AM.jpeg"
+?? "../../WhatsApp Image 2026-05-04 at 7.11.41 PM.jpeg"
+?? "../../WhatsApp Image 2026-05-13 at 3.39.48 PM (1).jpeg"
+?? "../../WhatsApp Image 2026-05-13 at 3.39.48 PM.jpeg"
+?? "../../WhatsApp Image 2026-05-21 at 8.03.38 PM.jpeg"
+?? "../../WhatsApp Image 2026-05-21 at 8.03.47 PM.jpeg"
+?? "../../WhatsApp Image 2026-05-21 at 8.04.04 PM.jpeg"
+?? "../../WhatsApp Image 2026-05-21 at 8.04.11 PM.jpeg"
+?? "../../WhatsApp Image 2026-05-21 at 8.04.12 PM.jpeg"
+?? "../../WhatsApp Image 2026-05-21 at 8.04.13 PM (1).jpeg"
+?? "../../WhatsApp Image 2026-05-21 at 8.04.13 PM.jpeg"
+?? "../../WhatsApp Image 2026-05-21 at 8.04.24 PM.jpeg"
+?? "../../WhatsApp Image 2026-05-26 at 8.29.44 PM.jpeg"
+?? "../../WhatsApp Image 2026-06-02 at 8.06.44 PM.jpeg"
+?? "../../WhatsApp Image 2026-06-11 at 11.02.47 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-11 at 11.18.52 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-11 at 11.27.45 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-11 at 2.38.23 PM.jpeg"
+?? "../../WhatsApp Image 2026-06-17 at 12.02.47 PM.jpeg"
+?? "../../WhatsApp Image 2026-06-18 at 2.38.54 PM.jpeg"
+?? "../../WhatsApp Image 2026-06-22 at 4.57.33 PM.jpeg"
+?? "../../WhatsApp Image 2026-06-26 at 8.37.29 PM.jpeg"
+?? "../../WhatsApp Image 2026-06-30 at 10.13.30 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-30 at 11.25.40 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-30 at 11.28.43 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-30 at 11.31.50 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-30 at 11.37.08 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-30 at 11.38.19 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-30 at 11.40.17 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-30 at 11.40.29 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-30 at 11.40.31 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-30 at 11.42.20 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-30 at 11.51.18 AM.jpeg"
+?? "../../WhatsApp Image 2026-06-30 at 8.48.55 AM.jpeg"
+?? "../../WhatsApp Image 2026-07-02 at 8.09.35 PM.jpeg"
+?? "../../WhatsApp Image 2026-07-06 at 10.56.19 AM.jpeg"
+?? "../../WhatsApp Image 2026-07-10 at 6.50.05 PM.jpeg"
+?? "../../WhatsApp Image 2026-07-10 at 6.50.07 PM.jpeg"
+?? "../../WhatsApp Image 2026-07-10 at 6.50.08 PM.jpeg"
+?? "../../WhatsApp Image 2026-07-10 at 6.50.10 PM.jpeg"
+?? "../../WhatsApp Image 2026-07-10 at 6.50.16 PM.jpeg"
+?? "../../WhatsApp Image 2026-07-10 at 6.50.29 PM.jpeg"
+?? "../../WhatsApp Image 2026-07-10 at 6.50.30 PM (1).jpeg"
+?? "../../WhatsApp Image 2026-07-10 at 6.50.30 PM.jpeg"
+?? "../../WhatsApp Image 2026-07-10 at 6.50.38 PM.jpeg"
+?? "../../WhatsApp Image 2026-07-10 at 6.50.46 PM.jpeg"
+?? "../../WhatsApp Image 2026-07-10 at 6.50.47 PM.jpeg"
+?? "../../WhatsApp Image 2026-07-10 at 6.50.48 PM.jpeg"
+?? "../../WhatsApp Image 2026-07-14 at 11.14.59 PM.jpeg"
+?? "../../WhatsApp Unknown 2023-12-31 at 15.13.49.zip"
+?? "../../WhatsApp Unknown 2025-11-02 at 4.24.25 PM.zip"
+?? "../../WhatsApp Unknown 2026-05-26 at 8.13.36 PM.zip"
+?? "../../WhatsApp Unknown 2026-05-26 at 8.13.36 PM/"
+?? "../../WhatsApp Unknown 2026-07-12 at 10.48.00 PM.zip"
+?? "../../WhatsApp Unknown 2026-07-12 at 10.48.00 PM/"
+?? "../../WhatsApp Video 2023-12-04 at 00.23.17.mp4"
+?? "../../WhatsApp Video 2025-04-17 at 22.53.15_ee4f4a34.mp4"
+?? "../../WhatsApp Video 2025-10-06 at 20.12.03_6ca1fa93.mp4"
+?? ../../WhatsApp-Image-2022-05-27-at-16.59.31-wpp1653786187135.jpeg
+?? ../../WhatsApp-Image-2025-05-07-at-11.21.33_90cf7e38.jpeg
+?? ../../Wuthering_Waves_Google_PC_Launcher_Ver_1.0.exe
+?? "../../X Bot@Fast Run (1).fbx"
+?? "../../X Bot@Fast Run.fbx"
+?? "../../XI NEW (1).docx"
+?? "../../XI NEW.docx"
+?? ../../YOLOv5_Object_Detection_Presentation.pptx
+?? "../../YULIA MEGA PRATIWI UNIVERSITAS JEMBER FASTCLASS OSCE UNEJ BATCH 2 2026 KELOMPOK A.jpeg"
+?? "../../Zaskia Gotik - Paijo feat. RPH & Donall (Official Music Video NAGASWARA) #music (192).mp3"
+?? "../../[07]+58-64_5917_CE (1).pdf"
+?? ../../[07]+58-64_5917_CE.pdf
+?? ../../a04f66af-af96-4a64-a76a-aaffaceb5348.jpg
+?? ../../a2ae05a3-d16d-4c48-a90c-e69852371440.jpg
+?? ../../a7e5a5f4-efd9-4506-80f5-249f738266eb.jpg
+?? ../../aa8e1ffd-8f7d-4ea7-ae8c-a44d2e348dd9.jpg
+?? "../../admin,+29-ANALISIS+DAN+PERANCANGAN+SISTEM+PEMESANAN+TIKET+DENGAN+TEKNOLOGI+MOBILE (1).pdf"
+?? "../../admin,+29-ANALISIS+DAN+PERANCANGAN+SISTEM+PEMESANAN+TIKET+DENGAN+TEKNOLOGI+MOBILE - Copy.pdf"
+?? ../../admin,+29-ANALISIS+DAN+PERANCANGAN+SISTEM+PEMESANAN+TIKET+DENGAN+TEKNOLOGI+MOBILE.pdf
+?? "../../admin,+J007-J012+-+Suparto+Darudiato+-+Perancangan+basisdata+eksplorasi+berbasis+objek (1).pdf"
+?? ../../admin,+J007-J012+-+Suparto+Darudiato+-+Perancangan+basisdata+eksplorasi+berbasis+objek.pdf
+?? ../../agile.png
+?? ../../agriculture-12-01447.pdf
+?? ../../aida64extreme765.exe
+?? ../../ambasing.mp3
+?? "../../among us latihan jalan.blend1"
+?? ../../analisis_produksi_beras.pptx
+?? ../../apel.jpg
+?? ../../api-main.zip
+?? ../../api-main/
+?? ../../api_carfix-master.zip
+?? ../../api_carfix-master/
+?? ../../app-release.apk
+?? ../../app-release/
+?? ../../archive.zip
+?? ../../archive/
+?? ../../arduino-ide_2.3.6_Windows_64bit.exe
+?? ../../arduino/
+?? "../../artikel blockchain.docx"
+?? "../../artikel jaringan terapan.pdf"
+?? "../../artikel_kpi_INFEST2026 (1).docx"
+?? ../../artikel_kpi_INFEST2026.docx
+?? ../../artikel_kpi_INFEST2026_FINAL.docx
+?? ../../artikel_kpi_INFEST2026_eigar.docx
+?? ../../artikel_kpi_v3_revisi.docx
+?? ../../artikelblockchain2.docx
+?? ../../audacity-win-3.7.3-64bit.exe
+?? ../../autoclicker-setup-v204.exe
+?? ../../avast_free_antivirus_setup_online.exe
+?? ../../avv.docx
+?? ../../avv.pdf
+?? ../../b071dca2-8e57-4438-99e4-92d77a2f8519.jpg
+?? ../../b13213e7-4460-46ea-8179-e786adde6a15.jpg
+?? ../../b1fd9184-5355-4afc-9c41-31d3a406ed9f.jpeg
+?? ../../b77aff36-d6d2-4fcb-9aa2-3e842f462fd5.jpg
+?? ../../b79040d9-a9e0-49b5-bbb0-576934d7639b.jpeg
+?? ../../bank+marketing.zip
+?? "../../bank-sampah (1).sql"
+?? "../../bank-sampah-projectt-main (1).zip"
+?? "../../bank-sampah-projectt-main (2).zip"
+?? "../../bank-sampah-projectt-main (2)/"
+?? ../../bank-sampah-projectt-main.zip
+?? ../../bank-sampah.sql
+?? ../../bank-sampah.zip
+?? ../../bank-sampah1.sql
+?? ../../biru.jpg
+?? ../../blender-4.2.2-windows-x64.msi
+?? ../../blenderkit-v3.15.1.250403.zip
+?? ../../bootstrap-3.3.7.zip
+?? ../../bravo-coffee-logo.png
+?? ../../bravo_coffee_pos_poster.png
+?? ../../breiman2001_article_randomforests.pdf
+?? ../../brimo20240403-052342-scaled-wpp1714473078283.jpg
+?? "../../buku_kas_August 2025.xlsx"
+?? "../../buku_kas_September 2025 (1).pdf"
+?? "../../buku_kas_September 2025 (1).xlsx"
+?? "../../buku_kas_September 2025 (2) (1).xlsx"
+?? "../../buku_kas_September 2025 (2).pdf"
+?? "../../buku_kas_September 2025 (2).xlsx"
+?? "../../buku_kas_September 2025 (3).xlsx"
+?? "../../buku_kas_September 2025.pdf"
+?? "../../buku_kas_September 2025.xlsx"
+?? ../../buku_kas_September_2025_clean.xlsx
+?? ../../burpsuite_community_windows-x64_v2026_3_3.exe
+?? ../../c7a78342-a6d8-4413-8399-6f3cf18a73f9.png
+?? ../../cPlayer-next.zip
+?? ../../cPlayer-next/
+?? "../../class diagram.png"
+?? ../../cloudtunes-master.zip
+?? ../../cloudtunes-master/
+?? ../../clustering.csv
+?? ../../content_warning_c8450e8f.webm
+?? ../../copy_88C1542D-8801-4A52-AE4C-78EBB5F6C58D.mov
+?? ../../cover1.jpeg
+?? ../../cover2.jpeg
+?? ../../cover3.jpeg
+?? ../../crud-mahasiswa-auth-main.zip
+?? ../../crud-mahasiswa-auth-main/
+?? ../../crud_api_a.sql
+?? ../../crud_php.zip
+?? ../../d529de7b-e18f-452f-8238-129b7f42e0c0.jpeg
+?? ../../d6c123d5-2eb2-4c13-99a6-ed2c543a61b2.jpeg
+?? ../../dashboard_api-eigar.zip
+?? ../../dashboard_api-final2.zip
+?? ../../dashboard_old-master.zip
+?? ../../dashboard_old-master/
+?? "../../dashboard_v2_frontend-final (1).zip"
+?? ../../dashboard_v2_frontend-final.zip
+?? ../../dashboard_v2_frontend-final/
+?? "../../data ai.xlsx"
+?? "../../data praktikkum AI padi sawah 20-11-24.xlsx"
+?? ../../data_knn.csv
+?? ../../data_knn.xlsx
+?? ../../data_transaksi.xlsx
+?? ../../dera-anjela-pamer-uting.mp4
+?? ../../desa-digital-aman-main.zip
+?? ../../describe_a_photo_or_picture_-_activity.pdf
+?? ../../design_1770256697409.png
+?? ../../desktop.ini
+?? ../../devcoach-198-maching-learning-dalam-flutter-bikin-aplikasi-kamu-makin-canggih-dengan-ai-certificate.pdf
+?? ../../devcoach-199-soft-skill-adaptasi-bukan-pilihan-tapi-kunci-untuk-berkembang-certificate.pdf
+?? ../../df24cf3e-8008-47ee-8a80-aac157a1824e.jpg
+?? ../../diabetes.csv
+?? ../../dice_images.zip
+?? ../../dice_images/
+?? ../../doc.pdf
+?? "../../download (1).png"
+?? ../../download.htm
+?? ../../download.png
+?? ../../drive-download-20250502T062651Z-1-001.zip
+?? ../../drive-download-20250502T062651Z-1-001/
+?? "../../drive-download-20250519T061631Z-1-001 (1).zip"
+?? ../../drive-download-20250519T061631Z-1-001.zip
+?? ../../drive-download-20250519T061632Z-1-001.zip
+?? "../../drive-download-20250519T061633Z-1-001 (1).zip"
+?? "../../drive-download-20250519T061633Z-1-001 (1)/"
+?? ../../drive-download-20250519T061633Z-1-001.zip
+?? ../../e884c7e7-c26f-4d94-a881-85fdc33053e3.jpg
+?? ../../ea.txt
+?? ../../ea364c45-9dba-4709-9104-44e1b23eb2d6.jpg
+?? "../../eigar zhafif noerlenta G.211.23.0056.jpg"
+?? "../../eigar zhafif noerlenta_2.pdf"
+?? ../../emel.mp4
+?? "../../everyday-business-english tanpa kunci.pdf"
+?? ../../f3677e76-9e91-446e-a3e7-13063b49f6fd.jpeg
+?? ../../f4090fa1-4a2d-4657-ba83-1aef71cceaba.jpeg
+?? ../../f7b33956-7005-43ab-9ede-92232ccc08a3.jpg
+?? ../../fahhhhhhhhhhhhhh.mp3
+?? ../../font-awesome-4.7.0.zip
+?? ../../form.css
+?? "../../foto rumah atas (1) (1).png"
+?? "../../foto rumah atas (1).png"
+?? "../../foto rumah atas.png"
+?? ../../fpdf186.zip
+?? ../../freesound_community-fumar-6420.mp3
+?? ../../fullpaper_6a3be4c52d079_Eigar__Klasifikasi_Pencapaian_KPI_Perusahaan_Menggunakan_Algoritma_Random_Forest_Berbasis_Data_Target_dan_.docx
+?? ../../guy-using-smartphone-isolated-design.zip
+?? ../../guy-using-smartphone-isolated-design/
+?? ../../hitam.jpg
+?? "../../homepage - Copy.zip"
+?? ../../homepage.rar
+?? "../../homework meeting 12.pdf"
+?? "../../homework meeting 14.pdf"
+?? "../../homework meetings 11.pdf"
+?? ../../iLoveZIP.zip
+?? ../../iTunes64Setup.exe
+?? ../../idcamp-x-dicoding-live-9-unlock-limitless-ai-potential-with-the-agentic-trend-certificate.pdf
+?? "../../idul Adha.pdf"
+?? ../../ijere-1.docx
+?? ../../ijo.jpg
+?? ../../ijrnoqpqmsxs-road.rar
+?? ../../ijrnoqpqmsxs-road/
+?? ../../iloveimg-converted.zip
+?? ../../iloveimg-converted/
+?? ../../ilovepdf_extracted-pages.zip
+?? ../../ilovepdf_extracted-pages[1]/
+?? ../../image.png
+?? ../../image_thumb.jpg
+?? ../../images.htm
+?? "../../index (1).html"
+?? "../../index (2).html"
+?? "../../index (3).html"
+?? ../../index.blade.php
+?? ../../index.html
+?? ../../index.php
+?? ../../ireng.mp3
+?? ../../iris.csv
+?? "../../jadwal final SMT 4 1.0 (1).xlsx"
+?? "../../jadwal final SMT 4 1.0.xlsx"
+?? ../../jawa-jawa.mp3
+?? ../../jmir-2011-3-e67.pdf
+?? ../../jmjki,+6.pdf
+?? ../../jpg2png.zip
+?? ../../jre-8u51-windows-x64.exe
+?? ../../jurnal+cloud.pdf
+?? "../../jurnal_iot (1).docx"
+?? ../../jurnal_iot.docx
+?? ../../kartu_pendaftaran_no_261003518.pdf
+?? ../../kartu_pendaftaran_no_261003521.pdf
+?? ../../kc_house_data.csv
+?? "../../keamanan web.pdf"
+?? "../../keamanan web_compressed (1).pdf"
+?? "../../keamanan web_compressed.pdf"
+?? ../../kelik_sussolaikah,+389-398+FIX+ARDIKA_RISTY_ARI+2852-Data+Analysis-12018-1-15-20230921.pdf
+?? ../../kiro-ide-0.10.78-stable-win32-x64.exe
+?? ../../ktm.pdf
+?? "../../ktp eigar.pdf"
+?? "../../kuis 6 mat diskrit .pdf"
+?? "../../laporan orkom perawatan laptop.pdf"
+?? "../../laporan projek akhir.docx"
+?? "../../laporan projek akhir.pdf"
+?? "../../laporan_iklim_harian (1).pdf"
+?? "../../laporan_iklim_harian (1).xlsx"
+?? "../../laporan_iklim_harian (10).xlsx"
+?? "../../laporan_iklim_harian (11).xlsx"
+?? "../../laporan_iklim_harian (12).xlsx"
+?? "../../laporan_iklim_harian (13).xlsx"
+?? "../../laporan_iklim_harian (14).xlsx"
+?? "../../laporan_iklim_harian (15).xlsx"
+?? "../../laporan_iklim_harian (16).xlsx"
+?? "../../laporan_iklim_harian (17).xlsx"
+?? "../../laporan_iklim_harian (18).xlsx"
+?? "../../laporan_iklim_harian (2).pdf"
+?? "../../laporan_iklim_harian (2).xlsx"
+?? "../../laporan_iklim_harian (3).xlsx"
+?? "../../laporan_iklim_harian (4).xlsx"
+?? "../../laporan_iklim_harian (5).xlsx"
+?? "../../laporan_iklim_harian (6).xlsx"
+?? "../../laporan_iklim_harian (7).xlsx"
+?? "../../laporan_iklim_harian (8).xlsx"
+?? "../../laporan_iklim_harian (9).xlsx"
+?? "../../laporan_iklim_harian agustus 2023.xlsx"
+?? "../../laporan_iklim_harian april 2023.xlsx"
+?? "../../laporan_iklim_harian desember 2023.xlsx"
+?? "../../laporan_iklim_harian feb 2023.pdf"
+?? "../../laporan_iklim_harian jan 2023.pdf"
+?? "../../laporan_iklim_harian juli 2023.xlsx"
+?? "../../laporan_iklim_harian juni 2023.xlsx"
+?? "../../laporan_iklim_harian maret 2023.pdf"
+?? "../../laporan_iklim_harian mei 2023.xlsx"
+?? "../../laporan_iklim_harian november 2023.xlsx"
+?? "../../laporan_iklim_harian october 2023.xlsx"
+?? "../../laporan_iklim_harian september 2023.xlsx"
+?? ../../laporan_iklim_harian.pdf
+?? ../../laporan_iklim_harian.xlsx
+?? ../../laravel-12-react-crud-app-main.zip
+?? ../../laravel.pdf
+?? "../../latihan UTS_G.211.23.0056 (1).pdf"
+?? ../../lawu.jpg
+?? "../../le robot.jpeg"
+?? ../../lembab-20251208-0718.csv
+?? "../../lembar kerja 5 PRAKTIKUM 5 (1).docx"
+?? "../../lembar kerja 5 PRAKTIKUM 5.docx"
+?? "../../lembar kerja 6 PRAKTIKUM 6 (1).docx"
+?? "../../lembar kerja 6 PRAKTIKUM 6.docx"
+?? ../../liebe-black-clover-3840x2160-11223.jpg
+?? ../../liebe-black-clover-black-demon-form-ioaxh9or1y2frr4b.jpg
+?? "../../love me  realestk speed up.mp3"
+?? ../../mahasiswa-app-main.zip
+?? ../../mahasiswa-app-main/
+?? ../../mahasiswa-app2-main.zip
+?? ../../mahasiswa-app2-main/
+?? ../../mahasiswa-crud-main.zip
+?? ../../mahasiswa-crud-main/
+?? ../../makalah_cloud_computing.pdf
+?? ../../makalah_cloud_computing_panjang.pdf
+?? ../../makalah_cloud_sensor_mobil.pdf
+?? ../../makehuman-community-1.3.0-windows.zip
+?? "../../manjar eigar zhafif noerlenta G.211.23.0056.pdf"
+?? ../../mario_coin_sound.mp3
+?? ../../masak.jpeg
+?? "../../materi Metodologi pengembangan PL.pptx"
+?? ../../matkul.pdf
+?? ../../matplotlib-3.8.2.tar.gz
+?? ../../meeting-98815360468.ics
+?? ../../memori.pptx
+?? ../../mendeley-reference-manager-2.125.2-x64.exe
+?? ../../merah.jpg
+?? "../../metopenn UTS (1).docx"
+?? "../../metopenn UTS.docx"
+?? "../../mika-ops-hub-main-live-chart (1).zip"
+?? ../
+?? ../../mika-ops-hub-main-live-chart.zip
+?? ../../mika-ops-hub-main.zip
+?? ../../mikapedia-logo-trading.png
+?? ../../mikapedia-trader-hub-main.zip
+?? ../../moviebox-v-3.0.12.0205.03.apk
+?? ../../mt4setup.exe
+?? ../../mt5setup.exe
+?? "../../nanda punya.pptx"
+?? ../../ngrok-v3-stable-windows-amd64.zip
+?? ../../nistspecialpublication800-145.pdf
+?? ../../nmap-7.99-setup.exe
+?? ../../node-v22.16.0-x64.msi
+?? ../../node-v24.12.0-x64.msi
+?? ../../node-v24.13.1-x64.msi
+?? ../../nota_13_2025-09-04.png
+?? "../../nota_Bu Umi_2025-09-14.pdf"
+?? "../../nota_IRFAN PRAMONO ARYOSETYO_2025-09-12.pdf"
+?? "../../nota_IRFAN PRAMONO ARYOSETYO_2025-09-13.pdf"
+?? "../../ns_51art022_ CMNT1812-275 ZHA ESMC-E-55 Corrected SH ED (1).pdf"
+?? ../../o46gKYWwILxWQKAARsBGAfh39zeofR9VeMNeKB.mp4
+?? ../../openjdk-22.0.2_windows-x64_bin.zip
+?? ../../operation-master-app-Http-Controllers.zip
+?? ../../operation-master.zip
+?? ../../operation-master/
+?? ../../pas-foto-anak-sd-3.jpg
+?? "../../peluang 1 statistika.pptx"
+?? ../../pendahuluan.ppt
+?? "../../perawatan dan perbaikan (1).docx"
+?? "../../perawatan dan perbaikan.docx"
+?? ../../personality_datasert.csv
+?? ../../photo_2025-02-06_16-07-48.jpg
+?? ../../photo_2026-03-31_13-21-42.jpg
+?? ../../php-8.3.12.tar.gz
+?? ../../php-8.3.4.tar.gz
+?? ../../php-8.4.13-nts-Win32-vs17-x64.zip
+?? ../../pict1.png
+?? ../../playerData.json
+?? ../../png-clipart-duolingo-logo-thumbnail-tech-companies.png
+?? ../../pngegg.png
+?? ../../pngtree-modern-flat-design-concept-of-programmers-at-work-concept-software-development-png-image_5332895.jpg
+?? ../../pngwing.com.png
+?? ../../postgresql-18.1-2-windows-x64-binaries/
+?? ../../postgresql-18.1-2-windows-x64.exe
+?? "../../pra perakitan.rtf"
+?? "../../pratikum 7/"
+?? "../../pratikum13 (1).php"
+?? ../../pratikum13.php
+?? ../../pratikum4.pdf
+?? ../../prediksi_suhu-20251208-0717.csv
+?? ../../presentasi.zip
+?? "../../preview 2.webp"
+?? "../../preview 3.webp"
+?? ../../preview.webp
+?? "../../prk2 teknologi dan informasi.docx"
+?? ../../prk4_teknologi_dan_informasi[1].docx
+?? ../../processing-4.3-windows-x64.zip
+?? ../../project_bank_sampah.xml
+?? ../../project_bank_sampah_fixed.xml
+?? "../../project_music_player-main (1).zip"
+?? ../../project_music_player-main.zip
+?? ../../project_music_player-main/
+?? ../../putih2.jpg
+?? ../../putty-64bit-0.83-installer.msi
+?? "../../python-3.12.0-amd64 (1).exe"
+?? ../../python-3.12.0-amd64.exe
+?? ../../python-3.13.3-amd64.exe
+?? ../../python-manager-25.2.msix
+?? ../../qrcode.png
+?? ../../quiz_html.png
+?? ../../random_forest_model.pkl
+?? ../../react-main.zip
+?? ../../react-main/
+?? ../../remotesensing-12-00021-v2.pdf
+?? "../../remotesensing-15-01361 (1).pdf"
+?? ../../remotesensing-15-01361.pdf
+?? "../../remotesensing-15-02374 (1).pdf"
+?? ../../remotesensing-15-02374.pdf
+?? "../../remotesensing-15-02511-v2 (1).pdf"
+?? ../../remotesensing-15-02511-v2.pdf
+?? ../../requestpart-master.zip
+?? ../../requestpart-master/
+?? ../../response_1770964060294.json
+?? "../../rev salamlestari.txt"
+?? "../../rjocsupp-07-jeperson-hutahaean.doc-e-tiketmetode-waterfallweb - Copy.pdf"
+?? ../../rjocsupp-07-jeperson-hutahaean.doc-e-tiketmetode-waterfallweb.pdf
+?? ../../rustup-init.exe
+?? "../../sales data-set.csv"
+?? ../../scan-gravel-road-02-freepolyorg.zip
+?? ../../scan-gravel-road-02-freepolyorg/
+?? ../../scrcpy-win64-v2.6.1.zip
+?? "../../sem 1.pdf"
+?? "../../sem 3.pdf"
+?? "../../sem 4.pdf"
+?? ../../sensors-21-05386.pdf
+?? ../../sertifikat_utbk_263560080077.pdf
+?? ../../settings.py
+?? ../../signal-flow-watch-main.zip
+?? ../../signature_hex.txt
+?? ../../smart-slider-3.zip
+?? ../../snaptik_7150864263811271963.mp4
+?? ../../snaptik_7506823041083559175.mp4
+?? ../../snoring-meme.mp3
+?? ../../soal_KNN.xlsx
+?? "../../srt magang ppt meka Eigar.docx"
+?? "../../srt magang ppt meka Lutfi.docx"
+?? "../../stores data-set.csv"
+?? ../../stretto-master.zip
+?? ../../suhu-20251208-0717.json
+?? ../../suhu-20251208-0729.csv
+?? ../../surat_pernyataan.pdf
+?? ../../survey_game_online.png
+?? ../../teamspeak-client.msi
+?? ../../teamspeak3-server_win64-3.13.7.zip
+?? ../../teamspeak3-server_win64-3.13.7/
+?? ../../technical_writing_monev_6.docx
+?? ../../technical_writing_monev_6_revisi.docx
+?? ../../technical_writing_monev_6_revisi_fixed.docx
+?? "../../text (1).html"
+?? "../../text (1).php"
+?? ../../text,html
+?? ../../text.html
+?? ../../text.php
+?? "../../th (1).jpeg"
+?? "../../th (1).jpg"
+?? "../../th (2).jpeg"
+?? "../../th (2).jpg"
+?? "../../th (3).jpeg"
+?? "../../th (4).jpeg"
+?? ../../th.jpeg
+?? ../../th.jpg
+?? ../../tiktok_live_studio-v0.63.0-win32-x64.exe
+?? "../../timex27s-running-out-151012 (1).mp3"
+?? ../../timex27s-running-out-151012.mp3
+?? ../../transfer-brimo.webp
+?? ../../tsetup-x64.5.10.7.exe
+?? "../../tugas 3 eigar zhafif noerlenta0056.pdf"
+?? "../../tugas Teknologi dan informasi pertemuan ke 7.docx"
+?? "../../tugas Teknologi dan informasi pertemuan ke 7.pdf"
+?? "../../tugas akhir pratikum.apk"
+?? "../../tugas listening 4-6.pdf"
+?? "../../tugas manjar.pdf"
+?? "../../tugas pertemuan ke 11.docx"
+?? "../../tugas pra perakitan.docx"
+?? "../../tugas pra perakitan.pdf"
+?? "../../tugas prak 5.pdf"
+?? "../../tugas pratikum ke-2 APBO.pdf"
+?? "../../tugas rumah pratikum 5.pdf"
+?? "../../tugas skill 13-15 eigar zhafif noerlenta G.211.23.0056.pdf"
+?? "../../tugas staruml (1).pdf"
+?? "../../tugas staruml.pdf"
+?? "../../tugas statistika 3-4-24 eigar.pdf"
+?? "../../tugas structure 5.docx"
+?? "../../tugas structure 5.pdf"
+?? "../../tugas teknologi informasi form.pptx"
+?? ../../tugas_1_data_mining.zip
+?? "../../uas (1).pdf"
+?? "../../uas (2).pdf"
+?? ../../uas.blend
+?? ../../uas.pdf
+?? "../../ujian machine learning.pdf"
+?? "../../ujian pratikum 6.pdf"
+?? "../../ujian tahap 1.pdf"
+?? ../../uploads_files_3220185_Godzilla+Legendary+Rigged.zip
+?? ../../uploads_files_3220185_Godzilla+Legendary+Rigged/
+?? ../../urls.py
+?? ../../users.csv
+?? "../../utweb_installer (1).exe"
+?? ../../utweb_installer.exe
+?? ../../v-model_id52700.webp
+?? ../../videoframe_9717.png
+?? ../../vs_BuildTools.exe
+?? ../../waterfall.png
+?? ../../welcome.blade.php
+?? ../../what-is-rootkit-and-how-to-remove-it.png
+?? ../../windows-xp-startup_1ph012N.mp3
+?? ../../winequality-white.csv
+?? ../../wleowleo.blend
+?? ../../xampp-windows-x64-8.2.4-0-VS16-installer.exe
+?? ../../xender_download-v1.5.5-20240911133712_release.exe
+?? "../../y2mate.com - SaturdaySunday  David Guetta Jason Derulo Lirik Lagu Terjemahan.mp3"
+?? ../../ytmp3free.cc_copyright-free-ambient-music-fragments-by-aerhead-youtubemp3free.org.mp3
+?? "../../yusrian,+610-1857-1-CE+(1) (1).pdf"
+?? ../../yusrian,+610-1857-1-CE+(1).pdf
+?? "../../~$gas Pertemuan ke 6.docx"
+?? "../../~$gas pertemuan ke 11.docx"
+?? "../../~$k2 teknologi dan informasi.docx"
+?? ../../~$k4_teknologi_dan_informasi[1].docx
+?? "../../~$mbar kerja 6 PRAKTIKUM 6 (1).docx"
+?? ../../~$poran_Kerja_Praktek_Carfix_Eigar_final.docx
+?? ../../~$tikel_kpi_INFEST2026_eigar.docx
+?? ../../~WRL0005.tmp
+?? "../../\342\200\224Pngtree\342\200\224developers are coding programs on_14867886.png"
+?? "../../\342\200\224Pngtree\342\200\224programmer working on code with_19295155.png"
+?? "../../\342\200\224Pngtree\342\200\224they wearing vr goggles modern_7693688.png"
+?? ../../../Favorites/
+?? ../../../Links/
+?? ../../../Music/
+?? "../../../My project (1)/"
+?? "../../../My project/"
+?? ../../../NTUSER.DAT
+?? ../../../NTUSER.DAT{2d8fdf77-bd49-11ef-84ca-a50d67e24b8a}.TM.blf
+?? ../../../NTUSER.DAT{2d8fdf77-bd49-11ef-84ca-a50d67e24b8a}.TMContainer00000000000000000001.regtrans-ms
+?? ../../../NTUSER.DAT{2d8fdf77-bd49-11ef-84ca-a50d67e24b8a}.TMContainer00000000000000000002.regtrans-ms
+?? ../../../OneDrive/
+?? ../../../Pictures/
+?? "../../../Saved Games/"
+?? ../../../Searches/
+?? "../../../Setup Guide In-Editor Tutorial/"
+?? ../../../Videos/
+?? ../../../blenderkit_data/
+?? ../../../blog-app/
+?? ../../../blog-app2/
+?? ../../../composer-setup.php
+?? ../../../composer.phar
+?? ../../../crud-api/
+?? ../../../crud-mahasiswa/
+?? ../../../crud/
+?? ../../../example-app/
+?? ../../../installLaravel/
+?? ../../../jmg
+?? ../../../laravel-api/
+?? ../../../ntuser.dat.LOG1
+?? ../../../ntuser.dat.LOG2
+?? ../../../ntuser.ini
+?? "../../../path finding latih/"
+?? ../../../react-crud-frontend/
+?? ../../../rekweb2/
+?? ../../../tes/
+?? ../../../vscode-remote-wsl/
+?? ../../../weekend-class/
+?? ../../../xenderpc/
