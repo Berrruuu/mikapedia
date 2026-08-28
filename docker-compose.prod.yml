@@ -1,13 +1,4 @@
-# =============================================================================
-# MIKAPEDIA TOMS — Production Docker Compose
-# =============================================================================
-# Usage:
-#   cp backend/.env.production backend/.env   # then edit with real values
-#   docker compose -f docker-compose.prod.yml up -d --build
-# =============================================================================
-
 services:
-  # ── PostgreSQL ─────────────────────────────────────────────────────────────
   db:
     image: postgres:16-alpine
     restart: unless-stopped
@@ -25,7 +16,6 @@ services:
     networks:
       - internal
 
-  # ── Redis ──────────────────────────────────────────────────────────────────
   redis:
     image: redis:7-alpine
     restart: unless-stopped
@@ -40,7 +30,6 @@ services:
     networks:
       - internal
 
-  # ── Django Backend (Daphne ASGI) ───────────────────────────────────────────
   backend:
     build:
       context: ./backend
@@ -62,9 +51,7 @@ services:
         condition: service_healthy
     networks:
       - internal
-    # Don't expose 8000 to host — only accessible through Nginx
 
-  # ── Celery Worker ──────────────────────────────────────────────────────────
   celery-worker:
     build:
       context: ./backend
@@ -87,7 +74,6 @@ services:
     networks:
       - internal
 
-  # ── Celery Beat (Scheduler) ────────────────────────────────────────────────
   celery-beat:
     build:
       context: ./backend
@@ -108,7 +94,6 @@ services:
     networks:
       - internal
 
-  # ── Frontend (React SSR via Nitro) ─────────────────────────────────────────
   frontend:
     build:
       context: .
@@ -116,13 +101,13 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+      - HOST=0.0.0.0
       - PORT=3000
     depends_on:
       - backend
     networks:
       - internal
 
-  # ── Nginx Reverse Proxy ────────────────────────────────────────────────────
   nginx:
     build:
       context: ./nginx
@@ -134,9 +119,6 @@ services:
     volumes:
       - static_files:/app/backend/staticfiles:ro
       - media_files:/app/backend/media:ro
-      # Uncomment when using Let's Encrypt / Certbot:
-      # - ./certbot/conf:/etc/letsencrypt:ro
-      # - ./certbot/www:/var/www/certbot:ro
     depends_on:
       - backend
       - frontend

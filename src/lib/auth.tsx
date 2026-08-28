@@ -291,7 +291,3 @@ export async function apiFetch(path: string, init?: RequestInit): Promise<Respon
   return res;
 }
 
-export const DEMO_ACCOUNTS = [
-  { role: "Administrator", email: "admin@mikapedia.com",  password: "admin123" },
-  { role: "Trader",        email: "trader@mikapedia.com", password: "trader123" },
-];
