@@ -34,7 +34,6 @@ dist-ssr
 # Backend
 backend/.env
 backend/.env.production
-backend/.env.*
 backend/venv/
 backend/__pycache__/
 backend/db.sqlite3
