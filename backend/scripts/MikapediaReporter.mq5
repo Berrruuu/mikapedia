@@ -5,7 +5,7 @@
 //|  CARA PASANG:                                                    |
 //|  1. Copy ke folder MQL5/Experts                                  |
 //|  2. Compile di MetaEditor (F7)                                   |
-//|  3. Drag ke chart mana saja (XAUUSD M1)                          |
+//|  3. Drag ke chart mana saja (XAUUSD M15)                          |
 //|  4. Isi BACKEND_URL dan EA_TOKEN di parameter                    |
 //|  5. Tools → Options → Expert Advisors → Allow WebRequest         |
 //|     Tambahkan URL backend ke whitelist                           |
@@ -14,7 +14,7 @@
 #property version   "2.00"
 #property strict
 
-input string BACKEND_URL  = "http://mikapedia.online";
+input string BACKEND_URL  = "https://mikapedia.online/api/v1/mt5/ea-report/";
 input string EA_TOKEN     = "mikapedia_prod_2026_7f9e2d1a6c3b8e4f";
 input int    REPORT_EVERY = 1;
 

@@ -49,6 +49,39 @@ class MT5Service:
         return self.sync_account(account)
 
     def sync_account(self, account: MT5Account) -> MT5Account:
+        """
+        Sync MT5 account data.
+        
+        IMPORTANT: In production (Linux), this uses simulation mode.
+        Real data comes from EA via /api/v1/mt5/ea-report/ endpoint.
+        
+        If account has recent EA data (last_sync within 10 seconds),
+        we skip simulation to avoid overwriting real data.
+        """
+        from datetime import timedelta
+        
+        # Check if account has recent EA data (synced within last 10 seconds)
+        if account.last_sync:
+            time_since_sync = timezone.now() - account.last_sync
+            if time_since_sync < timedelta(seconds=10):
+                # EA is actively pushing data, don't overwrite with simulation
+                logger.info(
+                    'Account %s has recent EA data (synced %s ago), skipping simulation',
+                    account.pk,
+                    time_since_sync
+                )
+                # Just refresh account from database and return
+                account.refresh_from_db()
+                
+                # Broadcast current data
+                try:
+                    broadcast_mt5(str(account.user.id), MT5AccountSerializer(account).data)
+                except Exception:
+                    logger.exception('Failed to broadcast MT5 live update for account %s', account.pk)
+                
+                return account
+        
+        # No recent EA data, proceed with normal sync (simulation or real MT5)
         try:
             password = mt5_service.decrypt_password(account.password_encrypted)
             snapshot = mt5_service.get_account_snapshot(account.login, password, account.server)

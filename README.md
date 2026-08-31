@@ -164,8 +164,34 @@ sudo certbot certonly --standalone -d yourdomain.com
 |-------|-----------|------------|
 | Frontend 502 Bad Gateway | Rebuild frontend container | [DEPLOY-QUICK-FIX.md](DEPLOY-QUICK-FIX.md) |
 | MT5 Credentials 500 Error | Update backend .env | [FIXES-SUMMARY.md](FIXES-SUMMARY.md) |
+| MT5 Account Not Showing | Check simulation mode | [MT5-TROUBLESHOOT.md](MT5-TROUBLESHOOT.md) |
+| MT5 Sync Overwrites EA Data | Disable auto-sync polling | [FIX-EA-DATA-OVERWRITE.md](FIX-EA-DATA-OVERWRITE.md) |
 | Container restart loop | Check logs & rebuild | [DEPLOY-TROUBLESHOOT.md](DEPLOY-TROUBLESHOOT.md) |
 | Database connection error | Check PostgreSQL status | [VPS-COMMANDS.md](VPS-COMMANDS.md) |
+
+### MT5 Troubleshooting
+
+| Document | Purpose |
+|----------|---------|
+| **[FIX-SIMULATION-DATA.md](FIX-SIMULATION-DATA.md)** | 🎯 Data simulasi → Data real (5 menit fix) |
+| **[MT5-DATA-FLOW.md](MT5-DATA-FLOW.md)** | 🔄 Bagaimana data MT5 bekerja (flow diagram) |
+| **[MT5-TROUBLESHOOT.md](MT5-TROUBLESHOOT.md)** | 🔍 Complete MT5 troubleshooting guide |
+| **[EA-INSTALLATION-GUIDE.md](EA-INSTALLATION-GUIDE.md)** | 📘 Step-by-step install EA |
+| **[CARA-HUBUNGKAN-MT5.md](CARA-HUBUNGKAN-MT5.md)** | 📘 User guide (Bahasa Indonesia) |
+| **[MT5-DEBUG-SUMMARY.md](MT5-DEBUG-SUMMARY.md)** | 📊 Debug summary & changes |
+| **[MT5-QUICK-REF.md](MT5-QUICK-REF.md)** | 📋 Quick reference card |
+| **[diagnose-mt5.sh](diagnose-mt5.sh)** | 🔧 Automated diagnostic script |
+| **[test-mt5-flow.sh](test-mt5-flow.sh)** | 🧪 Complete flow test script |
+
+**Quick Diagnostic:**
+```bash
+./test-mt5-flow.sh trader@test.com password123 7724091 mt5pass ICMarkets-Live01
+```
+
+**Quick Fix (Data Simulasi):**
+```bash
+# Lihat FIX-SIMULATION-DATA.md untuk install EA (~5 menit)
+```
 
 ### Debug Commands
 

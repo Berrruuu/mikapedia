@@ -73,11 +73,14 @@ function TraderMT5Page() {
     if (!silent) setLoading(true);
     try {
       const data = await mt5Api.me();
+      console.log('✓ MT5 account loaded:', data);
       setAccount(data);
       setNotFound(false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "";
+      console.error('✗ Failed to load MT5 account:', msg, err);
       if (msg.includes("404") || msg.includes("No MT5")) {
+        console.log('→ No MT5 account found (expected before first save)');
         setNotFound(true);
       }
     } finally {
@@ -135,6 +138,11 @@ function TraderMT5Page() {
   useEffect(() => {
     if (!account || account.status !== "connected") return;
 
+    // ⚠️ DISABLED: EA pushes data via WebSocket, no need to poll sync endpoint
+    // Polling sync endpoint will overwrite EA data with simulation in production
+    // 
+    // If you need to force sync (e.g., development without EA), uncomment below:
+    /*
     const interval = setInterval(() => {
       if (!syncingRef.current) {
         void handleSync();
@@ -142,6 +150,9 @@ function TraderMT5Page() {
     }, 1000);
 
     return () => clearInterval(interval);
+    */
+    
+    // No-op: EA + WebSocket handles real-time updates
   }, [account, handleSync]);
 
   const handleSaveCredentials = async (e: FormEvent<HTMLFormElement>) => {
@@ -160,8 +171,21 @@ function TraderMT5Page() {
       setShowCreds(false);
       setPassword("");
       toast.success(`Connected: ${data.accountNumber} @ ${data.server}`);
+      
+      // Force refresh account data after credentials are saved
+      setTimeout(async () => {
+        try {
+          const refreshed = await mt5Api.me();
+          setAccount(refreshed);
+          console.log('MT5 account refreshed:', refreshed);
+        } catch (err) {
+          console.error('Failed to refresh MT5 account:', err);
+        }
+      }, 1000);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to connect");
+      const errorMsg = err instanceof Error ? err.message : "Failed to connect";
+      console.error('MT5 setCredentials error:', err);
+      toast.error(errorMsg);
     } finally {
       setSavingCreds(false);
     }

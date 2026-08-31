@@ -439,13 +439,25 @@ export interface MT5Position {
 
 export const mt5Api = {
   list: () => api.get<MT5Account[]>("/mt5/"),
-  me: () => api.get<MT5Account>("/mt5/me/"),
+  me: async () => {
+    console.log('🔍 MT5: Fetching account data from /v1/mt5/me/');
+    const result = await api.get<MT5Account>("/v1/mt5/me/");
+    console.log('✓ MT5: Account data received:', result);
+    return result;
+  },
   summary: () => api.get<unknown>("/mt5/summary/"),
   syncAll: () => api.post<unknown>("/mt5/sync-all/", {}),
-  syncOne: (id: number) => api.post<MT5Account>(`/mt5/${id}/sync/`, {}),
+  syncOne: (id: number) => {
+    console.log(`🔄 MT5: Syncing account ${id}`);
+    return api.post<MT5Account>(`/mt5/${id}/sync/`, {});
+  },
   deals: (id: number) => api.get<unknown[]>(`/mt5/${id}/deals/`),
-  setCredentials: (payload: { login: number; password: string; server: string; broker?: string }) =>
-    api.post<MT5Account>("/mt5/credentials/", payload),
+  setCredentials: async (payload: { login: number; password: string; server: string; broker?: string }) => {
+    console.log('💾 MT5: Saving credentials...', { login: payload.login, server: payload.server, broker: payload.broker });
+    const result = await api.post<MT5Account>("/v1/mt5/credentials/", payload);
+    console.log('✓ MT5: Credentials saved, account created:', result);
+    return result;
+  },
 };
 
 // ─── Compliance ───────────────────────────────────────────────────────────────
