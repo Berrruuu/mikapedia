@@ -144,7 +144,7 @@ function SignalsPage() {
   const [date, setDate]         = useState(() => new Date().toISOString().slice(0, 10));
   const [testModal, setTestModal] = useState(false);
   const [webhookUrl]            = useState(() => {
-    if (typeof window === "undefined") return "http://localhost:8000/api/signals/webhook/";
+    if (typeof window === "undefined") return "https://mikapedia.online/api/signals/webhook/";
     const host = window.location.hostname;
     const isLocal = host === "localhost" || host === "127.0.0.1";
     const proto = window.location.protocol;

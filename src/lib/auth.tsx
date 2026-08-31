@@ -37,7 +37,12 @@ const REFRESH_KEY  = "mikapedia.refresh";
 const _authApiHost = (typeof window !== 'undefined' && window.location?.hostname)
   ? window.location.hostname
   : 'localhost';
-const _authApiProto = _authApiHost.includes('loca.lt') || _authApiHost.includes('ngrok') ? 'https' : 'http';
+// Use HTTPS if page is loaded via HTTPS, or for known tunnel services
+const _authApiProto = (typeof window !== 'undefined' && window.location?.protocol === 'https:') 
+  || _authApiHost.includes('loca.lt') 
+  || _authApiHost.includes('ngrok') 
+  ? 'https' 
+  : 'http';
 const _authApiPort = (_authApiHost === 'localhost' || _authApiHost === '127.0.0.1') ? ':8000' : '';
 export const API_BASE = `${_authApiProto}://${_authApiHost}${_authApiPort}/api`;
 
