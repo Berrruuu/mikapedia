@@ -14,8 +14,8 @@
 #property version   "2.00"
 #property strict
 
-input string BACKEND_URL  = "https://xxxx.ngrok-free.dev";
-input string EA_TOKEN     = "WIyu2iegq4bMzplIeLCHq7uOgyPZyXozEYpwsKrA2fc";
+input string BACKEND_URL  = "http://mikapedia.online";
+input string EA_TOKEN     = "mikapedia_prod_2026_7f9e2d1a6c3b8e4f";
 input int    REPORT_EVERY = 1;
 
 datetime g_lastReport = 0;
