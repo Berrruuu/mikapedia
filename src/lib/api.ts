@@ -10,9 +10,24 @@ import { getAccessToken, getRefreshToken, setAccessToken, setRefreshToken, clear
 const _apiHost = (typeof window !== 'undefined' && window.location?.hostname)
   ? window.location.hostname
   : 'localhost';
-const _apiProto = _apiHost.includes('loca.lt') || _apiHost.includes('ngrok') ? 'https' : 'http';
+// Use HTTPS if page is loaded via HTTPS, or for known tunnel services
+const _apiProto = (typeof window !== 'undefined' && window.location?.protocol === 'https:') 
+  || _apiHost.includes('loca.lt') 
+  || _apiHost.includes('ngrok') 
+  ? 'https' 
+  : 'http';
 const _apiPort = (_apiHost === 'localhost' || _apiHost === '127.0.0.1') ? ':8000' : '';
 export const API_BASE = `${_apiProto}://${_apiHost}${_apiPort}/api`;
+
+// Debug log (remove after testing)
+if (typeof window !== 'undefined') {
+  console.log('🔧 API Configuration:', {
+    protocol: window.location?.protocol,
+    hostname: _apiHost,
+    computedProto: _apiProto,
+    API_BASE
+  });
+}
 
 async function refreshAccessToken(): Promise<boolean> {
   const refresh = getRefreshToken();
