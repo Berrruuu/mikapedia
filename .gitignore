@@ -6,6 +6,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+debug-output.txt
+frontend-debug.log
+health-check-output.txt
 
 node_modules
 dist
@@ -51,3 +54,7 @@ __pycache__/
 # Docker
 postgres_data/
 redis_data/
+
+# Database backups
+backup_*.sql
+backup_*.sql.gz
