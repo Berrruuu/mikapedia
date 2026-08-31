@@ -9,6 +9,7 @@ import {
   Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart,
   Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/page-header";
 import { StatCard } from "@/components/stat-card";
 import { Card } from "@/components/ui/card";
@@ -16,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { dashboardApi, signalsApi, notificationsApi, type AdminDashboardData, type Notification, type Signal } from "@/lib/api";
+import { apiFetch } from "@/lib/auth";
 import { useWSEvent } from "@/lib/ws-context";
 
 export const Route = createFileRoute("/admin/")({
@@ -38,9 +40,8 @@ const economicEvents = [
 ];
 
 const tradingSessions = [
-  { name: "London", state: "Open", color: "success" },
-  { name: "New York", state: "Open", color: "success" },
-  { name: "Tokyo", state: "Closed", color: "info" },
+  { name: "Trading Session 1 (05:00 - 10:00)", state: "Open", color: "success" },
+  { name: "Trading Session 2 (18:00 - 23:00)", state: "Open", color: "success" },
 ];
 
 function AdminDashboard() {
@@ -158,10 +159,34 @@ function AdminDashboard() {
   const mt5Total = dashboard?.mt5Bridge?.total ?? 0;
   const mt5BridgeHint = mt5Total > 0 ? `${mt5Connected}/${mt5Total} accounts online` : "No MT5 accounts linked";
 
+  const handleExportDashboard = async () => {
+    try {
+      const date = new Date().toISOString().slice(0, 10);
+      const response = await apiFetch(`/reports/export/session/?format=xlsx&date=${date}`);
+      if (!response.ok) {
+        throw new Error("Export failed");
+      }
+
+      const blob = await response.blob();
+      const disposition = response.headers.get("content-disposition") ?? "";
+      const match = disposition.match(/filename="([^"]+)"/);
+      const filename = match?.[1] ?? `session_report_${date}.xlsx`;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success("Dashboard report exported");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to export dashboard report.");
+    }
+  };
+
   return (
     <>
       <PageHeader
-        eyebrow="Operations · London Session"
+        eyebrow="Operations · Trading Sessions"
         title="Command Center"
         description="Real-time visibility across every trader, signal, and MT5 bridge."
         actions={
@@ -170,7 +195,7 @@ function AdminDashboard() {
               <Clock className="h-3 w-3" /> {now} UTC
             </Badge>
             <Button variant="outline" size="sm"><RefreshCw className="mr-1.5 h-3.5 w-3.5" />Refresh</Button>
-            <Button size="sm" className="gradient-primary text-primary-foreground">
+            <Button size="sm" className="gradient-primary text-primary-foreground" onClick={() => void handleExportDashboard()}>
               <Download className="mr-1.5 h-3.5 w-3.5" />Export
             </Button>
           </>

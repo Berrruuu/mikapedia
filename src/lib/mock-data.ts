@@ -148,8 +148,6 @@ export const NOTIFICATIONS = [
 ];
 
 export const SESSIONS = [
-  { name: "Sydney", state: "Closed", color: "muted" },
-  { name: "Tokyo", state: "Closing", color: "warning" },
-  { name: "London", state: "Open", color: "success" },
-  { name: "New York", state: "Opens in 2h 14m", color: "info" },
+  { name: "Trading Session 1 (05:00 - 10:00)", state: "Open", color: "success" },
+  { name: "Trading Session 2 (18:00 - 23:00)", state: "Open", color: "success" },
 ] as const;

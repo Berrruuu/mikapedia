@@ -282,7 +282,7 @@ function TraderDashboard() {
         title={`Good session, ${user?.name.split(" ")[0]}`}
         description={
           account
-            ? `MT5 ${liveMt5?.accountNumber ?? account.accountNumber} · London session · Balance $${(liveMt5?.balance ?? account.balance).toLocaleString()}`
+            ? `MT5 ${liveMt5?.accountNumber ?? account.accountNumber} · Trading Session 1 (05:00 - 10:00) · Balance $${(liveMt5?.balance ?? account.balance).toLocaleString()}`
             : "Dashboard overview"
         }
         actions={

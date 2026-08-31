@@ -40,7 +40,7 @@ const MOCK_LOGS: LogEntry[] = [
   { time: "11:10:00", actor: "system", action: "Session snapshot saved to archive", ip: "scheduler", severity: "info", category: "system" },
   { time: "10:47:38", actor: "Melati Rahayu", action: "Check-in selfie verified — GPS OK (42m from office)", ip: "10.24.8.12", severity: "info", category: "attendance" },
   { time: "09:15:02", actor: "Rendra Prakoso", action: "Failed login attempt (wrong password)", ip: "10.24.9.7", severity: "warning", category: "auth" },
-  { time: "09:00:01", actor: "system", action: "London session opened — 8 accounts eligible", ip: "scheduler", severity: "info", category: "system" },
+  { time: "09:00:01", actor: "system", action: "Trading Session 1 opened — 8 accounts eligible", ip: "scheduler", severity: "info", category: "system" },
   { time: "08:58:44", actor: "system", action: "Daily SOP rules loaded from configuration", ip: "scheduler", severity: "info", category: "settings" },
 ];
 

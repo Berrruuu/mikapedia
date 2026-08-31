@@ -76,6 +76,21 @@ export function AppLayout({ role, children }: { role: Role; children: ReactNode 
   };
 
   const handleLogout = async () => { await logout(); navigate({ to: "/login" }); };
+  const handleProfile = () => {
+    if (role === "admin") {
+      navigate({ to: "/admin/settings" });
+      return;
+    }
+    navigate({ to: "/trader/profile" });
+  };
+  const handlePreferences = () => {
+    toggleTheme();
+  };
+  const handleReportIssue = () => {
+    const subject = encodeURIComponent("Report an issue");
+    const body = encodeURIComponent(`User: ${user?.name ?? "Unknown"}\nEmail: ${user?.email ?? "Unknown"}\nRole: ${role}\nPage: ${location.pathname}\n\nDescribe the issue:\n`);
+    window.location.href = `mailto:support@mikapedia.com?subject=${subject}&body=${body}`;
+  };
   const wsStatus = useWSStatus();
 
   const initials = (user?.name ?? "MK").split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
@@ -197,11 +212,17 @@ export function AppLayout({ role, children }: { role: Role; children: ReactNode 
                   <div className="text-[11px] font-normal text-muted-foreground">{user?.email}</div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem><Gauge className="mr-2 h-4 w-4" />Profile</DropdownMenuItem>
-                <DropdownMenuItem><Settings className="mr-2 h-4 w-4" />Preferences</DropdownMenuItem>
-                <DropdownMenuItem><AlertTriangle className="mr-2 h-4 w-4" />Report an issue</DropdownMenuItem>
+                <DropdownMenuItem onSelect={(event) => { event.preventDefault(); handleProfile(); }}>
+                  <Gauge className="mr-2 h-4 w-4" />Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={(event) => { event.preventDefault(); handlePreferences(); }}>
+                  <Settings className="mr-2 h-4 w-4" />Preferences
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={(event) => { event.preventDefault(); handleReportIssue(); }}>
+                  <AlertTriangle className="mr-2 h-4 w-4" />Report an issue
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-destructive">
+                <DropdownMenuItem onSelect={(event) => { event.preventDefault(); void handleLogout(); }} className="text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>
