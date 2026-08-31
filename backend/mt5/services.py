@@ -29,6 +29,12 @@ class MT5Service:
         return account
 
     def set_credentials(self, user, data: dict):
+        """
+        Set MT5 credentials for user.
+        
+        IMPORTANT: In production with EA, we don't sync immediately.
+        Just create the account and wait for EA to push real data.
+        """
         login = data['login']
         broker = data.get('broker', '')
         existing = MT5Account.objects.filter(login=login, broker=broker).exclude(user=user).first()
@@ -43,23 +49,50 @@ class MT5Service:
             server=data['server'],
             broker=broker,
             account_number=str(login),
-            status='pending',
-            error_message='',
+            status='pending',  # Will be 'connected' once EA pushes data
+            error_message='Waiting for EA to push data...',
         )
-        return self.sync_account(account)
+        
+        # Don't call sync_account() here - let EA push real data
+        # If you need immediate sync for testing, uncomment:
+        # return self.sync_account(account)
+        
+        return account
 
     def sync_account(self, account: MT5Account) -> MT5Account:
         """
         Sync MT5 account data.
         
-        IMPORTANT: In production (Linux), this uses simulation mode.
-        Real data comes from EA via /api/v1/mt5/ea-report/ endpoint.
+        IMPORTANT: In production (Linux + MT5_USE_SIMULATION=True), 
+        real data ONLY comes from EA via /api/v1/mt5/ea-report/ endpoint.
         
-        If account has recent EA data (last_sync within 10 seconds),
-        we skip simulation to avoid overwriting real data.
+        This endpoint should NEVER generate simulation data that overwrites EA data.
+        It only reads current state from database and broadcasts it.
         """
         from datetime import timedelta
+        from decouple import config as env_config
         
+        # If MT5_USE_SIMULATION=True (production/Linux), ALWAYS skip simulation
+        # EA is the only source of truth for real data
+        use_simulation = env_config('MT5_USE_SIMULATION', default=False, cast=bool)
+        
+        if use_simulation:
+            # Production mode: EA pushes data, sync endpoint just reads from DB
+            logger.info(
+                'MT5_USE_SIMULATION=True: Account %s sync reads from database (EA is data source)',
+                account.pk
+            )
+            account.refresh_from_db()
+            
+            # Broadcast current data from database
+            try:
+                broadcast_mt5(str(account.user.id), MT5AccountSerializer(account).data)
+            except Exception:
+                logger.exception('Failed to broadcast MT5 live update for account %s', account.pk)
+            
+            return account
+        
+        # Development/Windows mode: Can use real MT5 package or generate simulation
         # Check if account has recent EA data (synced within last 10 seconds)
         if account.last_sync:
             time_since_sync = timezone.now() - account.last_sync
@@ -81,7 +114,7 @@ class MT5Service:
                 
                 return account
         
-        # No recent EA data, proceed with normal sync (simulation or real MT5)
+        # No recent EA data, proceed with normal sync (real MT5 or simulation for dev)
         try:
             password = mt5_service.decrypt_password(account.password_encrypted)
             snapshot = mt5_service.get_account_snapshot(account.login, password, account.server)

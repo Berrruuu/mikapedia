@@ -104,10 +104,15 @@ function TraderMT5Page() {
     setServer(account.server ?? "");
     setBroker(account.broker ?? "");
 
+    // ⚠️ DISABLED: Auto-sync on mount will generate simulation data in production
+    // EA pushes real data via WebSocket, no need to call sync endpoint
+    // If you need to force sync (e.g., development), uncomment below:
+    /*
     if (!autoSyncRef.current) {
       autoSyncRef.current = true;
       void handleSync();
     }
+    */
   }, [account]);
 
   // WebSocket: replace 10s polling with live MT5 push
@@ -172,7 +177,10 @@ function TraderMT5Page() {
       setPassword("");
       toast.success(`Connected: ${data.accountNumber} @ ${data.server}`);
       
-      // Force refresh account data after credentials are saved
+      // ⚠️ DISABLED: Don't force refresh after save, EA will push data
+      // Forcing refresh triggers sync endpoint which generates simulation data
+      // EA should push real data within seconds via /api/v1/mt5/ea-report/
+      /*
       setTimeout(async () => {
         try {
           const refreshed = await mt5Api.me();
@@ -182,6 +190,7 @@ function TraderMT5Page() {
           console.error('Failed to refresh MT5 account:', err);
         }
       }, 1000);
+      */
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "Failed to connect";
       console.error('MT5 setCredentials error:', err);
