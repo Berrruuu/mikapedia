@@ -178,7 +178,8 @@ def ea_report(request):
     account.status = 'connected'
     account.last_sync = tz.now()
     account.open_positions = len(request.data.get('positions', []))
-    account.save(update_fields=['balance', 'equity', 'floating_pnl', 'status', 'last_sync', 'open_positions'])
+    account.pending_orders = len(request.data.get('pending_orders', []))
+    account.save(update_fields=['balance', 'equity', 'floating_pnl', 'status', 'last_sync', 'open_positions', 'pending_orders'])
 
     # Sync positions from EA payload
     positions_data = request.data.get('positions', [])
@@ -293,6 +294,7 @@ def ea_report(request):
         otype = order_type_map.get(raw_type, 'buy_limit' if 'BUY' in raw_type else 'sell_limit')
         direction = 'BUY' if 'BUY' in raw_type else 'SELL'
 
+        # Save to Trade model (for compliance tracking)
         Trade.objects.update_or_create(
             account=account,
             ticket=ticket,
@@ -310,10 +312,29 @@ def ea_report(request):
                 'pnl': 0,
             }
         )
+        
+        # ALSO save to MT5Order model (for frontend display)
+        from mt5.models import MT5Order
+        MT5Order.objects.update_or_create(
+            account=account,
+            ticket=ticket,
+            defaults={
+                'symbol': order.get('symbol', ''),
+                'type': raw_type,
+                'volume': order.get('volume', 0),
+                'price_open': order.get('price_open', 0),
+                'sl': order.get('sl'),
+                'tp': order.get('tp'),
+                'comment': order.get('comment', ''),
+                'magic': order.get('magic', 0),
+                'time_setup': time_setup,
+            }
+        )
 
     # Mark pending orders that disappeared (cancelled or expired) as cancelled
     from django.utils import timezone as tz
     if pending_orders_data:  # only if EA sent orders data
+        # Update Trade model
         Trade.objects.filter(
             account=account,
             status='pending',
@@ -321,6 +342,12 @@ def ea_report(request):
             status='cancelled',
             cancelled_at=tz.now(),
         )
+        
+        # Delete from MT5Order model (no longer pending)
+        from mt5.models import MT5Order
+        MT5Order.objects.filter(
+            account=account,
+        ).exclude(ticket__in=pending_tickets_seen).delete()
 
     # Run signal matcher
     matched = 0
