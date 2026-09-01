@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, type ChangeEvent } from "react";
-import { Users, Plus, Shield } from "lucide-react";
+import { Users, Plus, Shield, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/page-header";
 import { Card } from "@/components/ui/card";
@@ -38,6 +38,9 @@ function UsersPage() {
   const [editRole, setEditRole] = useState("trader");
   const [editStatus, setEditStatus] = useState("active");
   const [editError, setEditError] = useState<string | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<UserSummary | null>(null);
 
   const resetInviteForm = () => {
     setInviteEmail("");
@@ -57,6 +60,10 @@ function UsersPage() {
     setEditRole("trader");
     setEditStatus("active");
     setEditError(null);
+  };
+
+  const resetDeleteForm = () => {
+    setUserToDelete(null);
   };
 
   const openEditDialog = (user: UserSummary) => {
@@ -186,7 +193,20 @@ function UsersPage() {
                     </td>
                     <td className="p-4 text-xs text-muted-foreground">{u.date_joined ? new Date(u.date_joined).toLocaleDateString() : "—"}</td>
                     <td className="p-4 text-right">
-                      <Button variant="ghost" size="sm" onClick={() => openEditDialog(u)}>Edit</Button>
+                      <div className="flex gap-2 justify-end">
+                        <Button variant="ghost" size="sm" onClick={() => openEditDialog(u)}>Edit</Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => {
+                            setUserToDelete(u);
+                            setDeleteOpen(true);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -380,6 +400,48 @@ function UsersPage() {
               disabled={editLoading}
             >
               {editLoading ? "Menyimpan…" : "Simpan perubahan"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteOpen} onOpenChange={(open) => {
+        setDeleteOpen(open);
+        if (!open) resetDeleteForm();
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Hapus Akun Trader</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              <p className="font-medium mb-2">Apakah Anda yakin ingin menghapus akun ini?</p>
+              <p className="text-xs">Akun trader <strong>{userToDelete?.name}</strong> akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteOpen(false)}>Batal</Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (!userToDelete) return;
+                setDeleteLoading(true);
+                try {
+                  await usersApi.delete(userToDelete.id);
+                  setUsers((prev) => prev.filter((user) => user.id !== userToDelete.id));
+                  toast.success(`${userToDelete.name} berhasil dihapus.`);
+                  setDeleteOpen(false);
+                  resetDeleteForm();
+                } catch (error) {
+                  const message = error instanceof Error ? error.message : "Gagal menghapus trader.";
+                  toast.error(message);
+                } finally {
+                  setDeleteLoading(false);
+                }
+              }}
+              disabled={deleteLoading}
+            >
+              {deleteLoading ? "Menghapus…" : "Hapus"}
             </Button>
           </DialogFooter>
         </DialogContent>

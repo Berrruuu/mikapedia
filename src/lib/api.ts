@@ -558,6 +558,7 @@ export const usersApi = {
   create: (payload: UserCreatePayload) => api.post<UserSummary>("/users/", payload),
   update: (id: string, payload: UserUpdatePayload) =>
     api.patch<UserSummary>(`/users/${id}/`, payload),
+  delete: (id: string) => api.del<void>(`/users/${id}/`),
 };
 
 // ─── Notifications ────────────────────────────────────────────────────────────
