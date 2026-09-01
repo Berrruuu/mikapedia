@@ -26,6 +26,16 @@ from django.utils import timezone
 logger = logging.getLogger('mt5.signal_matcher')
 
 
+# Import models (moved to top to avoid NameError)
+def _get_models():
+    """Lazy import to avoid circular dependencies"""
+    from signals.models import Signal
+    from mt5.models import MT5Account, Trade
+    from compliance.models import ComplianceResult
+    from compliance.services import ComplianceService
+    return Signal, MT5Account, Trade, ComplianceResult, ComplianceService
+
+
 def _normalize_symbol(symbol: str) -> str:
     """Strip broker prefix: OANDA:XAUUSD → XAUUSD"""
     return symbol.split(':')[-1].upper().strip()
@@ -347,6 +357,7 @@ def _detect_rogue_trades(account, today, active_signals) -> int:
     
     Returns: number of rogue trades detected
     """
+    from mt5.models import Trade
     from compliance.models import ComplianceResult
     from compliance.services import ComplianceService
     
