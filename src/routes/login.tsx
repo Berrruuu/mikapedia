@@ -39,7 +39,10 @@ function LoginPage() {
   const [confirmPw, setConfirmPw]   = useState("");
 
   useEffect(() => {
-    if (user) navigate({ to: user.role === "admin" ? "/admin" : "/trader", replace: true });
+    if (user) {
+      const redirectPath = user.role === "admin" || user.role === "owner" ? "/admin" : "/trader";
+      navigate({ to: redirectPath, replace: true });
+    }
   }, [user, navigate]);
 
   // ── Login submit ────────────────────────────────────────────────────────────
@@ -49,7 +52,8 @@ function LoginPage() {
     try {
       const u = await login(email, password, remember);
       toast.success(`Welcome back, ${u.name.split(" ")[0]}`);
-      navigate({ to: u.role === "admin" ? "/admin" : "/trader", replace: true });
+      const redirectPath = u.role === "admin" || u.role === "owner" ? "/admin" : "/trader";
+      navigate({ to: redirectPath, replace: true });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Login failed");
     } finally {

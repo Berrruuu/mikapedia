@@ -254,7 +254,7 @@ function ProfilePage() {
               )}
               <Separator />
               <Badge variant="outline" className="gap-1 w-full justify-center bg-primary/10 text-primary border-primary/20">
-                {user?.role === "admin" ? "Administrator" : "Trader"}
+                {user?.role === "owner" ? "Owner" : user?.role === "admin" ? "Administrator" : "Trader"}
               </Badge>
               {unackDanger > 0 && (
                 <Badge variant="outline" className="gap-1 w-full justify-center bg-destructive/10 text-destructive border-destructive/20">

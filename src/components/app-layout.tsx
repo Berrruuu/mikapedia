@@ -56,7 +56,7 @@ const TRADER_NAV: { section: string; items: NavItem[] }[] = [
 ];
 
 export function AppLayout({ role, children }: { role: Role; children: ReactNode }) {
-  const nav = role === "admin" ? ADMIN_NAV : TRADER_NAV;
+  const nav = role === "admin" || role === "owner" ? ADMIN_NAV : TRADER_NAV;
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,7 +77,7 @@ export function AppLayout({ role, children }: { role: Role; children: ReactNode 
 
   const handleLogout = async () => { await logout(); navigate({ to: "/login" }); };
   const handleProfile = () => {
-    if (role === "admin") {
+    if (role === "admin" || role === "owner") {
       navigate({ to: "/admin/settings" });
       return;
     }
@@ -189,7 +189,7 @@ export function AppLayout({ role, children }: { role: Role; children: ReactNode 
               <span className="text-[10px] text-muted-foreground hidden sm:inline">{wsStatus}</span>
             </div>
             <Button variant="ghost" size="icon" className="relative" asChild>
-              <Link to={role === "admin" ? "/admin/notifications" : "/trader"}>
+              <Link to={role === "admin" || role === "owner" ? "/admin/notifications" : "/trader"}>
                 <Bell className="h-4 w-4" />
                 <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
               </Link>
@@ -201,7 +201,7 @@ export function AppLayout({ role, children }: { role: Role; children: ReactNode 
                   <div className="hidden text-left sm:block">
                     <div className="text-xs font-semibold leading-tight">{user?.name}</div>
                     <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                      {role === "admin" ? "Supervisor" : "Trader"}
+                      {role === "owner" ? "Owner" : role === "admin" ? "Supervisor" : "Trader"}
                     </div>
                   </div>
                 </button>

@@ -14,7 +14,7 @@ function IndexRedirect() {
   useEffect(() => {
     if (loading) return;
     if (!user) navigate({ to: "/login", replace: true });
-    else if (user.role === "admin") navigate({ to: "/admin", replace: true });
+    else if (user.role === "admin" || user.role === "owner") navigate({ to: "/admin", replace: true });
     else navigate({ to: "/trader", replace: true });
   }, [user, loading, navigate]);
 

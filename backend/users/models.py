@@ -7,6 +7,7 @@ from common.models import BaseModel, SoftDeleteModel, TimestampedModel
 
 class User(AbstractUser, SoftDeleteModel, TimestampedModel):
     ROLE_CHOICES = (
+        ('owner', 'Owner'),
         ('admin', 'Administrator'),
         ('trader', 'Trader'),
     )
