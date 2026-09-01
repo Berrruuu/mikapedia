@@ -19,7 +19,34 @@ export const Route = createFileRoute("/admin/signals/$id")({
       ? complianceResponse
       : complianceResponse?.results ?? [];
 
-    return { signal, records };
+    // Fetch real MT5 trades linked to this signal
+    let mt5Trades: Array<{
+      id: number;
+      ticket: number;
+      symbol: string;
+      direction: string;
+      orderType: string;
+      volume: number;
+      entryPrice: number;
+      stopLoss: number | null;
+      takeProfit: number | null;
+      status: string;
+      openTime: string | null;
+      account: { id: number; login: number; accountNumber: string; userName: string };
+      user: { id: number; name: string; email: string };
+    }> = [];
+
+    try {
+      const { api } = await import("@/lib/api");
+      const response = await api.get<{
+        results?: typeof mt5Trades;
+      } | typeof mt5Trades>(`/mt5/trades/?signal=${params.id}`);
+      mt5Trades = Array.isArray(response) ? response : response.results ?? [];
+    } catch (error) {
+      console.error("Failed to load MT5 trades:", error);
+    }
+
+    return { signal, records, mt5Trades };
   },
   component: SignalDetail,
   notFoundComponent: () => (
@@ -37,84 +64,35 @@ const complianceMap = [
 ];
 
 function SignalDetail() {
-  const { signal, records } = Route.useLoaderData() as { signal: Signal; records: ComplianceRecord[] };
-
-  const sampleMt5Trades = useMemo(() => {
-    const pair = signal.pair || "XAUUSD";
-    const directionLabel = signal.direction === "SELL" ? "SELL" : "BUY";
-    const baseEntry = signal.fibEntry || signal.takeProfit || 2400;
-
-    return [
-      {
-        id: 1001,
-        ticket: 900101,
-        symbol: pair,
-        direction: directionLabel,
-        orderType: directionLabel === "BUY" ? "buy_limit" : "sell_limit",
-        volume: 0.1,
-        entryPrice: Number((baseEntry + 0.08).toFixed(2)),
-        stopLoss: Number((baseEntry - 1.4).toFixed(2)),
-        takeProfit: Number((baseEntry + 2.3).toFixed(2)),
-        status: "pending",
-        openTime: null,
-        account: { id: 1, login: 110001, accountNumber: "10012345", userName: "Ayu Pratama" },
-      },
-      {
-        id: 1002,
-        ticket: 900102,
-        symbol: pair,
-        direction: directionLabel,
-        orderType: directionLabel === "BUY" ? "buy_limit" : "sell_limit",
-        volume: 0.08,
-        entryPrice: Number((baseEntry + 0.03).toFixed(2)),
-        stopLoss: Number((baseEntry - 1.1).toFixed(2)),
-        takeProfit: Number((baseEntry + 2.0).toFixed(2)),
-        status: "open",
-        openTime: "2026-07-26T10:15:00",
-        account: { id: 2, login: 110002, accountNumber: "10012346", userName: "Bima Surya" },
-      },
-      {
-        id: 1003,
-        ticket: 900103,
-        symbol: pair,
-        direction: directionLabel,
-        orderType: directionLabel === "BUY" ? "buy_limit" : "sell_limit",
-        volume: 0.06,
-        entryPrice: Number((baseEntry - 0.05).toFixed(2)),
-        stopLoss: Number((baseEntry - 1.2).toFixed(2)),
-        takeProfit: Number((baseEntry + 1.9).toFixed(2)),
-        status: "closed",
-        openTime: "2026-07-26T09:40:00",
-        account: { id: 3, login: 110003, accountNumber: "10012347", userName: "Citra Lestari" },
-      },
-    ];
-  }, [signal.pair, signal.direction, signal.fibEntry, signal.takeProfit]);
-
-  const hasRealMt5Trades = Boolean((signal as Signal & { mt5Trades?: unknown[] }).mt5Trades?.length);
-  const mt5Trades = hasRealMt5Trades
-    ? ((signal as Signal & { mt5Trades?: Array<{
-        id: number;
-        ticket: number;
-        symbol: string;
-        direction: string;
-        orderType: string;
-        volume: number;
-        entryPrice: number;
-        stopLoss: number | null;
-        takeProfit: number | null;
-        status: string;
-        openTime: string | null;
-        account: { id: number; login: number; accountNumber: string; userName: string };
-      }> }).mt5Trades ?? [])
-    : sampleMt5Trades;
-
-  const mt5Summary = (signal as Signal & { mt5Summary?: { totalTrades?: number; pending?: number; open?: number; closed?: number; cancelled?: number } }).mt5Summary ?? {
-    totalTrades: mt5Trades.length,
-    pending: mt5Trades.filter((trade) => trade.status === "pending").length,
-    open: mt5Trades.filter((trade) => trade.status === "open").length,
-    closed: mt5Trades.filter((trade) => trade.status === "closed").length,
-    cancelled: mt5Trades.filter((trade) => trade.status === "cancelled").length,
+  const { signal, records, mt5Trades } = Route.useLoaderData() as {
+    signal: Signal;
+    records: ComplianceRecord[];
+    mt5Trades: Array<{
+      id: number;
+      ticket: number;
+      symbol: string;
+      direction: string;
+      orderType: string;
+      volume: number;
+      entryPrice: number;
+      stopLoss: number | null;
+      takeProfit: number | null;
+      status: string;
+      openTime: string | null;
+      account: { id: number; login: number; accountNumber: string; userName: string };
+      user: { id: number; name: string; email: string };
+    }>;
   };
+
+  const mt5Summary = useMemo(() => {
+    return {
+      totalTrades: mt5Trades.length,
+      pending: mt5Trades.filter((trade) => trade.status === "pending").length,
+      open: mt5Trades.filter((trade) => trade.status === "open").length,
+      closed: mt5Trades.filter((trade) => trade.status === "closed").length,
+      cancelled: mt5Trades.filter((trade) => trade.status === "cancelled").length,
+    };
+  }, [mt5Trades]);
 
   const rows = useMemo(() => {
     return records.map((record) => {
@@ -179,9 +157,7 @@ function SignalDetail() {
         <div className="border-b border-border/60 p-4">
           <div className="text-sm font-semibold">MT5 linked orders / positions</div>
           <div className="text-xs text-muted-foreground">
-            {hasRealMt5Trades
-              ? "Pending limit orders and executed positions linked to this signal."
-              : "Contoh tampilan data MT5 realistis untuk preview sebelum data live terhubung."}
+            Pending limit orders and executed positions linked to this signal from real MT5 accounts.
           </div>
         </div>
         <div className="overflow-x-auto scrollbar-thin">
@@ -192,6 +168,7 @@ function SignalDetail() {
                 <th className="p-4 font-semibold">Ticket</th>
                 <th className="p-4 font-semibold">Symbol</th>
                 <th className="p-4 font-semibold">Type</th>
+                <th className="p-4 font-semibold">Volume</th>
                 <th className="p-4 font-semibold">Entry</th>
                 <th className="p-4 font-semibold">SL / TP</th>
                 <th className="p-4 font-semibold">Status</th>
@@ -200,27 +177,42 @@ function SignalDetail() {
             <tbody className="divide-y divide-border/60">
               {mt5Trades.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-6 text-center text-sm text-muted-foreground">No MT5 trades linked to this signal yet.</td>
+                  <td colSpan={8} className="p-6 text-center text-sm text-muted-foreground">
+                    No MT5 trades linked to this signal yet. Trades will appear here once traders execute following this signal.
+                  </td>
                 </tr>
               ) : mt5Trades.map((trade) => (
                 <tr key={trade.id} className="hover:bg-muted/40">
                   <td className="p-4">
-                    <div className="font-medium">{trade.account.userName}</div>
-                    <div className="text-[11px] font-mono text-muted-foreground">#{trade.account.login}</div>
+                    <div className="font-medium">{trade.user?.name || 'Unknown'}</div>
+                    <div className="text-[11px] font-mono text-muted-foreground">{trade.user?.email || `#${trade.account?.login || 'N/A'}`}</div>
                   </td>
                   <td className="p-4 font-mono text-xs">{trade.ticket}</td>
                   <td className="p-4 font-medium">{trade.symbol}</td>
                   <td className="p-4">
-                    <Badge variant="outline" className={trade.orderType.includes("buy") ? "bg-success/10 text-success border-success/20" : "bg-destructive/10 text-destructive border-destructive/20"}>
-                      {trade.orderType}
+                    <Badge variant="outline" className={
+                      trade.direction === "BUY" || trade.orderType?.includes("buy")
+                        ? "bg-success/10 text-success border-success/20"
+                        : "bg-destructive/10 text-destructive border-destructive/20"
+                    }>
+                      {trade.orderType?.replace('_', ' ').toUpperCase() || trade.direction}
                     </Badge>
                   </td>
-                  <td className="p-4 font-mono text-xs">{trade.entryPrice}</td>
+                  <td className="p-4 font-mono text-xs">{trade.volume.toFixed(2)}</td>
+                  <td className="p-4 font-mono text-xs">{trade.entryPrice?.toFixed(5) || '—'}</td>
                   <td className="p-4 font-mono text-xs">
-                    {trade.stopLoss ?? "—"} / {trade.takeProfit ?? "—"}
+                    {trade.stopLoss?.toFixed(5) || "—"} / {trade.takeProfit?.toFixed(5) || "—"}
                   </td>
                   <td className="p-4">
-                    <Badge variant="outline" className={trade.status === "pending" ? "bg-warning/10 text-warning border-warning/20" : trade.status === "open" ? "bg-success/10 text-success border-success/20" : "bg-muted text-muted-foreground border-border"}>
+                    <Badge variant="outline" className={
+                      trade.status === "pending"
+                        ? "bg-warning/10 text-warning border-warning/20"
+                        : trade.status === "open"
+                        ? "bg-success/10 text-success border-success/20"
+                        : trade.status === "closed"
+                        ? "bg-muted text-muted-foreground border-border"
+                        : "bg-destructive/10 text-destructive border-destructive/20"
+                    }>
                       {trade.status}
                     </Badge>
                   </td>

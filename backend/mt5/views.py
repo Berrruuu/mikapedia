@@ -371,3 +371,59 @@ def ea_report(request):
         'positions_synced': len(tickets_seen),
         'signals_matched': matched,
     }, status=status.HTTP_200_OK)
+
+
+
+# ─── MT5 Trades Endpoint ──────────────────────────────────────────────────────
+# List trades linked to a specific signal for admin signal detail view
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def trades_by_signal(request):
+    """
+    GET /api/mt5/trades/?signal=<signal_id>
+    Returns list of Trade records linked to a specific signal.
+    Used by admin signal detail page to show MT5 linked orders/positions.
+    """
+    # Only admins can view all trades
+    if request.user.role != 'admin':
+        return error_response('Forbidden', status=status.HTTP_403_FORBIDDEN, code='permission_denied')
+    
+    signal_id = request.query_params.get('signal')
+    if not signal_id:
+        return error_response('signal parameter is required', status=status.HTTP_400_BAD_REQUEST, code='validation_error')
+    
+    # Get trades for this signal
+    trades = Trade.objects.filter(signal_id=signal_id).select_related(
+        'user', 'account', 'signal'
+    ).order_by('-created_at')
+    
+    # Serialize trades
+    results = []
+    for trade in trades:
+        results.append({
+            'id': trade.id,
+            'ticket': trade.ticket,
+            'symbol': trade.symbol,
+            'direction': trade.direction,
+            'orderType': trade.order_type,
+            'volume': float(trade.volume) if trade.volume else 0,
+            'entryPrice': float(trade.entry_price) if trade.entry_price else 0,
+            'stopLoss': float(trade.stop_loss) if trade.stop_loss else None,
+            'takeProfit': float(trade.take_profit) if trade.take_profit else None,
+            'status': trade.status,
+            'openTime': trade.open_time.isoformat() if trade.open_time else None,
+            'account': {
+                'id': trade.account.id if trade.account else None,
+                'login': trade.account.login if trade.account else None,
+                'accountNumber': trade.account.account_number if trade.account else None,
+                'userName': trade.user.name if trade.user else 'Unknown',
+            },
+            'user': {
+                'id': trade.user.id if trade.user else None,
+                'name': trade.user.name if trade.user else 'Unknown',
+                'email': trade.user.email if trade.user else '',
+            }
+        })
+    
+    return success_response({'results': results})
