@@ -15,7 +15,7 @@ class UserService:
         obj = self.repository.get_by_id(pk)
         if obj is None:
             raise ValidationError('User not found.')
-        if user.role != 'admin' and obj != user:
+        if user.role not in ['owner', 'admin'] and obj != user:
             raise PermissionError('Forbidden')
         return obj
 

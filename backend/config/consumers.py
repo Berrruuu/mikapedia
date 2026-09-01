@@ -36,7 +36,7 @@ class MikapediaConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add('broadcast', self.channel_name)
 
         # Role-based groups
-        if self.role == 'admin':
+        if self.role in ['owner', 'admin']:
             await self.channel_layer.group_add('admin_room', self.channel_name)
         else:
             await self.channel_layer.group_add(f'trader_{self.user_id}', self.channel_name)
@@ -54,7 +54,7 @@ class MikapediaConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         if hasattr(self, 'user'):
             await self.channel_layer.group_discard('broadcast', self.channel_name)
-            if self.role == 'admin':
+            if self.role in ['owner', 'admin']:
                 await self.channel_layer.group_discard('admin_room', self.channel_name)
             else:
                 await self.channel_layer.group_discard(f'trader_{self.user_id}', self.channel_name)

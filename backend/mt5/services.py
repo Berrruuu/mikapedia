@@ -24,7 +24,7 @@ class MT5Service:
 
     def get_account_for_request(self, request, pk=None):
         account = self.repository.get_by_id(pk)
-        if request.user.role != 'admin' and account and account.user != request.user:
+        if request.user.role not in ['owner', 'admin'] and account and account.user != request.user:
             raise PermissionError('Forbidden')
         return account
 

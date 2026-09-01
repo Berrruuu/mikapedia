@@ -16,7 +16,7 @@ class ComplianceViewSet(StandardizedReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role == 'admin':
+        if user.role in ['owner', 'admin']:
             return ComplianceRecord.objects.select_related('user', 'signal').all()
         return ComplianceRecord.objects.filter(user=user).select_related('signal')
 
@@ -30,14 +30,14 @@ class SOPWarningViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role == 'admin':
+        if user.role in ['owner', 'admin']:
             return SOPWarning.objects.select_related('user', 'compliance_result').all()
         return SOPWarning.objects.filter(user=user).select_related('compliance_result')
 
     def partial_update(self, request, *args, **kwargs):
         warning = self.get_object()
-        # Only allow acknowledging own warnings (or admin)
-        if request.user.role != 'admin' and warning.user != request.user:
+        # Only allow acknowledging own warnings (or owner/admin)
+        if request.user.role not in ['owner', 'admin'] and warning.user != request.user:
             return error_response('Forbidden', status=status.HTTP_403_FORBIDDEN, code='forbidden')
 
         if request.data.get('acknowledged'):

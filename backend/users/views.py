@@ -6,18 +6,13 @@ from .serializers import UserSerializer, UserCreateSerializer, UserUpdateSeriali
 from .services import UserService
 from common.api import StandardizedModelViewSet
 from common.response import success_response, error_response
-
-
-class IsAdminRole(permissions.BasePermission):
-    """Only users with role='admin' can access"""
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.role == 'admin'
+from common.permissions import IsOwnerOrAdmin
 
 
 class IsAdminOrSelf(permissions.BasePermission):
-    """Admin can do anything; traders can only read/update themselves"""
+    """Owner/Admin can do anything; traders can only read/update themselves"""
     def has_object_permission(self, request, view, obj):
-        if request.user.role == 'admin':
+        if request.user.role in ['owner', 'admin']:
             return True
         # Traders can only GET/PATCH their own profile
         return obj == request.user and request.method in ('GET', 'PATCH')
@@ -49,11 +44,11 @@ class UserViewSet(StandardizedModelViewSet):
 
     def get_permissions(self):
         if self.action == 'create':
-            return [IsAdminRole()]
+            return [IsOwnerOrAdmin()]
         if self.action == 'destroy':
-            return [IsAdminRole()]
+            return [IsOwnerOrAdmin()]
         if self.action == 'list':
-            return [IsAdminRole()]
+            return [IsOwnerOrAdmin()]
         return [permissions.IsAuthenticated(), IsAdminOrSelf()]
 
     def get_queryset(self):
@@ -69,7 +64,7 @@ class UserViewSet(StandardizedModelViewSet):
         return success_response(UserSerializer(updated_user).data)
 
     # ── Suspend / activate ────────────────────────────────────────────────────
-    @action(detail=True, methods=['post'], permission_classes=[IsAdminRole])
+    @action(detail=True, methods=['post'], permission_classes=[IsOwnerOrAdmin])
     def suspend(self, request, pk=None):
         user = self.get_object()
         new_status = request.data.get('status', 'suspended')
@@ -80,7 +75,7 @@ class UserViewSet(StandardizedModelViewSet):
         return success_response({'id': str(updated_user.id), 'status': updated_user.status})
 
     # ── Reset password by admin ───────────────────────────────────────────────
-    @action(detail=True, methods=['post'], permission_classes=[IsAdminRole], url_path='reset-password')
+    @action(detail=True, methods=['post'], permission_classes=[IsOwnerOrAdmin], url_path='reset-password')
     def reset_password(self, request, pk=None):
         user = self.get_object()
         new_password = request.data.get('new_password', '')

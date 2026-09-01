@@ -13,16 +13,7 @@ from .excel_generator import (
     generate_leaderboard_xlsx, generate_compliance_xlsx, generate_session_xlsx,
 )
 from common.response import success_response
-
-
-class IsAdminRole:
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.role == 'admin'
-
-from rest_framework.permissions import BasePermission
-class AdminOnly(BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.role == 'admin'
+from common.permissions import IsOwnerOrAdmin
 
 
 def _get_params(request) -> tuple[str, date | None]:
@@ -56,28 +47,28 @@ def _export_response(fmt: str, data_fn, pdf_fn, xlsx_fn, filename_base: str):
 # ─── Data endpoints (JSON) ────────────────────────────────────────────────────
 
 @api_view(['GET'])
-@permission_classes([AdminOnly])
+@permission_classes([IsOwnerOrAdmin])
 def execution_report(request):
     period, ref = _get_params(request)
     return success_response(report_service.get_execution_report(period, ref))
 
 
 @api_view(['GET'])
-@permission_classes([AdminOnly])
+@permission_classes([IsOwnerOrAdmin])
 def attendance_report(request):
     period, ref = _get_params(request)
     return success_response(report_service.get_attendance_report(period, ref))
 
 
 @api_view(['GET'])
-@permission_classes([AdminOnly])
+@permission_classes([IsOwnerOrAdmin])
 def compliance_report(request):
     period, ref = _get_params(request)
     return success_response(report_service.get_compliance_report(period, ref))
 
 
 @api_view(['GET'])
-@permission_classes([AdminOnly])
+@permission_classes([IsOwnerOrAdmin])
 def leaderboard(request):
     period, ref = _get_params(request)
     return success_response(report_service.get_leaderboard(period, ref))
@@ -93,7 +84,7 @@ def session_report(request):
 # ─── Export endpoints ─────────────────────────────────────────────────────────
 
 @api_view(['GET'])
-@permission_classes([AdminOnly])
+@permission_classes([IsOwnerOrAdmin])
 def export_execution(request):
     period, ref = _get_params(request)
     fmt = request.query_params.get('format', 'xlsx')
@@ -111,7 +102,7 @@ def export_execution(request):
 
 
 @api_view(['GET'])
-@permission_classes([AdminOnly])
+@permission_classes([IsOwnerOrAdmin])
 def export_attendance(request):
     period, ref = _get_params(request)
     fmt = request.query_params.get('format', 'xlsx')
@@ -128,7 +119,7 @@ def export_attendance(request):
 
 
 @api_view(['GET'])
-@permission_classes([AdminOnly])
+@permission_classes([IsOwnerOrAdmin])
 def export_leaderboard(request):
     period, ref = _get_params(request)
     fmt = request.query_params.get('format', 'xlsx')
@@ -145,7 +136,7 @@ def export_leaderboard(request):
 
 
 @api_view(['GET'])
-@permission_classes([AdminOnly])
+@permission_classes([IsOwnerOrAdmin])
 def export_compliance(request):
     period, ref = _get_params(request)
     fmt = request.query_params.get('format', 'xlsx')
@@ -162,7 +153,7 @@ def export_compliance(request):
 
 
 @api_view(['GET'])
-@permission_classes([AdminOnly])
+@permission_classes([IsOwnerOrAdmin])
 def export_session(request):
     _, ref = _get_params(request)
     fmt = request.query_params.get('format', 'xlsx')

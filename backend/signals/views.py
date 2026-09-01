@@ -18,11 +18,7 @@ logger = logging.getLogger('signals.webhook')
 from common.api import StandardizedModelViewSet, StandardizedReadOnlyModelViewSet
 from common.response import success_response, error_response
 from audit_logs.utils import create_audit
-
-
-class IsAdminRole(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.role == 'admin'
+from common.permissions import IsOwnerOrAdmin
 
 
 # ─── Webhook endpoint ─────────────────────────────────────────────────────────
@@ -117,7 +113,7 @@ def tradingview_webhook(request):
 # ─── Test webhook (dev only) ──────────────────────────────────────────────────
 
 @api_view(['POST'])
-@permission_classes([IsAdminRole])
+@permission_classes([IsOwnerOrAdmin])
 def test_webhook(request):
     """
     POST /api/signals/test-webhook/
@@ -176,7 +172,7 @@ class SignalViewSet(StandardizedModelViewSet):
 
     def get_permissions(self):
         if self.action in ('create', 'update', 'partial_update', 'destroy'):
-            return [IsAdminRole()]
+            return [IsOwnerOrAdmin()]
         return [permissions.IsAuthenticated()]
 
     def create(self, request, *args, **kwargs):

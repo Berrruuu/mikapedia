@@ -13,14 +13,10 @@ from common.api import StandardizedModelViewSet
 from common.response import success_response, error_response
 from .manager import manager as mt5_manager
 from django.conf import settings as django_settings
+from common.permissions import IsOwnerOrAdmin
 import logging
 
 logger = logging.getLogger('mt5.views')
-
-
-class IsAdminRole(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.role == 'admin'
 
 
 class MT5AccountViewSet(StandardizedModelViewSet):
@@ -66,7 +62,7 @@ class MT5AccountViewSet(StandardizedModelViewSet):
     def sync(self, request, pk=None):
         """Manually trigger sync for an account"""
         account = self.get_object()
-        if request.user.role != 'admin' and account.user != request.user:
+        if request.user.role not in ['owner', 'admin'] and account.user != request.user:
             return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
         account = self.service.sync_account(account)
         return Response(MT5AccountSerializer(account).data)
@@ -86,7 +82,7 @@ class MT5AccountViewSet(StandardizedModelViewSet):
     @action(detail=True, methods=['get'], url_path='deals')
     def deals(self, request, pk=None):
         account = self.get_object()
-        if request.user.role != 'admin' and account.user != request.user:
+        if request.user.role not in ['owner', 'admin'] and account.user != request.user:
             return Response({'detail': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN)
         qs = self.service.get_deals(account)
         return success_response(MT5DealSerializer(qs, many=True).data)
@@ -94,7 +90,7 @@ class MT5AccountViewSet(StandardizedModelViewSet):
     @action(detail=True, methods=['get'], url_path='status')
     def status(self, request, pk=None):
         account = self.get_object()
-        if request.user.role != 'admin' and account.user != request.user:
+        if request.user.role not in ['owner', 'admin'] and account.user != request.user:
             return error_response('Forbidden', status=status.HTTP_403_FORBIDDEN, code='permission_denied')
         st = mt5_manager.get_status(account.login)
         return success_response(st)
@@ -385,8 +381,8 @@ def trades_by_signal(request):
     Returns list of Trade records linked to a specific signal.
     Used by admin signal detail page to show MT5 linked orders/positions.
     """
-    # Only admins can view all trades
-    if request.user.role != 'admin':
+    # Only owner/admins can view all trades
+    if request.user.role not in ['owner', 'admin']:
         return error_response('Forbidden', status=status.HTTP_403_FORBIDDEN, code='permission_denied')
     
     signal_id = request.query_params.get('signal')

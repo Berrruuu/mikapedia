@@ -3,6 +3,7 @@ from .models import AuditLog
 from .serializers import AuditLogSerializer
 from django_filters import rest_framework as filters
 from common.api import StandardizedReadOnlyModelViewSet
+from common.permissions import IsOwnerOrAdmin
 
 
 class AuditLogFilter(filters.FilterSet):
@@ -21,7 +22,7 @@ class AuditLogFilter(filters.FilterSet):
 class AuditLogViewSet(StandardizedReadOnlyModelViewSet):
     queryset = AuditLog.objects.all()
     serializer_class = AuditLogSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsOwnerOrAdmin]
     filterset_class = AuditLogFilter
     search_fields = ['action', 'actor_label', 'details']
     ordering_fields = ['created_at', 'severity']

@@ -5,15 +5,11 @@ from .models import SystemSettings
 from .serializers import SystemSettingsSerializer
 from common.response import success_response, error_response
 from audit_logs.utils import create_audit
-
-
-class IsAdminRole(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.role == 'admin'
+from common.permissions import IsOwnerOrAdmin
 
 
 @api_view(['GET', 'PATCH'])
-@permission_classes([IsAdminRole])
+@permission_classes([IsOwnerOrAdmin])
 def settings_view(request):
     """
     GET  /api/settings/  — retrieve current settings

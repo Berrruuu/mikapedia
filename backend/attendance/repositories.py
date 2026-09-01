@@ -11,7 +11,7 @@ class AttendanceRepository:
 
     def get_queryset_for_user(self, user: User) -> QuerySet:
         qs = self.get_queryset()
-        if getattr(user, 'role', None) == 'admin':
+        if getattr(user, 'role', None) in ['owner', 'admin']:
             return qs
         return qs.filter(user=user)
 

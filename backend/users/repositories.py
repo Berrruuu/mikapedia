@@ -8,7 +8,7 @@ class UserRepository:
         return User.objects.all()
 
     def get_queryset_for_user(self, user: User) -> QuerySet:
-        if getattr(user, 'role', None) == 'admin':
+        if getattr(user, 'role', None) in ['owner', 'admin']:
             return self.get_queryset().order_by('-date_joined')
         return self.get_queryset().filter(id=user.id)
 

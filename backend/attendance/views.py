@@ -16,12 +16,7 @@ from .serializers import (
 from .services import AttendanceService
 from common.api import StandardizedModelViewSet
 from common.response import success_response, error_response
-
-
-
-class IsAdminRole(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.role == 'admin'
+from common.permissions import IsOwnerOrAdmin
 
 
 class AttendanceViewSet(StandardizedModelViewSet):
@@ -105,7 +100,7 @@ class AttendanceViewSet(StandardizedModelViewSet):
             'available_shifts': [AttendanceShiftSerializer(shift).data for shift in shifts],
         })
 
-    @action(detail=True, methods=['patch'], permission_classes=[IsAdminRole], url_path='validate')
+    @action(detail=True, methods=['patch'], permission_classes=[IsOwnerOrAdmin], url_path='validate')
     def validate(self, request, pk=None):
         record = self.get_object()
         serializer = AdminValidateSerializer(data=request.data)
@@ -126,7 +121,7 @@ class AttendanceViewSet(StandardizedModelViewSet):
 
         return success_response(AttendanceSerializer(record, context={'request': request}).data)
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAdminRole], url_path='summary')
+    @action(detail=False, methods=['get'], permission_classes=[IsOwnerOrAdmin], url_path='summary')
     def summary(self, request):
         date = request.query_params.get('date', str(timezone.localdate()))
         summary = self.service.summary(date)
@@ -143,7 +138,7 @@ class AttendanceViewSet(StandardizedModelViewSet):
 class AttendanceShiftViewSet(StandardizedModelViewSet):
     queryset = AttendanceShift.objects.all()
     serializer_class = AttendanceShiftSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminRole]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
     filterset_fields = ['is_active', 'name']
     search_fields = ['name', 'description']
     ordering_fields = ['start_time', 'end_time', 'name']
@@ -152,7 +147,7 @@ class AttendanceShiftViewSet(StandardizedModelViewSet):
 class AttendanceScheduleViewSet(StandardizedModelViewSet):
     queryset = AttendanceSchedule.objects.select_related('user', 'shift').all()
     serializer_class = AttendanceScheduleSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminRole]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
     filterset_fields = ['user', 'shift', 'is_active']
     search_fields = ['user__email', 'user__first_name', 'user__last_name', 'shift__name']
     ordering_fields = ['user__email', 'shift__start_time', 'is_active']
@@ -212,7 +207,7 @@ class AttendanceScheduleViewSet(StandardizedModelViewSet):
 class AttendanceScheduleEntryViewSet(StandardizedModelViewSet):
     queryset = AttendanceScheduleEntry.objects.select_related('user', 'shift', 'cover_for').all()
     serializer_class = AttendanceScheduleEntrySerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminRole]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
     filterset_fields = ['user', 'date', 'assignment_type', 'cover_for']
     search_fields = ['user__email', 'user__first_name', 'user__last_name', 'shift__name', 'cover_for__email']
     ordering_fields = ['date', 'user__email', 'assignment_type']
