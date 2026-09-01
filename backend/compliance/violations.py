@@ -12,9 +12,11 @@ SOP: Trader WAJIB membuka 3 posisi per signal:
   Semua dengan SL di Fib 0.786 dan TP di Fib -0.27
 
 Score deductions per violation:
+  unauthorized_trade     -100  (entry tanpa signal, diluar SOP)
   missed_signal          -100  (tidak entry sama sekali)
   incomplete_entries     -15   per posisi yang kurang (max -45 untuk 3 missing)
   wrong_direction        -60   (arah berlawanan signal)
+  wrong_order_type       -20   (pakai market order instead of limit)
   late_entry             -25   (entry setelah max_entry_time)
   no_stop_loss           -20   per posisi (applied to all positions)
   no_take_profit         -20   per posisi

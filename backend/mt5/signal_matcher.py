@@ -293,6 +293,11 @@ def match_account_to_signals(account) -> int:
     # Mark expired signals as Missed for this trader
     _mark_missed_signals(user, active_signals)
 
+    # ── Step 3: Detect rogue trades (positions without matching signal) ───────
+    rogue_count = _detect_rogue_trades(account, today, active_signals)
+    if rogue_count > 0:
+        logger.warning('Detected %d rogue trade(s) for user %s', rogue_count, user.email)
+
     return matched
 
 
@@ -324,3 +329,160 @@ def _mark_missed_signals(user, active_signals):
             logger.info('Signal #%s processed for user %s (missed or order not hit)', signal.id, user.email)
         except Exception:
             logger.exception('Failed to process missed compliance for signal #%s user %s', signal.id, user.email)
+
+
+def _detect_rogue_trades(account, today, active_signals) -> int:
+    """
+    Detect positions opened without following any active signal (rogue/unauthorized trades).
+    
+    Logic:
+    1. Get all positions from this account
+    2. Get all trades that ARE linked to signals (legitimate)
+    3. Find positions that are NOT in the legitimate list (rogue)
+    4. For each rogue position:
+       - Create Trade record without signal
+       - Create ComplianceResult with "unauthorized_trade" violation
+       - Send notification to trader
+       - Issue SOPWarning
+    
+    Returns: number of rogue trades detected
+    """
+    from compliance.models import ComplianceResult
+    from compliance.services import ComplianceService
+    
+    user = account.user
+    
+    # Get all positions from this account (today's positions)
+    positions = list(account.positions.all())
+    
+    if not positions:
+        return 0  # no positions, nothing to check
+    
+    # Get all trades that ARE linked to signals (these are legitimate)
+    matched_tickets = set(Trade.objects.filter(
+        account=account,
+        signal__isnull=False,
+    ).values_list('ticket', flat=True))
+    
+    # Find rogue positions (not linked to any signal)
+    rogue_positions = [p for p in positions if p.ticket not in matched_tickets]
+    
+    if not rogue_positions:
+        return 0  # all positions are matched, all good
+    
+    # For each rogue position, check if it's truly unauthorized
+    # or just opened before signal was created (edge case)
+    rogue_count = 0
+    
+    for pos in rogue_positions:
+        # Skip if we already created a rogue trade compliance for this ticket
+        existing_rogue = ComplianceResult.objects.filter(
+            user=user,
+            trade__ticket=pos.ticket,
+            signal__isnull=True,  # rogue trades have no signal
+        ).first()
+        
+        if existing_rogue:
+            continue  # already marked as rogue
+        
+        # Create Trade record without signal (rogue trade marker)
+        trade, created = Trade.objects.get_or_create(
+            account=account,
+            ticket=pos.ticket,
+            defaults={
+                'user': user,
+                'signal': None,  # no signal = rogue
+                'symbol': pos.symbol,
+                'direction': pos.type,
+                'order_type': 'market',  # assume market if not specified
+                'volume': pos.volume,
+                'entry_price': pos.price_open,
+                'stop_loss': pos.sl,
+                'take_profit': pos.tp,
+                'open_time': pos.time_open,
+                'status': 'open',
+                'pnl': pos.profit,
+            }
+        )
+        
+        if not created:
+            # Trade already exists without signal, just update it
+            trade.status = 'open'
+            trade.pnl = pos.profit
+            trade.save(update_fields=['status', 'pnl'])
+        
+        # Create ComplianceResult with "unauthorized_trade" violation
+        result, _ = ComplianceResult.objects.update_or_create(
+            user=user,
+            trade=trade,
+            defaults={
+                'signal': None,  # no signal
+                'trader_profile': getattr(user, 'trader_profile', None),
+                'status': 'Unauthorized Trade',
+                'score': 0,
+                'actual_direction': pos.type,
+                'actual_entry': float(pos.price_open) if pos.price_open else None,
+                'actual_entry_time': ComplianceService()._coerce_time(pos.time_open),
+                'coaching_note': (
+                    f'Trader membuka posisi {pos.symbol} {pos.type} @ {pos.price_open} '
+                    f'tanpa ada signal yang match. Entry diluar SOP. '
+                    f'Pastikan hanya entry sesuai signal dari TradingView.'
+                ),
+                'violations': ['unauthorized_trade'],
+                'entry_count': 0,
+                'entry1_ticket': None,
+                'entry2_ticket': None,
+                'entry3_ticket': None,
+            }
+        )
+        
+        # Send notification to trader
+        try:
+            from notifications.models import Notification
+            Notification.objects.create(
+                recipient=user,
+                type='compliance',
+                level='danger',
+                title=f'⚠️ Entry Tanpa Signal — {pos.symbol}',
+                body=(
+                    f'Kamu membuka posisi {pos.symbol} {pos.type} @ {pos.price_open} '
+                    f'tanpa mengikuti signal apapun. Ini melanggar SOP. '
+                    f'Pastikan hanya entry sesuai signal dari TradingView.'
+                ),
+            )
+        except Exception:
+            logger.exception('Failed to send rogue trade notification to %s', user.email)
+        
+        # Issue SOPWarning
+        try:
+            from compliance.models import SOPWarning
+            from datetime import timedelta
+            
+            # Count recent warnings (last 30 days)
+            cutoff = timezone.now() - timedelta(days=30)
+            recent_count = SOPWarning.objects.filter(user=user, created_at__gte=cutoff).count()
+            severity = 'danger' if recent_count >= 3 else 'warning'
+            
+            SOPWarning.objects.create(
+                user=user,
+                compliance_result=result,
+                violation_type='unauthorized_trade',
+                severity=severity,
+                message=f'Entry tanpa signal: {pos.symbol} {pos.type} @ {pos.price_open}',
+            )
+        except Exception:
+            logger.exception('Failed to create SOPWarning for rogue trade')
+        
+        # Update user compliance scores
+        try:
+            ComplianceService()._recalculate_user_scores(user)
+        except Exception:
+            logger.exception('Failed to recalculate scores for user %s', user.email)
+        
+        rogue_count += 1
+        logger.warning(
+            'Rogue trade detected: user=%s symbol=%s direction=%s entry=%.2f ticket=%s',
+            user.email, pos.symbol, pos.type, pos.price_open, pos.ticket
+        )
+    
+    return rogue_count
