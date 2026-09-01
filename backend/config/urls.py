@@ -4,7 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # Django admin panel (renamed to avoid conflict with frontend /admin route)
+    path('django-admin/', admin.site.urls),
 
     # Versioned API routes
     path('api/v1/auth/', include('authentication.urls')),
