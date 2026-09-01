@@ -36,7 +36,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'email', 'password', 'first_name', 'last_name', 'role',
+            'email', 'password', 'first_name', 'last_name', 'role', 'status',
             'employeeId', 'department', 'position', 'phone',
             'accountNumber', 'brokerServer', 'brokerName',
         ]
