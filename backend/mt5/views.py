@@ -13,7 +13,7 @@ from common.api import StandardizedModelViewSet
 from common.response import success_response, error_response
 from .manager import manager as mt5_manager
 from django.conf import settings as django_settings
-from common.permissions import IsOwnerOrAdmin
+from common.permissions import IsOwnerOrAdmin, IsAdminRole
 import logging
 
 logger = logging.getLogger('mt5.views')
@@ -29,7 +29,7 @@ class MT5AccountViewSet(StandardizedModelViewSet):
 
     def get_permissions(self):
         if self.action in ('list', 'summary'):
-            return [IsOwnerOrAdmin()]
+            return [IsAdminRole()]
         return [permissions.IsAuthenticated()]
 
     def get_queryset(self):
@@ -68,7 +68,7 @@ class MT5AccountViewSet(StandardizedModelViewSet):
         return Response(MT5AccountSerializer(account).data)
 
     # ── POST /api/mt5/sync-all/ ───────────────────────────────────────────────
-    @action(detail=False, methods=['post'], permission_classes=[IsOwnerOrAdmin], url_path='sync-all')
+    @action(detail=False, methods=['post'], permission_classes=[IsAdminRole], url_path='sync-all')
     def sync_all(self, request):
         """Admin syncs all accounts"""
         accounts = MT5Account.objects.all()
