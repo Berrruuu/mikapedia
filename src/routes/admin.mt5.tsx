@@ -194,8 +194,6 @@ function MT5Page() {
       toast.error(err instanceof Error ? err.message : 'Download failed');
     }
   };
-    }
-  };
 
   return (
     <>
