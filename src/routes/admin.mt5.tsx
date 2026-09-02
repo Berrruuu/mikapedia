@@ -156,16 +156,19 @@ function MT5Page() {
   const handleDownloadHistory = async (accountId: number, userName: string) => {
     try {
       // Build URL with date range params if set
-      let url = `/mt5/${accountId}/export-history/`;
+      let url = `/api/mt5/${accountId}/export-history/`;
       const params = new URLSearchParams();
       if (exportStartDate) params.append('start_date', exportStartDate);
       if (exportEndDate) params.append('end_date', exportEndDate);
       if (params.toString()) url += `?${params.toString()}`;
 
-      const response = await api.get<string>(url, { method: 'GET' });
+      // Use fetch directly for CSV file download (not api.get which parses JSON)
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
       
-      // Create blob and download
-      const blob = new Blob([response as any], { type: 'text/csv' });
+      const blob = await response.blob();
       const url_obj = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url_obj;
@@ -189,6 +192,8 @@ function MT5Page() {
       toast.success('History downloaded');
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Download failed');
+    }
+  };
     }
   };
 
