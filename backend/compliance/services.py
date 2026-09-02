@@ -205,11 +205,11 @@ class ComplianceService:
         recent_count = SOPWarning.objects.filter(user=user, created_at__gte=cutoff).count()
         severity = 'danger' if recent_count >= WARNING_THRESHOLD else 'warning'
 
-        # Use get_or_create to prevent duplicate warnings for same compliance_result
+        # Use get_or_create with both user AND compliance_result to find unique warning
         warning, created = SOPWarning.objects.get_or_create(
+            user=user,
             compliance_result=result,
             defaults={
-                'user': user,
                 'violation_type': vtype,
                 'severity': severity,
                 'message': report.coaching_note,
