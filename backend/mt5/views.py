@@ -83,7 +83,7 @@ class MT5AccountViewSet(StandardizedModelViewSet):
         return Response({'synced': len(results), 'accounts': results})
 
     # ── GET /api/mt5/summary/ ─────────────────────────────────────────────────
-    @action(detail=False, methods=['get'], permission_classes=[IsAdminRole], url_path='summary')
+    @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated], url_path='summary')
     def summary(self, request):
         """Admin KPI summary: account counts and totals"""
         accounts = MT5Account.objects.all()
@@ -122,15 +122,19 @@ class MT5AccountViewSet(StandardizedModelViewSet):
         st = mt5_manager.get_status(account.login)
         return success_response(st)
 
-    @action(detail=True, methods=['get'], permission_classes=[IsAdminRole], url_path='export-history')
+    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated], url_path='export-history')
     def export_history(self, request, pk=None):
         """
         GET /api/mt5/{id}/export-history/?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD
         Exports trading history for this account as CSV
         Supports optional date range filtering
-        Admin only
+        Admin, owner, or account owner can download their own history
         """
         account = self.get_object()
+        
+        # Check permission: admin/owner can download any, user can only download their own
+        if request.user.role not in ['owner', 'admin'] and account.user != request.user:
+            return error_response('Forbidden', status=status.HTTP_403_FORBIDDEN, code='permission_denied')
         
         # Get date range from query params
         start_date = request.query_params.get('start_date')
