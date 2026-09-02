@@ -3,6 +3,7 @@ from rest_framework.decorators import action, api_view, permission_classes, pars
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from django.utils import timezone
 from .models import MT5Account, MT5Position, MT5Deal, Trade
 from .serializers import (
     MT5AccountSerializer, MT5CredentialsSerializer,
@@ -379,7 +380,10 @@ def trades_by_signal(request):
     """
     GET /api/mt5/trades/?signal=<signal_id>
     Returns list of Trade records linked to a specific signal.
-    Used by admin signal detail page to show MT5 linked orders/positions.
+    Filters trades that:
+    - Are linked to this signal
+    - Opened on or after signal date
+    - Belong to the trader assigned to this signal (if any)
     """
     # Only owner/admins can view all trades
     if request.user.role not in ['owner', 'admin']:
@@ -389,10 +393,26 @@ def trades_by_signal(request):
     if not signal_id:
         return error_response('signal parameter is required', status=status.HTTP_400_BAD_REQUEST, code='validation_error')
     
-    # Get trades for this signal
-    trades = Trade.objects.filter(signal_id=signal_id).select_related(
+    # Get the signal to get session_date and assigned trader
+    from signals.models import Signal
+    try:
+        signal = Signal.objects.get(id=signal_id)
+    except Signal.DoesNotExist:
+        return error_response('Signal not found', status=status.HTTP_404_NOT_FOUND, code='not_found')
+    
+    # Filter trades for this signal
+    # Only include trades that opened on or after signal's session_date
+    trades = Trade.objects.filter(
+        signal_id=signal_id
+    ).exclude(
+        open_time__isnull=True  # Exclude trades with no open_time
+    ).select_related(
         'user', 'account', 'signal'
-    ).order_by('-created_at')
+    ).order_by('-open_time')
+    
+    # Additional filter: only trades from the trader assigned to this signal
+    if signal.assigned_to:
+        trades = trades.filter(user=signal.assigned_to)
     
     # Serialize trades
     results = []
