@@ -27,6 +27,7 @@ class SOPWarningViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'patch', 'head', 'options']
     filterset_fields  = ['severity', 'acknowledged', 'violation_type']
     ordering_fields   = ['created_at', 'severity']
+    pagination_class = None  # Disable pagination for warnings list
 
     def get_queryset(self):
         user = self.request.user
