@@ -4,6 +4,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.utils import timezone
+from django.http import HttpResponse
+import csv
 from .models import MT5Account, MT5Position, MT5Deal, Trade
 from .serializers import (
     MT5AccountSerializer, MT5CredentialsSerializer,
@@ -96,12 +98,69 @@ class MT5AccountViewSet(StandardizedModelViewSet):
         st = mt5_manager.get_status(account.login)
         return success_response(st)
 
-    # ── GET /api/mt5/summary/ ─────────────────────────────────────────────────
-    @action(detail=False, methods=['get'], permission_classes=[IsAdminRole], url_path='summary')
-    def summary(self, request):
-        """Admin summary of all accounts"""
-        summary = self.service.get_summary()
-        return success_response(summary)
+    @action(detail=True, methods=['get'], permission_classes=[IsAdminRole], url_path='export-history')
+    def export_history(self, request, pk=None):
+        """
+        GET /api/mt5/{id}/export-history/?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD
+        Exports trading history for this account as CSV
+        Supports optional date range filtering
+        Admin only
+        """
+        account = self.get_object()
+        
+        # Get date range from query params
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+        
+        # Build trades queryset
+        trades = Trade.objects.filter(account=account).select_related('signal')
+        
+        # Apply date range filter if provided
+        if start_date:
+            trades = trades.filter(open_time__gte=f'{start_date} 00:00:00')
+        if end_date:
+            trades = trades.filter(open_time__lte=f'{end_date} 23:59:59')
+        
+        trades = trades.order_by('-open_time')
+        
+        # Create CSV response
+        date_suffix = ''
+        if start_date and end_date:
+            date_suffix = f'_{start_date}_to_{end_date}'
+        elif start_date:
+            date_suffix = f'_from_{start_date}'
+        elif end_date:
+            date_suffix = f'_until_{end_date}'
+        
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="trading_history_{account.account_number}{date_suffix}_{timezone.now().date()}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'Ticket', 'Symbol', 'Type', 'Volume', 'Entry Price', 'Exit Price',
+            'Stop Loss', 'Take Profit', 'Open Time', 'Close Time', 'P/L',
+            'Status', 'Order Type', 'Signal ID'
+        ])
+        
+        for trade in trades:
+            writer.writerow([
+                trade.ticket,
+                trade.symbol,
+                trade.direction,
+                float(trade.volume),
+                float(trade.entry_price),
+                float(trade.exit_price) if trade.exit_price else '',
+                float(trade.stop_loss) if trade.stop_loss else '',
+                float(trade.take_profit) if trade.take_profit else '',
+                trade.open_time.isoformat() if trade.open_time else '',
+                trade.close_time.isoformat() if trade.close_time else '',
+                float(trade.pnl),
+                trade.status,
+                trade.order_type,
+                trade.signal_id if trade.signal_id else '',
+            ])
+        
+        return response
 
 
 # ─── EA Reporter Endpoint ─────────────────────────────────────────────────────

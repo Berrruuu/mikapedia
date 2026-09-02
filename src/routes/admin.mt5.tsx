@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   HardDriveDownload, TrendingDown, TrendingUp, RefreshCw,
-  AlertTriangle, CheckCircle2, Clock, ChevronDown, ChevronUp,
+  AlertTriangle, CheckCircle2, Clock, ChevronDown, ChevronUp, Download,
 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/page-header";
@@ -55,6 +55,33 @@ function MT5Page() {
   const [loading, setLoading]     = useState(true);
   const [syncing, setSyncing]     = useState(false);
   const [expanded, setExpanded]   = useState<Set<number>>(new Set());
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [exportStartDate, setExportStartDate] = useState<string>('');
+  const [exportEndDate, setExportEndDate] = useState<string>(new Date().toISOString().split('T')[0]);
+
+  // Helper to get date range for quick filters
+  const getDateRange = (filter: 'week' | 'month' | 'lastMonth' | 'all') => {
+    const today = new Date();
+    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+
+    const format = (d: Date) => d.toISOString().split('T')[0];
+
+    switch (filter) {
+      case 'week':
+        return { start: format(startOfWeek), end: format(today) };
+      case 'month':
+        return { start: format(startOfMonth), end: format(today) };
+      case 'lastMonth':
+        return { start: format(startOfLastMonth), end: format(endOfLastMonth) };
+      case 'all':
+        return { start: '', end: '' };
+      default:
+        return { start: '', end: '' };
+    }
+  };
 
   const fetchAll = async (silent = false) => {
     if (!silent) setLoading(true);
@@ -122,6 +149,58 @@ function MT5Page() {
   const toggleExpand = (id: number) =>
     setExpanded((prev) => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
 
+  // Filter positions by selected date
+  const filteredAccounts = useMemo(() => {
+    return accounts.map(account => ({
+      ...account,
+      positions: account.positions.filter(pos => {
+        if (!pos.timeOpen) return false;
+        const posDate = new Date(pos.timeOpen).toISOString().split('T')[0];
+        return posDate === selectedDate;
+      })
+    }));
+  }, [accounts, selectedDate]);
+
+  // Download trading history for a trader
+  const handleDownloadHistory = async (accountId: number, userName: string) => {
+    try {
+      // Build URL with date range params if set
+      let url = `/mt5/${accountId}/export-history/`;
+      const params = new URLSearchParams();
+      if (exportStartDate) params.append('start_date', exportStartDate);
+      if (exportEndDate) params.append('end_date', exportEndDate);
+      if (params.toString()) url += `?${params.toString()}`;
+
+      const response = await api.get<string>(url, { method: 'GET' });
+      
+      // Create blob and download
+      const blob = new Blob([response as any], { type: 'text/csv' });
+      const url_obj = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url_obj;
+      
+      // Include date range in filename
+      let filename = `trading-history-${userName}`;
+      if (exportStartDate && exportEndDate) {
+        filename += `-${exportStartDate}_to_${exportEndDate}`;
+      } else if (exportStartDate) {
+        filename += `-from_${exportStartDate}`;
+      } else if (exportEndDate) {
+        filename += `-until_${exportEndDate}`;
+      }
+      filename += `.csv`;
+      
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url_obj);
+      document.body.removeChild(a);
+      toast.success('History downloaded');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Download failed');
+    }
+  };
+
   return (
     <>
       <PageHeader
@@ -130,6 +209,12 @@ function MT5Page() {
         description="Real-time account telemetry dari setiap trader yang terhubung."
         actions={
           <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="px-3 py-1 text-sm rounded-md border border-border bg-background"
+            />
             <Badge variant="outline" className="bg-success/10 text-success border-success/20 gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
               {summary?.connected ?? 0}/{summary?.totalAccounts ?? 0} connected
@@ -163,11 +248,66 @@ function MT5Page() {
         </div>
       )}
 
+      {/* Export History Filter */}
+      <Card className="mb-6 p-4">
+        <div className="text-sm font-semibold mb-3">Export Trading History</div>
+        <div className="flex flex-wrap gap-2 mb-4">
+          <Button
+            variant={exportStartDate === '' && exportEndDate === '' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => { setExportStartDate(''); setExportEndDate(''); }}
+          >
+            All Time
+          </Button>
+          <Button
+            variant={exportStartDate === getDateRange('week').start && exportEndDate === getDateRange('week').end ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => { const r = getDateRange('week'); setExportStartDate(r.start); setExportEndDate(r.end); }}
+          >
+            This Week
+          </Button>
+          <Button
+            variant={exportStartDate === getDateRange('month').start && exportEndDate === getDateRange('month').end ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => { const r = getDateRange('month'); setExportStartDate(r.start); setExportEndDate(r.end); }}
+          >
+            This Month
+          </Button>
+          <Button
+            variant={exportStartDate === getDateRange('lastMonth').start && exportEndDate === getDateRange('lastMonth').end ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => { const r = getDateRange('lastMonth'); setExportStartDate(r.start); setExportEndDate(r.end); }}
+          >
+            Last Month
+          </Button>
+        </div>
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <label className="text-xs text-muted-foreground">From</label>
+            <input
+              type="date"
+              value={exportStartDate}
+              onChange={(e) => setExportStartDate(e.target.value)}
+              className="w-full px-3 py-1.5 text-sm rounded-md border border-border bg-background"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="text-xs text-muted-foreground">To</label>
+            <input
+              type="date"
+              value={exportEndDate}
+              onChange={(e) => setExportEndDate(e.target.value)}
+              className="w-full px-3 py-1.5 text-sm rounded-md border border-border bg-background"
+            />
+          </div>
+        </div>
+      </Card>
+
       {loading ? (
         <div className="p-12 text-center text-sm text-muted-foreground">Loading accounts…</div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {accounts.map((a) => (
+          {filteredAccounts.map((a) => (
             <Card key={a.id} className="overflow-hidden">
               <div className="p-4">
                 {/* Header */}
@@ -190,6 +330,15 @@ function MT5Page() {
                     <Badge variant="outline" className={STATUS_TONE[a.status]}>
                       {a.status}
                     </Badge>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-7 w-7 p-0"
+                      title="Download trading history"
+                      onClick={() => handleDownloadHistory(a.id, a.user.name)}
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                    </Button>
                     <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => handleSyncOne(a.id)}>
                       <RefreshCw className="h-3.5 w-3.5" />
                     </Button>
