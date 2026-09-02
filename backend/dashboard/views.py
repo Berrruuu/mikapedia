@@ -61,7 +61,7 @@ def trader_dashboard(request):
     """
     user = request.user
     today = timezone.localdate()
-    signals = Signal.objects.filter(session_date=today)
+    signals = Signal.objects.filter(session_date=today, assigned_to=user)
     total = signals.count() or 1
     executed = signals.filter(status='Executed').count()
 
