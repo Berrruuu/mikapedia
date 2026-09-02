@@ -436,13 +436,23 @@ def _detect_rogue_trades(account, today, active_signals) -> int:
             trade.pnl = pos.profit
             trade.save(update_fields=['status', 'pnl'])
         
+        # Check if trade is already linked to another compliance result
+        trade_to_use = None
+        try:
+            existing_result = ComplianceResult.objects.exclude(user=user).get(trade=trade)
+            # Trade already linked to another user - don't re-link
+            trade_to_use = None
+        except ComplianceResult.DoesNotExist:
+            # Safe to use this trade
+            trade_to_use = trade
+
         # Create ComplianceResult with "unauthorized_trade" violation
         result, _ = ComplianceResult.objects.update_or_create(
             user=user,
-            trade=trade,
+            signal=None,  # no signal for unauthorized trades
             defaults={
-                'signal': None,  # no signal
                 'trader_profile': getattr(user, 'trader_profile', None),
+                'trade': trade_to_use,
                 'status': 'Unauthorized Trade',
                 'score': 0,
                 'actual_direction': pos.type,
