@@ -459,19 +459,20 @@ def trades_by_signal(request):
     except Signal.DoesNotExist:
         return error_response('Signal not found', status=status.HTTP_404_NOT_FOUND, code='not_found')
     
+    # If signal has no assigned trader, it's MISSED — return empty trades
+    if not signal.assigned_to:
+        return success_response({'results': []})
+    
     # Filter trades for this signal
     # Only include trades that opened on or after signal's session_date
     trades = Trade.objects.filter(
-        signal_id=signal_id
+        signal_id=signal_id,
+        user=signal.assigned_to  # Only trades from the assigned trader
     ).exclude(
         open_time__isnull=True  # Exclude trades with no open_time
     ).select_related(
         'user', 'account', 'signal'
     ).order_by('-open_time')
-    
-    # Additional filter: only trades from the trader assigned to this signal
-    if signal.assigned_to:
-        trades = trades.filter(user=signal.assigned_to)
     
     # Serialize trades
     results = []
