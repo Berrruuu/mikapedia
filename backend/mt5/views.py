@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.utils import timezone
 from django.http import HttpResponse
+from django.db import models
 import csv
 from .models import MT5Account, MT5Position, MT5Deal, Trade
 from .serializers import (
@@ -80,6 +81,29 @@ class MT5AccountViewSet(StandardizedModelViewSet):
             acc = self.service.sync_account(acc)
             results.append({'id': acc.id, 'login': acc.login, 'status': acc.status})
         return Response({'synced': len(results), 'accounts': results})
+
+    # ── GET /api/mt5/summary/ ─────────────────────────────────────────────────
+    @action(detail=False, methods=['get'], permission_classes=[IsAdminRole], url_path='summary')
+    def summary(self, request):
+        """Admin KPI summary: account counts and totals"""
+        accounts = MT5Account.objects.all()
+        connected_count = accounts.filter(status='connected').count()
+        disconnected_count = accounts.filter(status__in=['disconnected', 'error', 'pending']).count()
+        
+        totals = accounts.aggregate(
+            total_balance=models.Sum('balance'),
+            total_equity=models.Sum('equity'),
+            total_floating=models.Sum('floating_pnl'),
+        )
+        
+        return success_response({
+            'totalAccounts': accounts.count(),
+            'connected': connected_count,
+            'disconnected': disconnected_count,
+            'totalBalance': totals['total_balance'] or 0,
+            'totalEquity': totals['total_equity'] or 0,
+            'totalFloating': totals['total_floating'] or 0,
+        })
 
     # ── GET /api/mt5/{id}/deals/ ──────────────────────────────────────────────
     @action(detail=True, methods=['get'], url_path='deals')
