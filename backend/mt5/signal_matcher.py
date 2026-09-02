@@ -265,12 +265,26 @@ def match_account_to_signals(account) -> int:
             report = evaluate_three_positions(all_signal_trades, signal)
 
             from compliance.models import ComplianceResult
+            
+            # Determine primary trade: only use if not already linked to another compliance result
+            primary_trade = None
+            if all_signal_trades:
+                first_trade = all_signal_trades[0]
+                # Check if this trade is already linked to a compliance result from another signal
+                try:
+                    existing_result = ComplianceResult.objects.exclude(signal=signal).get(trade=first_trade)
+                    # Trade is already linked to another signal - don't re-link
+                    primary_trade = None
+                except ComplianceResult.DoesNotExist:
+                    # Safe to use this trade
+                    primary_trade = first_trade
+            
             result, _ = ComplianceResult.objects.update_or_create(
                 user=user,
                 signal=signal,
                 defaults={
                     'trader_profile': getattr(user, 'trader_profile', None),
-                    'trade': all_signal_trades[0] if all_signal_trades else None,
+                    'trade': primary_trade,
                     'status': report.status,
                     'score': report.final_score,
                     'actual_direction': all_signal_trades[0].direction if all_signal_trades else None,
