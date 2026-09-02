@@ -149,17 +149,8 @@ function MT5Page() {
   const toggleExpand = (id: number) =>
     setExpanded((prev) => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
 
-  // Filter positions by selected date
-  const filteredAccounts = useMemo(() => {
-    return accounts.map(account => ({
-      ...account,
-      positions: account.positions.filter(pos => {
-        if (!pos.timeOpen) return false;
-        const posDate = new Date(pos.timeOpen).toISOString().split('T')[0];
-        return posDate === selectedDate;
-      })
-    }));
-  }, [accounts, selectedDate]);
+  // Show all open positions (don't filter by date)
+  const filteredAccounts = accounts;
 
   // Download trading history for a trader
   const handleDownloadHistory = async (accountId: number, userName: string) => {
