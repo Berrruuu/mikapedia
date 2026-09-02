@@ -205,20 +205,29 @@ class ComplianceService:
         recent_count = SOPWarning.objects.filter(user=user, created_at__gte=cutoff).count()
         severity = 'danger' if recent_count >= WARNING_THRESHOLD else 'warning'
 
-        warning = SOPWarning.objects.create(
-            user=user,
+        # Use get_or_create to prevent duplicate warnings for same compliance_result
+        warning, created = SOPWarning.objects.get_or_create(
             compliance_result=result,
-            violation_type=vtype,
-            severity=severity,
-            message=report.coaching_note,
+            defaults={
+                'user': user,
+                'violation_type': vtype,
+                'severity': severity,
+                'message': report.coaching_note,
+            }
         )
 
-        logger.warning('SOPWarning issued: user=%s type=%s severity=%s count=%d',
-                       user.email, vtype, severity, recent_count + 1)
+        if created:
+            logger.warning('SOPWarning issued: user=%s type=%s severity=%s count=%d',
+                           user.email, vtype, severity, recent_count + 1)
 
-        # Escalate if danger threshold reached
-        if recent_count + 1 >= DANGER_THRESHOLD:
-            self._escalate_to_admin(user, recent_count + 1)
+            # Escalate if danger threshold reached
+            if recent_count + 1 >= DANGER_THRESHOLD:
+                self._escalate_to_admin(user, recent_count + 1)
+        else:
+            # Warning already exists for this result, just update if needed
+            if warning.severity != severity:
+                warning.severity = severity
+                warning.save(update_fields=['severity'])
 
     def _escalate_to_admin(self, user, violation_count: int):
         """Notify admin when a trader reaches the danger threshold."""
