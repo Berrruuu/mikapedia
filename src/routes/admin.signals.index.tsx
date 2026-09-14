@@ -139,6 +139,10 @@ const STATUS_ICON: Record<string, React.ComponentType<{ className?: string }>> =
 
 const ALL_STATUSES = ["Pending","Waiting","Executed","Late","Wrong Direction","Missed"];
 
+function formatPrice(value: number | null) {
+  return value == null ? "—" : value.toFixed(3);
+}
+
 function SignalsPage() {
   const [signals, setSignals]   = useState<Signal[]>([]);
   const [loading, setLoading]   = useState(true);
@@ -329,14 +333,14 @@ function SignalsPage() {
                 </div>
 
                 {s.timeframe === "5" ? (
-                  <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                  <div className="grid gap-2 text-xs mb-3">
                     {[{ label: "Position 1", position: s.position1 }, { label: "Position 2", position: s.position2 }].map(({ label, position }) => (
-                      <div key={label} className="rounded-md bg-muted/40 p-2">
-                        <div className="mb-1 text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-                        <div className="grid grid-cols-3 gap-1 font-mono">
-                          <span>Entry<br /><strong>{position.entry ?? "—"}</strong></span>
-                          <span className="text-destructive">SL<br /><strong>{position.sl ?? "—"}</strong></span>
-                          <span className="text-success">TP<br /><strong>{position.tp ?? "—"}</strong></span>
+                      <div key={label} className="rounded-md bg-muted/40 p-2.5">
+                        <div className="mb-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+                        <div className="grid grid-cols-3 gap-2 font-mono">
+                          <span className="min-w-0">Entry<br /><strong className="text-[11px]">{formatPrice(position.entry)}</strong></span>
+                          <span className="min-w-0 text-destructive">SL<br /><strong className="text-[11px]">{formatPrice(position.sl)}</strong></span>
+                          <span className="min-w-0 text-success">TP<br /><strong className="text-[11px]">{formatPrice(position.tp)}</strong></span>
                         </div>
                       </div>
                     ))}
