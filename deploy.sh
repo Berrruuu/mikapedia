@@ -69,7 +69,7 @@ migrate() {
 collectstatic() {
     log "Collecting static files..."
     docker compose -f "$COMPOSE_FILE" -p "$PROJECT_NAME" run --rm \
-        backend python manage.py collectstatic --noinput
+        --user root backend python manage.py collectstatic --noinput
     success "Static files collected"
 }
 
