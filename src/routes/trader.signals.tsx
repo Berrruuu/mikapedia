@@ -32,6 +32,8 @@ interface Signal {
   fib_0500: number | null;
   fib_0618: number | null;
   fib_tp: number | null;
+  position1: { entry: number | null; sl: number | null; tp: number | null };
+  position2: { entry: number | null; sl: number | null; tp: number | null };
   status: string;
   executionRate: number;
   sessionDate: string;
@@ -45,6 +47,10 @@ const STATUS_TONE: Record<string, string> = {
   "Wrong Direction": "bg-destructive/10 text-destructive border-destructive/20",
   Missed:            "bg-destructive/10 text-destructive border-destructive/20",
 };
+
+function formatPrice(value: number | null) {
+  return value == null ? "—" : value.toFixed(3);
+}
 
 function TraderSignalsPage() {
   const [signals, setSignals]   = useState<Signal[]>([]);
@@ -170,28 +176,44 @@ function TraderSignalsPage() {
                       {s.timeframe}m
                     </Badge>
                   </div>
-                  {/* 3 Entry prices */}
-                  <div className="mt-1.5 flex items-center gap-1 flex-wrap">
-                    {s.fib_0236 && (
-                      <span className="rounded bg-success/10 border border-success/20 px-1.5 py-0.5 text-[10px] font-mono text-success font-semibold">
-                        E1 {s.fib_0236}
-                      </span>
-                    )}
-                    {s.fib_0500 && (
-                      <span className="rounded bg-primary/10 border border-primary/20 px-1.5 py-0.5 text-[10px] font-mono text-primary font-semibold">
-                        E2 {s.fib_0500}
-                      </span>
-                    )}
-                    {s.fib_0618 && (
-                      <span className="rounded bg-warning/10 border border-warning/20 px-1.5 py-0.5 text-[10px] font-mono text-warning font-semibold">
-                        E3 {s.fib_0618}
-                      </span>
-                    )}
-                  </div>
-                  <div className="mt-1 flex items-center gap-3 text-xs font-mono text-muted-foreground">
-                    <span className="text-success">TP {s.takeProfit}</span>
-                    <span className="text-destructive">SL {s.stopLoss}</span>
-                  </div>
+                  {s.timeframe === "5" ? (
+                    <div className="mt-2 grid max-w-xl gap-1.5 sm:grid-cols-2">
+                      {[{ label: "Position 1", position: s.position1 }, { label: "Position 2", position: s.position2 }].map(({ label, position }) => (
+                        <div key={label} className="rounded-md bg-muted/40 px-2 py-1.5 text-[10px] font-mono">
+                          <div className="mb-1 uppercase tracking-wider text-muted-foreground">{label}</div>
+                          <div className="grid grid-cols-3 gap-2">
+                            <span>Entry<br /><strong>{formatPrice(position.entry)}</strong></span>
+                            <span className="text-destructive">SL<br /><strong>{formatPrice(position.sl)}</strong></span>
+                            <span className="text-success">TP<br /><strong>{formatPrice(position.tp)}</strong></span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mt-1.5 flex items-center gap-1 flex-wrap">
+                        {s.fib_0236 && (
+                          <span className="rounded bg-success/10 border border-success/20 px-1.5 py-0.5 text-[10px] font-mono text-success font-semibold">
+                            E1 {s.fib_0236}
+                          </span>
+                        )}
+                        {s.fib_0500 && (
+                          <span className="rounded bg-primary/10 border border-primary/20 px-1.5 py-0.5 text-[10px] font-mono text-primary font-semibold">
+                            E2 {s.fib_0500}
+                          </span>
+                        )}
+                        {s.fib_0618 && (
+                          <span className="rounded bg-warning/10 border border-warning/20 px-1.5 py-0.5 text-[10px] font-mono text-warning font-semibold">
+                            E3 {s.fib_0618}
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-1 flex items-center gap-3 text-xs font-mono text-muted-foreground">
+                        <span className="text-success">TP {s.takeProfit}</span>
+                        <span className="text-destructive">SL {s.stopLoss}</span>
+                      </div>
+                    </>
+                  )}
                   <div className="mt-0.5 text-[10px] text-muted-foreground">{s.strategyName} · #{s.id}</div>
                 </div>
 
