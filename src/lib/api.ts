@@ -225,6 +225,8 @@ export interface Signal {
   fib_0500: number | null;
   fib_0618: number | null;
   fib_tp: number | null;
+  position1: { entry: number | null; sl: number | null; tp: number | null };
+  position2: { entry: number | null; sl: number | null; tp: number | null };
   status: string;
   executionRate: number;
   created_at: string;

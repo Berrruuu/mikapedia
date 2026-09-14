@@ -39,6 +39,8 @@ interface Signal {
   fib_0500: number | null;
   fib_0618: number | null;
   fib_tp: number | null;
+  position1: { entry: number | null; sl: number | null; tp: number | null };
+  position2: { entry: number | null; sl: number | null; tp: number | null };
   status: string;
   executionRate: number;
   created_at: string;
@@ -326,31 +328,47 @@ function SignalsPage() {
                   </Badge>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 text-xs mb-3">
-                  <div className="rounded-md bg-success/5 border border-success/20 p-2">
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Entry 1 (0.236)</div>
-                    <div className="font-mono font-semibold">{s.fib_0236 ?? "—"}</div>
+                {s.timeframe === "5" ? (
+                  <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                    {[{ label: "Position 1", position: s.position1 }, { label: "Position 2", position: s.position2 }].map(({ label, position }) => (
+                      <div key={label} className="rounded-md bg-muted/40 p-2">
+                        <div className="mb-1 text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+                        <div className="grid grid-cols-3 gap-1 font-mono">
+                          <span>Entry<br /><strong>{position.entry ?? "—"}</strong></span>
+                          <span className="text-destructive">SL<br /><strong>{position.sl ?? "—"}</strong></span>
+                          <span className="text-success">TP<br /><strong>{position.tp ?? "—"}</strong></span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="rounded-md bg-primary/5 border border-primary/20 p-2">
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Entry 2 (0.500)</div>
-                    <div className="font-mono font-semibold">{s.fib_0500 ?? "—"}</div>
-                  </div>
-                  <div className="rounded-md bg-warning/5 border border-warning/20 p-2">
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Entry 3 (0.618)</div>
-                    <div className="font-mono font-semibold">{s.fib_0618 ?? "—"}</div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-xs mb-3">
-                  <div className="rounded-md bg-muted/40 p-2">
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">TP (-0.27)</div>
-                    <div className="font-mono font-semibold text-success">{s.takeProfit}</div>
-                  </div>
-                  <div className="rounded-md bg-muted/40 p-2">
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">SL (0.786)</div>
-                    <div className="font-mono font-semibold text-destructive">{s.stopLoss}</div>
-                  </div>
-                </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-3 gap-2 text-xs mb-3">
+                      <div className="rounded-md bg-success/5 border border-success/20 p-2">
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Entry 1 (0.236)</div>
+                        <div className="font-mono font-semibold">{s.fib_0236 ?? "—"}</div>
+                      </div>
+                      <div className="rounded-md bg-primary/5 border border-primary/20 p-2">
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Entry 2 (0.500)</div>
+                        <div className="font-mono font-semibold">{s.fib_0500 ?? "—"}</div>
+                      </div>
+                      <div className="rounded-md bg-warning/5 border border-warning/20 p-2">
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Entry 3 (0.618)</div>
+                        <div className="font-mono font-semibold">{s.fib_0618 ?? "—"}</div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                      <div className="rounded-md bg-muted/40 p-2">
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">TP (-0.27)</div>
+                        <div className="font-mono font-semibold text-success">{s.takeProfit}</div>
+                      </div>
+                      <div className="rounded-md bg-muted/40 p-2">
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">SL (0.786)</div>
+                        <div className="font-mono font-semibold text-destructive">{s.stopLoss}</div>
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Timing bar */}
                 <SignalTimingBar signal={s} />

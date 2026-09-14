@@ -16,6 +16,8 @@ class SignalSerializer(serializers.ModelSerializer):
     sessionDate = serializers.DateField(source='session_date', read_only=True)
     mt5Summary = serializers.SerializerMethodField()
     mt5Trades = serializers.SerializerMethodField()
+    position1 = serializers.SerializerMethodField()
+    position2 = serializers.SerializerMethodField()
 
     class Meta:
         model = Signal
@@ -25,8 +27,29 @@ class SignalSerializer(serializers.ModelSerializer):
             'fibEntry', 'takeProfit', 'stopLoss',
             'fib_0236', 'fib_0500', 'fib_0618', 'fib_tp',
             'status', 'executionRate',
-            'created_at', 'mt5Summary', 'mt5Trades',
+            'created_at', 'mt5Summary', 'mt5Trades', 'position1', 'position2',
         ]
+
+    def _position_value(self, obj, key, fallback=None):
+        payload = obj.webhook_payload if isinstance(obj.webhook_payload, dict) else {}
+        value = payload.get(key, fallback)
+        return float(value) if value is not None else None
+
+    def get_position1(self, obj):
+        return {
+            'entry': self._position_value(obj, 'position_1_entry', obj.fib_0618),
+            'sl': self._position_value(obj, 'position_1_sl', obj.fib_0500 or obj.stop_loss),
+            'tp': self._position_value(obj, 'position_1_tp', obj.fib_tp or obj.take_profit),
+        }
+
+    def get_position2(self, obj):
+        entry = self._position_value(obj, 'position_2_entry', obj.fib_0618)
+        sl = self._position_value(obj, 'position_2_sl', obj.fib_0236)
+        tp = self._position_value(obj, 'position_2_tp')
+        if tp is None and entry is not None and sl is not None:
+            distance = abs(entry - sl)
+            tp = entry + distance if obj.direction == 'BUY' else entry - distance
+        return {'entry': entry, 'sl': sl, 'tp': tp}
 
     def get_mt5Summary(self, obj):
         qs = Trade.objects.filter(signal=obj)

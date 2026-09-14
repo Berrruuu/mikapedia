@@ -1,0 +1,348 @@
+//@version=5
+indicator("Seacrate", overlay=true)
+
+//=====================================================
+// Pair Check
+//=====================================================
+isXAUUSD = syminfo.ticker == "XAUUSD"
+isUSDJPY = syminfo.ticker == "USDJPY"
+
+//=====================================================
+// Candle Metrics
+//=====================================================
+totalCandle  = high - low
+bodyCandle   = math.abs(close - open)
+upperWick    = high - math.max(open, close)
+lowerWick    = math.min(open, close) - low
+totalWick    = upperWick + lowerWick
+
+totalWickPct = totalCandle > 0 ? (totalWick / totalCandle) * 100 : 0
+wickOK       = totalWickPct <= 30
+
+//=====================================================
+// Body Validation / Momentum
+// Current body > previous body
+//=====================================================
+prevBody = math.abs(close[1] - open[1])
+bodyOK   = bodyCandle > prevBody
+
+//=====================================================
+// Pair Rules
+//=====================================================
+validXAUUSD_M5  = isXAUUSD and timeframe.period == "5"  and totalCandle >= 3.4 and wickOK
+validXAUUSD_M15 = isXAUUSD and timeframe.period == "15" and totalCandle >= 3.8 and wickOK
+validUSDJPY_M15 = isUSDJPY and timeframe.period == "15" and bodyCandle >= 0.10 and wickOK
+
+validCandle = (validXAUUSD_M5 or validXAUUSD_M15 or validUSDJPY_M15) and bodyOK
+
+//=====================================================
+// Session Filter (WIB = UTC+7)
+// M15:
+// Sesi 1: 05:00 - 10:15 WIB
+// Sesi 2: 18:00 - 23:15 WIB
+//
+// M5:
+// Sesi 1: 05:00 - 10:00 WIB
+// Sesi 2: 18:00 - 23:00 WIB
+//=====================================================
+
+hourUTC   = hour(time, "UTC")
+minuteUTC = minute(time, "UTC")
+
+isM5  = timeframe.period == "5"
+isM15 = timeframe.period == "15"
+
+//-----------------------------------------------------
+// Sesi 1
+//-----------------------------------------------------
+session1_M15 = hourUTC >= 22 or hourUTC < 3 or (hourUTC == 3 and minuteUTC <= 15)
+session1_M5  = hourUTC >= 22 or hourUTC < 3 or (hourUTC == 3 and minuteUTC == 0)
+
+//-----------------------------------------------------
+// Sesi 2
+//-----------------------------------------------------
+session2_M15 = (hourUTC >= 11 and hourUTC < 16) or (hourUTC == 16 and minuteUTC <= 15)
+session2_M5  = (hourUTC >= 11 and hourUTC < 16) or (hourUTC == 16 and minuteUTC == 0)
+
+//-----------------------------------------------------
+// Final Session
+//-----------------------------------------------------
+session1 = isM15 ? session1_M15 : isM5 ? session1_M5 : false
+session2 = isM15 ? session2_M15 : isM5 ? session2_M5 : false
+
+inSession = session1 or session2
+
+//=====================================================
+// Direction
+//=====================================================
+buySignal  = validCandle and close > open and barstate.isconfirmed and inSession
+sellSignal = validCandle and close < open and barstate.isconfirmed and inSession
+
+//=====================================================
+// Fibonacci Levels
+//=====================================================
+candleRange = high - low
+
+// BUY
+buyEntry1 = high - candleRange * 0.236
+buyEntry2 = high - candleRange * 0.500
+buyEntry3 = high - candleRange * 0.618
+buySL     = high - candleRange * 0.786
+buyTP     = high + candleRange * 0.270
+
+// SELL
+sellEntry1 = low + candleRange * 0.236
+sellEntry2 = low + candleRange * 0.500
+sellEntry3 = low + candleRange * 0.618
+sellSL     = low + candleRange * 0.786
+sellTP     = low - candleRange * 0.270
+
+//=====================================================
+// XAUUSD M5 - New Trade Logic
+//=====================================================
+
+// Hanya aktif untuk XAUUSD M5
+isXAUUSD_M5 = isXAUUSD and timeframe.period == "5"
+
+//-----------------------------------------------------
+// Candle size dalam POINT
+// Menggunakan TOTAL CANDLE (high - low)
+//-----------------------------------------------------
+candlePoints = totalCandle / syminfo.mintick
+
+// Candle >= 1000 points = LARGE CANDLE
+largeCandle = isXAUUSD_M5 and candlePoints >= 1000
+
+//=====================================================
+// XAUUSD M5 - Pip Configuration
+//=====================================================
+//
+// Asumsi:
+// 1 pip XAUUSD = 0.10
+// 40 pips = 4.00
+//
+xauPipSize       = 0.10
+smallCandlePips  = 40.0
+smallCandleDist  = smallCandlePips * xauPipSize
+
+//=====================================================
+// XAUUSD M5 - Position 1 & Position 2
+//=====================================================
+
+// Entry kedua posisi selalu langsung pada CLOSE candle
+xauEntry = close
+
+//-----------------------------------------------------
+// LARGE CANDLE >= 1000 POINTS
+//
+// Position 1:
+// Entry = Close
+// TP    = Fibonacci -0.27
+// SL    = 1:1 dari Entry -> TP
+//
+// Position 2:
+// Entry = Close
+// SL    = Fibonacci 0.5
+// TP    = 1:1 dari Entry -> SL
+//-----------------------------------------------------
+
+// BUY - Large Candle
+buyPos1TP_Large = buyTP
+buyPos1SL_Large = xauEntry - math.abs(buyPos1TP_Large - xauEntry)
+
+buyPos2SL_Large = buyEntry2
+buyPos2TP_Large = xauEntry + math.abs(xauEntry - buyPos2SL_Large)
+
+// SELL - Large Candle
+sellPos1TP_Large = sellTP
+sellPos1SL_Large = xauEntry + math.abs(xauEntry - sellPos1TP_Large)
+
+sellPos2SL_Large = sellEntry2
+sellPos2TP_Large = xauEntry - math.abs(sellPos2SL_Large - xauEntry)
+
+//-----------------------------------------------------
+// SMALL CANDLE < 1000 POINTS
+//
+// Kedua posisi:
+// Entry = Close
+// SL    = 40 pips
+// TP    = 40 pips
+// RR    = 1:1
+//-----------------------------------------------------
+
+// BUY - Small Candle
+buyPos1SL_Small = xauEntry - smallCandleDist
+buyPos1TP_Small = xauEntry + smallCandleDist
+
+buyPos2SL_Small = xauEntry - smallCandleDist
+buyPos2TP_Small = xauEntry + smallCandleDist
+
+// SELL - Small Candle
+sellPos1SL_Small = xauEntry + smallCandleDist
+sellPos1TP_Small = xauEntry - smallCandleDist
+
+sellPos2SL_Small = xauEntry + smallCandleDist
+sellPos2TP_Small = xauEntry - smallCandleDist
+
+//=====================================================
+// Final XAUUSD M5 Trade Levels
+//=====================================================
+
+// BUY
+xauBuyPos1SL = largeCandle ? buyPos1SL_Large : buyPos1SL_Small
+xauBuyPos1TP = largeCandle ? buyPos1TP_Large : buyPos1TP_Small
+
+xauBuyPos2SL = largeCandle ? buyPos2SL_Large : buyPos2SL_Small
+xauBuyPos2TP = largeCandle ? buyPos2TP_Large : buyPos2TP_Small
+
+// SELL
+xauSellPos1SL = largeCandle ? sellPos1SL_Large : sellPos1SL_Small
+xauSellPos1TP = largeCandle ? sellPos1TP_Large : sellPos1TP_Small
+
+xauSellPos2SL = largeCandle ? sellPos2SL_Large : sellPos2SL_Small
+xauSellPos2TP = largeCandle ? sellPos2TP_Large : sellPos2TP_Small
+
+//=====================================================
+// Trade Mode
+//=====================================================
+
+xauTradeMode = largeCandle ? "LARGE_CANDLE_FIB" : "SMALL_CANDLE_40PIP"
+
+//=====================================================
+// Plot Signal
+//=====================================================
+
+plotshape(buySignal,style=shape.triangleup,color=color.blue,location=location.belowbar,size=size.small)
+
+plotshape(sellSignal,style=shape.triangledown,color=color.red,location=location.abovebar,size=size.small)
+
+//=====================================================
+// XAUUSD M5 - Plot Entry / SL / TP
+//=====================================================
+
+xauBuySignal  = buySignal and isXAUUSD_M5
+xauSellSignal = sellSignal and isXAUUSD_M5
+
+// Position 1
+plot(xauBuySignal ? xauEntry : na,title="XAU BUY Entry",color=color.blue,style=plot.style_circles,linewidth=2)
+
+plot(xauSellSignal ? xauEntry : na,title="XAU SELL Entry",color=color.red,style=plot.style_circles,linewidth=2)
+
+//=====================================================
+// Helper: Format bar_time dalam WIB agar sesuai dengan TIME_ZONE backend.
+//=====================================================
+
+barTimeStr = str.format_time(time, "yyyy-MM-dd HH:mm", "Asia/Jakarta")
+
+//=====================================================
+// JSON Alert - XAUUSD M5 (Format Backend-Compatible)
+//=====================================================
+
+// XAUUSD M5 - BUY Signal
+if xauBuySignal
+    // ─────────────────────────────────────────────────
+    // Map M5 positions ke fibonacci-style fields agar compatible dengan backend
+    // Position 1: entry=Close, sl=Pos1SL, tp=Pos1TP
+    // Position 2: entry=Close, sl=Pos2SL, tp=Pos2TP
+    // 
+    // Backend expects: fib_entry, fib_0236, fib_0500, fib_0618, fib_tp
+    // Kita gunakan:
+    // - fib_0236 = Position 2 SL (backup entry)
+    // - fib_0500 = Position 1 SL
+    // - fib_0618 = average entry level
+    // - fib_tp   = Position 1 TP
+    // ─────────────────────────────────────────────────
+    
+    msg = '{"secret":"mikapedia-tv-secret-2026",'
+    msg := msg + '"symbol":"OANDA:' + syminfo.ticker + '",'
+    msg := msg + '"pair":"' + syminfo.ticker + '",'
+    msg := msg + '"timeframe":"' + timeframe.period + '",'
+    msg := msg + '"direction":"BUY",'
+    msg := msg + '"strategy":"Seacrate",'
+    msg := msg + '"bar_time":"' + barTimeStr + '",'
+    msg := msg + '"trade_mode":"' + xauTradeMode + '",'
+    msg := msg + '"fib_entry":0.5,'
+    msg := msg + '"fib_0236":' + str.tostring(math.round(xauBuyPos2SL, 5)) + ','
+    msg := msg + '"fib_0500":' + str.tostring(math.round(xauBuyPos1SL, 5)) + ','
+    msg := msg + '"fib_0618":' + str.tostring(math.round(xauEntry, 5)) + ','
+    msg := msg + '"fib_tp":' + str.tostring(math.round(xauBuyPos1TP, 5)) + ','
+    msg := msg + '"take_profit":' + str.tostring(math.round(xauBuyPos1TP, 5)) + ','
+    msg := msg + '"stop_loss":' + str.tostring(math.round(xauBuyPos1SL, 5)) + ','
+    msg := msg + '"position_1_entry":' + str.tostring(math.round(xauEntry, 5)) + ','
+    msg := msg + '"position_1_sl":' + str.tostring(math.round(xauBuyPos1SL, 5)) + ','
+    msg := msg + '"position_1_tp":' + str.tostring(math.round(xauBuyPos1TP, 5)) + ','
+    msg := msg + '"position_2_entry":' + str.tostring(math.round(xauEntry, 5)) + ','
+    msg := msg + '"position_2_sl":' + str.tostring(math.round(xauBuyPos2SL, 5)) + ','
+    msg := msg + '"position_2_tp":' + str.tostring(math.round(xauBuyPos2TP, 5)) + ','
+    msg := msg + '"candle_points":' + str.tostring(math.round(candlePoints, 2)) + ','
+    msg := msg + '"max_entry_minutes":0,'
+    msg := msg + '"expiry_minutes":15}'
+    alert(msg, alert.freq_once_per_bar_close)
+
+// XAUUSD M5 - SELL Signal
+if xauSellSignal
+    msg = '{"secret":"mikapedia-tv-secret-2026",'
+    msg := msg + '"symbol":"OANDA:' + syminfo.ticker + '",'
+    msg := msg + '"pair":"' + syminfo.ticker + '",'
+    msg := msg + '"timeframe":"' + timeframe.period + '",'
+    msg := msg + '"direction":"SELL",'
+    msg := msg + '"strategy":"Seacrate",'
+    msg := msg + '"bar_time":"' + barTimeStr + '",'
+    msg := msg + '"trade_mode":"' + xauTradeMode + '",'
+    msg := msg + '"fib_entry":0.5,'
+    msg := msg + '"fib_0236":' + str.tostring(math.round(xauSellPos2SL, 5)) + ','
+    msg := msg + '"fib_0500":' + str.tostring(math.round(xauSellPos1SL, 5)) + ','
+    msg := msg + '"fib_0618":' + str.tostring(math.round(xauEntry, 5)) + ','
+    msg := msg + '"fib_tp":' + str.tostring(math.round(xauSellPos1TP, 5)) + ','
+    msg := msg + '"take_profit":' + str.tostring(math.round(xauSellPos1TP, 5)) + ','
+    msg := msg + '"stop_loss":' + str.tostring(math.round(xauSellPos1SL, 5)) + ','
+    msg := msg + '"position_1_entry":' + str.tostring(math.round(xauEntry, 5)) + ','
+    msg := msg + '"position_1_sl":' + str.tostring(math.round(xauSellPos1SL, 5)) + ','
+    msg := msg + '"position_1_tp":' + str.tostring(math.round(xauSellPos1TP, 5)) + ','
+    msg := msg + '"position_2_entry":' + str.tostring(math.round(xauEntry, 5)) + ','
+    msg := msg + '"position_2_sl":' + str.tostring(math.round(xauSellPos2SL, 5)) + ','
+    msg := msg + '"position_2_tp":' + str.tostring(math.round(xauSellPos2TP, 5)) + ','
+    msg := msg + '"candle_points":' + str.tostring(math.round(candlePoints, 2)) + ','
+    msg := msg + '"max_entry_minutes":0,'
+    msg := msg + '"expiry_minutes":15}'
+    alert(msg, alert.freq_once_per_bar_close)
+
+// BUY M15 (XAUUSD & USDJPY)
+if buySignal and not isXAUUSD_M5
+    msg = '{"secret":"mikapedia-tv-secret-2026",'
+    msg := msg + '"symbol":"OANDA:' + syminfo.ticker + '",'
+    msg := msg + '"pair":"' + syminfo.ticker + '",'
+    msg := msg + '"timeframe":"' + timeframe.period + '",'
+    msg := msg + '"direction":"BUY",'
+    msg := msg + '"strategy":"Seacrate",'
+    msg := msg + '"bar_time":"' + barTimeStr + '",'
+    msg := msg + '"fib_entry":0.5,'
+    msg := msg + '"fib_0236":' + str.tostring(math.round(buyEntry1, 5)) + ','
+    msg := msg + '"fib_0500":' + str.tostring(math.round(buyEntry2, 5)) + ','
+    msg := msg + '"fib_0618":' + str.tostring(math.round(buyEntry3, 5)) + ','
+    msg := msg + '"fib_tp":' + str.tostring(math.round(buyTP, 5)) + ','
+    msg := msg + '"take_profit":' + str.tostring(math.round(buyTP, 5)) + ','
+    msg := msg + '"stop_loss":' + str.tostring(math.round(buySL, 5)) + ','
+    msg := msg + '"max_entry_minutes":5,'
+    msg := msg + '"expiry_minutes":15}'
+    alert(msg, alert.freq_once_per_bar_close)
+
+// SELL M15 (XAUUSD & USDJPY)
+if sellSignal and not isXAUUSD_M5
+    msg = '{"secret":"mikapedia-tv-secret-2026",'
+    msg := msg + '"symbol":"OANDA:' + syminfo.ticker + '",'
+    msg := msg + '"pair":"' + syminfo.ticker + '",'
+    msg := msg + '"timeframe":"' + timeframe.period + '",'
+    msg := msg + '"direction":"SELL",'
+    msg := msg + '"strategy":"Seacrate",'
+    msg := msg + '"bar_time":"' + barTimeStr + '",'
+    msg := msg + '"fib_entry":0.5,'
+    msg := msg + '"fib_0236":' + str.tostring(math.round(sellEntry1, 5)) + ','
+    msg := msg + '"fib_0500":' + str.tostring(math.round(sellEntry2, 5)) + ','
+    msg := msg + '"fib_0618":' + str.tostring(math.round(sellEntry3, 5)) + ','
+    msg := msg + '"fib_tp":' + str.tostring(math.round(sellTP, 5)) + ','
+    msg := msg + '"take_profit":' + str.tostring(math.round(sellTP, 5)) + ','
+    msg := msg + '"stop_loss":' + str.tostring(math.round(sellSL, 5)) + ','
+    msg := msg + '"max_entry_minutes":5,'
+    msg := msg + '"expiry_minutes":15}'
+    alert(msg, alert.freq_once_per_bar_close)
