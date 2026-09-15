@@ -456,7 +456,7 @@ function TraderAttendance() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Selfie capture */}
-        <Card className="lg:col-span-2 p-6">
+        <Card className="min-w-0 p-3 sm:p-6 lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <div className="text-sm font-semibold">Selfie Capture</div>
             <label className="cursor-pointer">
@@ -511,7 +511,7 @@ function TraderAttendance() {
           )}
 
           {selfiePreview ? (
-            <div className="relative aspect-video rounded-xl overflow-hidden bg-muted">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-muted sm:aspect-video">
               <img
                 src={selfiePreview}
                 alt="Selfie preview"
@@ -526,10 +526,10 @@ function TraderAttendance() {
               </button>
             </div>
           ) : cameraActive ? (
-            <div className="relative aspect-video rounded-xl overflow-hidden bg-black">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-black sm:aspect-video">
               <video
                 ref={videoRef}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
                 autoPlay
                 muted
                 playsInline
@@ -552,7 +552,7 @@ function TraderAttendance() {
               <canvas ref={canvasRef} className="hidden" />
             </div>
           ) : (
-            <div className="aspect-video rounded-xl border-2 border-dashed border-border bg-muted/40 flex flex-col items-center justify-center gap-3">
+            <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border bg-muted/40 px-4 text-center sm:aspect-video">
               {cameraError ? (
                 <>
                   <AlertTriangle className="h-10 w-10 text-warning" />
