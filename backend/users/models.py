@@ -63,7 +63,7 @@ class User(AbstractUser, SoftDeleteModel, TimestampedModel):
 
 class TraderProfile(BaseModel):
     TIMEFRAME_CHOICES = (
-        ('1', 'M1'),
+        ('5', 'M5'),
         ('15', 'M15'),
     )
 

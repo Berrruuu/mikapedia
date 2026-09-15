@@ -502,7 +502,7 @@ function TradersPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {[
-                      ["1", "M1"], ["15", "M15"],
+                      ["5", "M5"], ["15", "M15"],
                     ].map(([value, label]) => (
                       <SelectItem key={value} value={value}>{label}</SelectItem>
                     ))}

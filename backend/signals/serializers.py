@@ -114,7 +114,7 @@ class WebhookSignalSerializer(serializers.Serializer):
     symbol = serializers.CharField(max_length=50)
     pair = serializers.CharField(max_length=30, required=False, allow_blank=True)
     direction = serializers.ChoiceField(choices=['BUY', 'SELL'])
-    timeframe = serializers.ChoiceField(choices=['1', '15'], default='15')
+    timeframe = serializers.ChoiceField(choices=['5', '15'], default='15')
     strategy = serializers.CharField(max_length=100, default='Fibonacci Strategy', required=False)
     # Allow slightly longer but still reasonably sized timestamps from clients
     bar_time = serializers.CharField(max_length=64, required=False, allow_blank=True,
