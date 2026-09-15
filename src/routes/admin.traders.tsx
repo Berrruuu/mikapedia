@@ -58,6 +58,7 @@ type TraderRow = {
   scheduleName: string;
   scheduleActive: boolean;
   scheduleNotes: string;
+  tradingTimeframe: string;
 };
 
 function TradersPage() {
@@ -80,6 +81,7 @@ function TradersPage() {
   const [swapTargetId, setSwapTargetId] = useState<string | null>(null);
   const [scheduleNotes, setScheduleNotes] = useState("");
   const [scheduleActive, setScheduleActive] = useState(true);
+  const [tradingTimeframe, setTradingTimeframe] = useState("15");
   const [entryDate, setEntryDate] = useState("");
   const [entryAssignmentType, setEntryAssignmentType] = useState("regular");
   const [entryCoverForId, setEntryCoverForId] = useState<string | null>(null);
@@ -165,6 +167,7 @@ function TradersPage() {
               : schedule
                 ? schedule.notes
                 : "",
+              tradingTimeframe: user.tradingTimeframe ?? "15",
           };
         });
 
@@ -191,6 +194,7 @@ function TradersPage() {
     setSelectedShiftId(schedule?.shift?.id ?? null);
     setScheduleNotes(schedule?.notes ?? "");
     setScheduleActive(schedule?.is_active ?? true);
+    setTradingTimeframe(trader.tradingTimeframe ?? "15");
     setScheduleStartDate(schedule?.startDate ?? today.toISOString().slice(0, 10));
     setScheduleEndDate(schedule?.endDate ?? nextMonth.toISOString().slice(0, 10));
     setScheduleOpen(true);
@@ -236,6 +240,9 @@ function TradersPage() {
         ? await attendanceApi.updateSchedule(scheduleId, payload)
         : await attendanceApi.createSchedule(payload);
 
+      await usersApi.update(selectedTrader.id, { tradingTimeframe });
+      setTraderUsers((prev) => prev.map((user) => user.id === selectedTrader.id ? { ...user, tradingTimeframe } : user));
+
       setSchedules((prev) => ({ ...prev, [String(selectedTrader.id)]: saved }));
       setTraders((prev) =>
         prev.map((row) =>
@@ -245,6 +252,7 @@ function TradersPage() {
                 scheduleName: `${saved.shift.name} ${saved.startDate} → ${saved.endDate}`,
                 scheduleActive: saved.is_active,
                 scheduleNotes: saved.notes,
+                tradingTimeframe,
               }
             : row,
         ),
@@ -398,6 +406,7 @@ function TradersPage() {
                               email: t.email,
                               role: "trader",
                               status: t.status,
+                              tradingTimeframe: t.tradingTimeframe,
                             })
                           }
                         >
@@ -484,6 +493,23 @@ function TradersPage() {
                     onChange={(event) => setScheduleEndDate(event.target.value)}
                   />
                 </div>
+              </div>
+              <div className="grid gap-2">
+                <Label>Signal timeframe</Label>
+                <Select value={tradingTimeframe} onValueChange={setTradingTimeframe}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Choose timeframe" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[
+                      ["1", "M1"], ["5", "M5"], ["15", "M15"], ["30", "M30"],
+                      ["60", "H1"], ["240", "H4"], ["D", "D1"],
+                    ].map(([value, label]) => (
+                      <SelectItem key={value} value={value}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="text-[11px] text-muted-foreground">Trader hanya menerima signal timeframe ini.</div>
               </div>
             </div>
             <div className="grid gap-2">

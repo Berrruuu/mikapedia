@@ -511,6 +511,7 @@ export interface UserSummary {
   entryAccuracy?: number;
   timingAccuracy?: number;
   lateEntries?: number;
+  tradingTimeframe?: string;
   date_joined?: string;
 }
 
@@ -528,6 +529,7 @@ export interface UserCreatePayload {
   accountNumber?: string;
   brokerServer?: string;
   brokerName?: string;
+  tradingTimeframe?: string;
 }
 
 export interface UserUpdatePayload {

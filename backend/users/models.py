@@ -62,8 +62,19 @@ class User(AbstractUser, SoftDeleteModel, TimestampedModel):
 
 
 class TraderProfile(BaseModel):
+    TIMEFRAME_CHOICES = (
+        ('1', 'M1'),
+        ('5', 'M5'),
+        ('15', 'M15'),
+        ('30', 'M30'),
+        ('60', 'H1'),
+        ('240', 'H4'),
+        ('D', 'D1'),
+    )
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='trader_profile')
     display_name = models.CharField(max_length=100, blank=True)
+    allowed_timeframe = models.CharField(max_length=10, choices=TIMEFRAME_CHOICES, default='15')
     risk_level = models.CharField(max_length=20, default='medium')
     max_daily_loss = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     max_position_size = models.DecimalField(max_digits=12, decimal_places=2, default=0)

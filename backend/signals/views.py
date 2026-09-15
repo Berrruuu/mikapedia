@@ -166,7 +166,7 @@ class SignalViewSet(StandardizedModelViewSet):
     ordering_fields = ['session_date', 'created_at', 'fib_entry']
 
     def get_queryset(self):
-        if self.action in ('retrieve', 'update', 'partial_update', 'destroy'):
+        if self.action in ('retrieve', 'update', 'partial_update', 'destroy') and self.request.user.role != 'trader':
             return Signal.objects.all()
         return SignalService().get_queryset_for_request(self.request)
 

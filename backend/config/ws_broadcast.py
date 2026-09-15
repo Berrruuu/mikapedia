@@ -20,8 +20,20 @@ def _send(group: str, msg_type: str, data: dict):
 # ── Public broadcast helpers ─────────────────────────────────────────────────
 
 def broadcast_signal(signal_data: dict):
-    """Push new/updated signal to all users"""
-    _send('broadcast', 'signal_update', signal_data)
+    """Push a signal to admins and only traders assigned to its session/timeframe."""
+    _send('admin_room', 'signal_update', signal_data)
+    try:
+        from signals.models import Signal
+        from signals.repositories import signal_visible_to_trader
+        from users.models import User
+
+        signal = Signal.objects.get(pk=signal_data['id'])
+        traders = User.objects.filter(role='trader', status='active').select_related('trader_profile')
+        for trader in traders:
+            if signal_visible_to_trader(signal, trader):
+                _send(f'trader_{trader.id}', 'signal_update', signal_data)
+    except Exception:
+        pass
 
 
 def broadcast_notification(notification_data: dict):
