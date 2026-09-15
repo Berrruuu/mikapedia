@@ -52,14 +52,14 @@ function SessionReport() {
       />
 
       <div className="grid gap-4 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-        <StatCard label="Total Signals" value={totalSignals} icon={<Radio className="h-5 w-5" />} accent="primary" />
-        <StatCard label="Executed" value={executed} hint={execRate ? `${execRate}%` : undefined} icon={<CheckCircle2 className="h-5 w-5" />} accent="success" />
-        <StatCard label="Missed" value={missed} icon={<XCircle className="h-5 w-5" />} accent="destructive" />
-        <StatCard label="Late" value={late} icon={<Clock className="h-5 w-5" />} accent="warning" />
-        <StatCard label="Wrong Direction" value={wrong} icon={<AlertTriangle className="h-5 w-5" />} accent="destructive" />
-        <StatCard label="Entry Accuracy" value={`${session?.execution ? Math.round((executed / (totalSignals || 1)) * 100) : 0}%`} icon={<Target className="h-5 w-5" />} accent="success" />
-        <StatCard label="Timing Accuracy" value={session?.execution?.timingAccuracy ?? "—"} icon={<Timer className="h-5 w-5" />} accent="info" />
-        <StatCard label="Execution Rate" value={`${execRate}%`} trend={Math.round(execRate) - 50} icon={<TrendingUp className="h-5 w-5" />} accent="primary" />
+        <StatCard label="Total Signals" value={totalSignals} icon={<Radio className="h-4 w-4 sm:h-5 sm:w-5" />} accent="primary" />
+        <StatCard label="Executed" value={executed} hint={execRate ? `${execRate}%` : undefined} icon={<CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />} accent="success" />
+        <StatCard label="Missed" value={missed} icon={<XCircle className="h-4 w-4 sm:h-5 sm:w-5" />} accent="destructive" />
+        <StatCard label="Late" value={late} icon={<Clock className="h-4 w-4 sm:h-5 sm:w-5" />} accent="warning" />
+        <StatCard label="Wrong Direction" value={wrong} icon={<AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5" />} accent="destructive" />
+        <StatCard label="Entry Accuracy" value={`${session?.execution ? Math.round((executed / (totalSignals || 1)) * 100) : 0}%`} icon={<Target className="h-4 w-4 sm:h-5 sm:w-5" />} accent="success" />
+        <StatCard label="Timing Accuracy" value={session?.execution?.timingAccuracy ?? "—"} icon={<Timer className="h-4 w-4 sm:h-5 sm:w-5" />} accent="info" />
+        <StatCard label="Execution Rate" value={`${execRate}%`} trend={Math.round(execRate) - 50} icon={<TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />} accent="primary" />
       </div>
 
       <Card className="mt-6 p-6 gradient-primary text-primary-foreground">

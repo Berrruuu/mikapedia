@@ -173,10 +173,10 @@ function AttendancePage() {
 
       {/* KPI */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
-        <StatCard label="Present"  value={summary?.present ?? 0}       icon={<CheckCircle2 className="h-5 w-5" />} accent="success" />
-        <StatCard label="Late"     value={summary?.late ?? 0}           icon={<Clock className="h-5 w-5" />}       accent="warning" />
-        <StatCard label="Absent"   value={summary?.absent ?? 0}         icon={<XCircle className="h-5 w-5" />}     accent="destructive" />
-        <StatCard label="Total"    value={summary?.totalTraders ?? 0}   hint="Registered traders" icon={<CalendarClock className="h-5 w-5" />} accent="primary" />
+        <StatCard label="Present"  value={summary?.present ?? 0}       icon={<CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />} accent="success" />
+        <StatCard label="Late"     value={summary?.late ?? 0}           icon={<Clock className="h-4 w-4 sm:h-5 sm:w-5" />}       accent="warning" />
+        <StatCard label="Absent"   value={summary?.absent ?? 0}         icon={<XCircle className="h-4 w-4 sm:h-5 sm:w-5" />}     accent="destructive" />
+        <StatCard label="Total"    value={summary?.totalTraders ?? 0}   hint="Registered traders" icon={<CalendarClock className="h-4 w-4 sm:h-5 sm:w-5" />} accent="primary" />
       </div>
 
       <Card className="p-0 overflow-hidden">

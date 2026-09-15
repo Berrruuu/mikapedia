@@ -203,18 +203,18 @@ function AdminDashboard() {
       />
 
       <div className="grid gap-4 grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
-        <StatCard label="Total Traders" value={totalTraders} hint="Active accounts" icon={<Users className="h-5 w-5" />} accent="primary" trend={5} />
-        <StatCard label="Online Now" value={online} hint={`${online}/${totalTraders} active`} icon={<Activity className="h-5 w-5" />} accent="success" />
-        <StatCard label="Attendance" value={`${present}/${totalTraders}`} hint={`${late} late · ${absent} absent`} icon={<CalendarClock className="h-5 w-5" />} accent="info" />
-        <StatCard label="Today's Signals" value={todaySignals} hint="From TradingView webhook" icon={<Radio className="h-5 w-5" />} accent="primary" />
-        <StatCard label="Execution Rate" value={`${execRate}%`} hint="Signal SOP adherence" icon={<TrendingUp className="h-5 w-5" />} accent="success" trend={3} />
-        <StatCard label="Followed" value={followed} hint="Compliant entries" icon={<CheckCircle2 className="h-5 w-5" />} accent="success" />
-        <StatCard label="Missed" value={missed} hint="No entry taken" icon={<XCircle className="h-5 w-5" />} accent="destructive" trend={-2} />
-        <StatCard label="Wrong Direction" value={wrong} hint="SOP violation" icon={<AlertTriangle className="h-5 w-5" />} accent="destructive" />
-        <StatCard label="Late Entries" value={lateSig} hint="Past max entry time" icon={<Clock className="h-5 w-5" />} accent="warning" />
-        <StatCard label="MT5 Bridge" value={mt5Total > 0 ? (mt5Connected > 0 ? "Live" : "Idle") : "Offline"} hint={mt5BridgeHint} icon={<HardDriveDownload className="h-5 w-5" />} accent={mt5Connected > 0 ? "success" : "warning"} />
-        <StatCard label="TradingView" value="Streaming" hint="Webhook active" icon={<LineChartIcon className="h-5 w-5" />} accent="info" />
-        <StatCard label="Compliance Score" value="94.6%" hint="Rolling 7-day" icon={<Sparkles className="h-5 w-5" />} accent="primary" trend={1} />
+        <StatCard label="Total Traders" value={totalTraders} hint="Active accounts" icon={<Users className="h-4 w-4 sm:h-5 sm:w-5" />} accent="primary" trend={5} />
+        <StatCard label="Online Now" value={online} hint={`${online}/${totalTraders} active`} icon={<Activity className="h-4 w-4 sm:h-5 sm:w-5" />} accent="success" />
+        <StatCard label="Attendance" value={`${present}/${totalTraders}`} hint={`${late} late · ${absent} absent`} icon={<CalendarClock className="h-4 w-4 sm:h-5 sm:w-5" />} accent="info" />
+        <StatCard label="Today's Signals" value={todaySignals} hint="From TradingView webhook" icon={<Radio className="h-4 w-4 sm:h-5 sm:w-5" />} accent="primary" />
+        <StatCard label="Execution Rate" value={`${execRate}%`} hint="Signal SOP adherence" icon={<TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />} accent="success" trend={3} />
+        <StatCard label="Followed" value={followed} hint="Compliant entries" icon={<CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />} accent="success" />
+        <StatCard label="Missed" value={missed} hint="No entry taken" icon={<XCircle className="h-4 w-4 sm:h-5 sm:w-5" />} accent="destructive" trend={-2} />
+        <StatCard label="Wrong Direction" value={wrong} hint="SOP violation" icon={<AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5" />} accent="destructive" />
+        <StatCard label="Late Entries" value={lateSig} hint="Past max entry time" icon={<Clock className="h-4 w-4 sm:h-5 sm:w-5" />} accent="warning" />
+        <StatCard label="MT5 Bridge" value={mt5Total > 0 ? (mt5Connected > 0 ? "Live" : "Idle") : "Offline"} hint={mt5BridgeHint} icon={<HardDriveDownload className="h-4 w-4 sm:h-5 sm:w-5" />} accent={mt5Connected > 0 ? "success" : "warning"} />
+        <StatCard label="TradingView" value="Streaming" hint="Webhook active" icon={<LineChartIcon className="h-4 w-4 sm:h-5 sm:w-5" />} accent="info" />
+        <StatCard label="Compliance Score" value="94.6%" hint="Rolling 7-day" icon={<Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />} accent="primary" trend={1} />
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">

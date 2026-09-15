@@ -32,22 +32,22 @@ export function StatCard({
   return (
     <Card
       className={cn(
-        "relative overflow-hidden border-border/60 p-5 transition-all hover:shadow-elevated hover:-translate-y-0.5",
+        "relative overflow-hidden border-border/60 p-4 sm:p-5 transition-all hover:shadow-elevated hover:-translate-y-0.5",
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
+      <div className="flex items-start justify-between gap-2 sm:gap-3">
+        <div className="min-w-0 flex-1">
           <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
             {label}
           </div>
-          <div className="mt-2 text-2xl font-bold tracking-tight text-foreground">{value}</div>
-          {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
+          <div className="mt-2 text-xl sm:text-2xl font-bold tracking-tight text-foreground">{value}</div>
+          {hint && <div className="mt-1 text-xs text-muted-foreground line-clamp-2">{hint}</div>}
         </div>
         {icon && (
           <div
             className={cn(
-              "relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border",
+              "relative z-10 flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl border",
               accentMap[accent],
             )}
           >

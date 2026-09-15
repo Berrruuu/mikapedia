@@ -306,14 +306,14 @@ function TraderDashboard() {
           label="Attendance"
           value={dashboard?.attendance ?? "Absent"}
           hint={dashboard?.attendance === "Present" ? "Checked in" : "No check-in"}
-          icon={<CalendarClock className="h-5 w-5" />}
+          icon={<CalendarClock className="h-4 w-4 sm:h-5 sm:w-5" />}
           accent="success"
         />
         <StatCard
           label="TradingView"
           value="Live"
           hint="Webhook streaming"
-          icon={<LineChartIcon className="h-5 w-5" />}
+          icon={<LineChartIcon className="h-4 w-4 sm:h-5 sm:w-5" />}
           accent="info"
         />
         <StatCard
@@ -324,21 +324,21 @@ function TraderDashboard() {
               ? `$${(liveMt5?.balance ?? account.balance ?? 0).toLocaleString()}`
               : "Connect your MT5"
           }
-          icon={<HardDriveDownload className="h-5 w-5" />}
+          icon={<HardDriveDownload className="h-4 w-4 sm:h-5 sm:w-5" />}
           accent="success"
         />
         <StatCard
           label="Today's Signals"
           value={dashboard?.todaySignals ?? signalCount}
           hint={`${executedCount} executed`}
-          icon={<Radio className="h-5 w-5" />}
+          icon={<Radio className="h-4 w-4 sm:h-5 sm:w-5" />}
           accent="primary"
         />
         <StatCard
           label="Execution Rate"
           value={`${dashboard?.executionRate ?? Math.round((executedCount / (dashboard?.todaySignals || signalCount || 1)) * 100)}%`}
           hint="SOP adherence"
-          icon={<TrendingUp className="h-5 w-5" />}
+          icon={<TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />}
           accent="success"
           trend={4}
         />
@@ -346,7 +346,7 @@ function TraderDashboard() {
           label="Pending"
           value={dashboard?.pendingSignals ?? pendingCount}
           hint="Awaiting entry"
-          icon={<Clock className="h-5 w-5" />}
+          icon={<Clock className="h-4 w-4 sm:h-5 sm:w-5" />}
           accent="warning"
         />
       </div>

@@ -159,12 +159,12 @@ function CompliancePage() {
 
       {/* Stats */}
       <div className="grid gap-4 grid-cols-2 md:grid-cols-6 mb-4">
-        <StatCard label="Overall Rate" value={`${overallRate}%`} hint="Compliance" icon={<ShieldCheck className="h-5 w-5" />} accent="primary" />
-        <StatCard label="Compliant"    value={totalCompliant}  hint="records" icon={<CheckCircle2 className="h-5 w-5" />} accent="success" />
-        <StatCard label="Late Entry"   value={totalLate}       hint="records" icon={<Clock className="h-5 w-5" />} accent="warning" />
-        <StatCard label="Wrong Dir"    value={totalWrong}      hint="records" icon={<XCircle className="h-5 w-5" />} accent="destructive" />
-        <StatCard label="Missed"       value={totalMissed}     hint="records" icon={<AlertTriangle className="h-5 w-5" />} accent="destructive" />
-        <StatCard label="Peringatan"   value={dangerWarnings}  hint="danger" icon={<TrendingDown className="h-5 w-5" />} accent="destructive" />
+        <StatCard label="Overall Rate" value={`${overallRate}%`} hint="Compliance" icon={<ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5" />} accent="primary" />
+        <StatCard label="Compliant"    value={totalCompliant}  hint="records" icon={<CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />} accent="success" />
+        <StatCard label="Late Entry"   value={totalLate}       hint="records" icon={<Clock className="h-4 w-4 sm:h-5 sm:w-5" />} accent="warning" />
+        <StatCard label="Wrong Dir"    value={totalWrong}      hint="records" icon={<XCircle className="h-4 w-4 sm:h-5 sm:w-5" />} accent="destructive" />
+        <StatCard label="Missed"       value={totalMissed}     hint="records" icon={<AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5" />} accent="destructive" />
+        <StatCard label="Peringatan"   value={dangerWarnings}  hint="danger" icon={<TrendingDown className="h-4 w-4 sm:h-5 sm:w-5" />} accent="destructive" />
       </div>
 
       <Tabs value={tab} onValueChange={setTab}>
