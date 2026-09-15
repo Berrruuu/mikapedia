@@ -64,12 +64,7 @@ class User(AbstractUser, SoftDeleteModel, TimestampedModel):
 class TraderProfile(BaseModel):
     TIMEFRAME_CHOICES = (
         ('1', 'M1'),
-        ('5', 'M5'),
         ('15', 'M15'),
-        ('30', 'M30'),
-        ('60', 'H1'),
-        ('240', 'H4'),
-        ('D', 'D1'),
     )
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='trader_profile')
