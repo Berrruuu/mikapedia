@@ -95,6 +95,7 @@ function TraderAttendance() {
   const [selfieBlob, setSelfieBlob] = useState<Blob | null>(null);
   const [selfiePreview, setSelfiePreview] = useState<string | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
+  const [cameraFacing, setCameraFacing] = useState<"user" | "environment">("environment");
   const [cameraError, setCameraError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -228,13 +229,30 @@ function TraderAttendance() {
       }
       stream?.getTracks().forEach((track) => track.stop());
       const s = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "user" } },
+        video: {
+          facingMode: { ideal: cameraFacing },
+        },
         audio: false,
       });
       setStream(s);
       setCameraActive(true);
     } catch (error) {
       const name = error instanceof DOMException ? error.name : "";
+      // Fallback for devices that cannot satisfy the selected facing mode
+      try {
+        if (navigator.mediaDevices?.getUserMedia) {
+          const fallbackStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false,
+          });
+          setStream(fallbackStream);
+          setCameraActive(true);
+          setCameraError(null);
+          return;
+        }
+      } catch {
+        // ignore fallback error and show the original error below
+      }
       setCameraError(
         name === "NotAllowedError"
           ? "Akses kamera ditolak. Izinkan kamera untuk Safari lalu tekan Buka Kamera lagi."
@@ -587,6 +605,14 @@ function TraderAttendance() {
                 playsInline
               />
               <div className="absolute inset-0 flex items-end justify-center pb-4 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setCameraFacing((prev) => (prev === "user" ? "environment" : "user"))}
+                  className="flex items-center gap-1.5 rounded-lg bg-background/80 px-3 py-1.5 text-xs font-medium backdrop-blur border border-border shadow-sm"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  {cameraFacing === "user" ? "Pindah ke belakang" : "Pindah ke depan"}
+                </button>
                 <button
                   onClick={capturePhoto}
                   className="flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-elevated hover:scale-105 transition"
