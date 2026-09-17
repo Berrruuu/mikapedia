@@ -258,24 +258,74 @@ function TraderAttendance() {
     [stream],
   );
 
-  const capturePhoto = () => {
+  const normalizeSelfieBlob = async (blob: Blob): Promise<Blob> => {
+    const lowerType = (blob.type || "image/jpeg").toLowerCase();
+    const supportedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (supportedTypes.includes(lowerType)) {
+      return blob;
+    }
+
+    const element = document.createElement("img");
+    const objectUrl = URL.createObjectURL(blob);
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        element.onload = () => resolve();
+        element.onerror = () => reject(new Error("Image decode failed"));
+        element.src = objectUrl;
+      });
+
+      const canvas = document.createElement("canvas");
+      canvas.width = element.naturalWidth || element.width;
+      canvas.height = element.naturalHeight || element.height;
+
+      const context = canvas.getContext("2d");
+      if (!context) return blob;
+
+      context.drawImage(element, 0, 0, canvas.width, canvas.height);
+
+      const normalizedBlob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob(resolve, "image/jpeg", 0.9);
+      });
+
+      return normalizedBlob ?? blob;
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
+  };
+
+  const capturePhoto = async () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (!video || !canvas) return;
+
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+      toast.error("Kamera belum siap, coba ambil foto lagi.");
+      return;
+    }
+
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    canvas.getContext("2d")?.drawImage(video, 0, 0);
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) return;
-        setSelfieBlob(blob);
-        setSelfiePreview(URL.createObjectURL(blob));
-        stopCamera();
-        toast.success("Photo captured!");
-      },
-      "image/jpeg",
-      0.85,
-    );
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    context.drawImage(video, 0, 0);
+
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob(resolve, "image/jpeg", 0.9);
+    });
+
+    if (!blob) {
+      toast.error("Foto dari kamera gagal dibuat. Coba ambil ulang.");
+      return;
+    }
+
+    const normalizedBlob = await normalizeSelfieBlob(blob);
+    setSelfieBlob(normalizedBlob);
+    setSelfiePreview(URL.createObjectURL(normalizedBlob));
+    stopCamera();
+    toast.success("Photo captured!");
   };
 
   const retakePhoto = () => {
@@ -285,11 +335,13 @@ function TraderAttendance() {
   };
 
   // File upload fallback
-  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setSelfieBlob(file);
-    setSelfiePreview(URL.createObjectURL(file));
+
+    const normalized = await normalizeSelfieBlob(file);
+    setSelfieBlob(normalized);
+    setSelfiePreview(URL.createObjectURL(normalized));
   };
 
   // ── Submit check-in ───────────────────────────────────────────────────────
