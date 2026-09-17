@@ -1,3 +1,7 @@
+from io import BytesIO
+
+from PIL import Image
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.utils import timezone
 
@@ -96,3 +100,27 @@ class AttendanceCoverAssignmentTests(TestCase):
 
         with self.assertRaises(Exception):
             self.service.check_in(self.regular_trader, {'shift_id': self.shift_b.id})
+
+    def test_selfie_upload_is_normalized_to_jpeg(self):
+        buffer = BytesIO()
+        Image.new('RGB', (64, 64), color='blue').save(buffer, format='PNG')
+        buffer.seek(0)
+
+        uploaded = SimpleUploadedFile(
+            'selfie.jpg',
+            buffer.read(),
+            content_type='image/png',
+        )
+
+        record = self.service.check_in(
+            self.regular_trader,
+            {'shift_id': self.shift_a.id},
+            {'selfie': uploaded},
+        )['record']
+
+        self.assertIsNotNone(record.selfie)
+        self.assertTrue(record.selfie.name.endswith('.jpg'))
+
+        with Image.open(record.selfie) as img:
+            self.assertEqual(img.format, 'JPEG')
+            self.assertEqual(img.size, (64, 64))

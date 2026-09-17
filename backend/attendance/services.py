@@ -1,4 +1,7 @@
 from datetime import datetime, timedelta
+from io import BytesIO
+
+from PIL import Image, UnidentifiedImageError
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.utils import timezone
@@ -125,6 +128,34 @@ class AttendanceService:
 
         return None
 
+    def _normalize_selfie(self, uploaded_file):
+        if uploaded_file is None:
+            return uploaded_file
+
+        try:
+            with Image.open(uploaded_file) as img:
+                img_format = (img.format or '').upper()
+                if img_format in {'JPEG', 'JPG'}:
+                    return uploaded_file
+
+                converted = BytesIO()
+                rgb_img = img.convert('RGB')
+                rgb_img.save(converted, format='JPEG', quality=90)
+                converted.seek(0)
+
+                original_name = uploaded_file.name or 'selfie.jpg'
+                base_name = original_name.rsplit('.', 1)[0] if '.' in original_name else original_name
+                normalized_name = f'{base_name}.jpg'
+                return uploaded_file.__class__(
+                    normalized_name,
+                    converted.read(),
+                    content_type='image/jpeg',
+                )
+        except (UnidentifiedImageError, OSError, ValueError):
+            return uploaded_file
+
+        return uploaded_file
+
     def check_in(self, user, data: dict, files: dict | None = None, meta: dict | None = None):
         today = timezone.localdate()
         shift = self._resolve_check_in_shift(user, data, today)
@@ -179,7 +210,8 @@ class AttendanceService:
         }
         record = AttendanceRecord(**payload)
         if files and 'selfie' in files:
-            record.selfie = files['selfie']
+            normalized_selfie = self._normalize_selfie(files['selfie'])
+            record.selfie = normalized_selfie
         try:
             record.save()
         except IntegrityError as exc:
