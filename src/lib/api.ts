@@ -259,10 +259,11 @@ export interface Signal {
 }
 
 export const signalsApi = {
-  list: (date?: string, status?: string) => {
+  list: (date?: string, status?: string, timeframe?: string) => {
     const params = new URLSearchParams();
     if (date) params.set("date", date);
     if (status) params.set("status", status);
+    if (timeframe) params.set("timeframe", timeframe);
     return api.get<{ results?: Signal[]; count?: number } | Signal[]>(`/signals/?${params}`);
   },
   getById: (id: string | number) => api.get<Signal>(`/signals/${id}/`),

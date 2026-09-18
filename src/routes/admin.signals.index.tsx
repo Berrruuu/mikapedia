@@ -138,6 +138,14 @@ const STATUS_ICON: Record<string, React.ComponentType<{ className?: string }>> =
 };
 
 const ALL_STATUSES = ["Pending","Waiting","Executed","Late","Wrong Direction","Missed"];
+const ALL_TIMEFRAMES = ["5", "15", "60", "240", "D"];
+
+function formatTimeframe(timeframe: string) {
+  if (timeframe === "60") return "1H";
+  if (timeframe === "240") return "4H";
+  if (timeframe === "D") return "1D";
+  return `${timeframe}m`;
+}
 
 function formatPrice(value: number | null) {
   return value == null ? "—" : value.toFixed(3);
@@ -147,6 +155,7 @@ function SignalsPage() {
   const [signals, setSignals]   = useState<Signal[]>([]);
   const [loading, setLoading]   = useState(true);
   const [filter, setFilter]     = useState("all");
+  const [timeframe, setTimeframe] = useState("all");
   const [date, setDate]         = useState(() => new Date().toISOString().slice(0, 10));
   const [testModal, setTestModal] = useState(false);
   const [webhookUrl]            = useState(() => {
@@ -168,11 +177,11 @@ function SignalsPage() {
   const [twSl, setTwSl]             = useState("2394.2");
   const [twBusy, setTwBusy]         = useState(false);
 
-  const fetchSignals = async () => {
+  const fetchSignals = useCallback(async () => {
     setLoading(true);
     try {
       const data = await api.get<{ results?: Signal[]; count?: number } | Signal[]>(
-        `/signals/?date=${date}${filter !== "all" ? `&status=${filter}` : ""}`
+        `/signals/?date=${date}${filter !== "all" ? `&status=${encodeURIComponent(filter)}` : ""}${timeframe !== "all" ? `&timeframe=${encodeURIComponent(timeframe)}` : ""}`
       );
       const list = Array.isArray(data) ? data : (data as { results: Signal[] }).results ?? [];
       setSignals(list);
@@ -181,9 +190,9 @@ function SignalsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [date, filter, timeframe]);
 
-  useEffect(() => { void fetchSignals(); }, [date, filter]);
+  useEffect(() => { void fetchSignals(); }, [fetchSignals]);
 
   // WebSocket: live signal updates (no polling needed)
   const handleSignalWS = useCallback((data: unknown) => {
@@ -191,13 +200,15 @@ function SignalsPage() {
     if (!sig?.id) return;
     const sigDate = sig.sessionDate ?? new Date().toISOString().slice(0, 10);
     if (sigDate !== date) return;
+    if (timeframe !== "all" && sig.timeframe !== timeframe) return;
+    if (filter !== "all" && sig.status !== filter) return;
     setSignals((prev) => {
       const exists = prev.find((s) => s.id === sig.id);
       if (exists) return prev.map((s) => s.id === sig.id ? sig : s);
       toast.info(`New signal: ${sig.pair} ${sig.direction}`, { icon: "📡" });
       return [sig, ...prev];
     });
-  }, [date]);
+  }, [date, filter, timeframe]);
 
   useWSEvent("signal_update", handleSignalWS);
 
@@ -256,6 +267,17 @@ function SignalsPage() {
             <Input type="date" value={date}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setDate(e.target.value)}
               className="h-9 w-40 text-sm" />
+            <Select value={timeframe} onValueChange={setTimeframe}>
+              <SelectTrigger className="h-9 w-32 text-sm">
+                <SelectValue placeholder="Timeframe" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All TF</SelectItem>
+                {ALL_TIMEFRAMES.map((value) => (
+                  <SelectItem key={value} value={value}>{formatTimeframe(value)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Button variant="outline" size="sm" onClick={fetchSignals} disabled={loading}>
               <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
             </Button>
@@ -321,7 +343,7 @@ function SignalsPage() {
                         : "bg-destructive/10 text-destructive border-destructive/20"}>
                         {s.direction}
                       </Badge>
-                      <Badge variant="outline" className="text-[10px] bg-muted">{s.timeframe}m</Badge>
+                      <Badge variant="outline" className="text-[10px] bg-muted">{formatTimeframe(s.timeframe)}</Badge>
                     </div>
                     <div className="text-[11px] font-mono text-muted-foreground mt-0.5">
                       #{s.id} · {s.time} · {s.symbol}
