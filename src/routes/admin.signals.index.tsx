@@ -138,7 +138,7 @@ const STATUS_ICON: Record<string, React.ComponentType<{ className?: string }>> =
 };
 
 const ALL_STATUSES = ["Pending","Waiting","Executed","Late","Wrong Direction","Missed"];
-const ALL_TIMEFRAMES = ["5", "15", "60", "240", "D"];
+const ALL_TIMEFRAMES = ["5", "15"];
 
 function formatTimeframe(timeframe: string) {
   if (timeframe === "60") return "1H";
