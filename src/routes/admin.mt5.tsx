@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { api } from "@/lib/api";
+import { formatAppDate } from "@/lib/date";
 import { useWSEvent } from "@/lib/ws-context";
 
 export const Route = createFileRoute("/admin/mt5")({
@@ -55,9 +56,9 @@ function MT5Page() {
   const [loading, setLoading]     = useState(true);
   const [syncing, setSyncing]     = useState(false);
   const [expanded, setExpanded]   = useState<Set<number>>(new Set());
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState<string>(formatAppDate());
   const [exportStartDate, setExportStartDate] = useState<string>('');
-  const [exportEndDate, setExportEndDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [exportEndDate, setExportEndDate] = useState<string>(formatAppDate());
 
   // Helper to get date range for quick filters
   const getDateRange = (filter: 'week' | 'month' | 'lastMonth' | 'all') => {
@@ -67,7 +68,7 @@ function MT5Page() {
     const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
     const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
 
-    const format = (d: Date) => d.toISOString().split('T')[0];
+    const format = (d: Date) => formatAppDate(d);
 
     switch (filter) {
       case 'week':

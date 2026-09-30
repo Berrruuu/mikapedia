@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/api";
+import { formatAppDate } from "@/lib/date";
 import { useWSEvent } from "@/lib/ws-context";
 
 export const Route = createFileRoute("/admin/signals/")({
@@ -49,7 +50,7 @@ interface Signal {
 // ── Timing Bar Component ──────────────────────────────────────────────────────
 function SignalTimingBar({ signal }: { signal: Signal }) {
   const now = new Date();
-  const sessionDate = signal.sessionDate ?? new Date().toISOString().slice(0, 10);
+  const sessionDate = signal.sessionDate ?? formatAppDate();
 
   // Parse issued_at and maxEntryTime into full Date objects
   const issuedAt   = new Date(`${sessionDate}T${signal.time}:00`);
@@ -156,7 +157,7 @@ function SignalsPage() {
   const [loading, setLoading]   = useState(true);
   const [filter, setFilter]     = useState("all");
   const [timeframe, setTimeframe] = useState("all");
-  const [date, setDate]         = useState(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate]         = useState(() => formatAppDate());
   const [testModal, setTestModal] = useState(false);
   const [webhookUrl]            = useState(() => {
     if (typeof window === "undefined") return "https://mikapedia.online/api/signals/webhook/";
@@ -198,7 +199,7 @@ function SignalsPage() {
   const handleSignalWS = useCallback((data: unknown) => {
     const sig = data as Signal;
     if (!sig?.id) return;
-    const sigDate = sig.sessionDate ?? new Date().toISOString().slice(0, 10);
+    const sigDate = sig.sessionDate ?? formatAppDate();
     if (sigDate !== date) return;
     if (timeframe !== "all" && sig.timeframe !== timeframe) return;
     if (filter !== "all" && sig.status !== filter) return;

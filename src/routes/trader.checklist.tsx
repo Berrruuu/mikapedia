@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { formatAppDate } from "@/lib/date";
 
 export const Route = createFileRoute("/trader/checklist")({
   component: ChecklistPage,
@@ -166,7 +167,7 @@ function ChecklistPage() {
   const { user } = useAuth();
   const [records, setRecords]   = useState<ComplianceRecord[]>([]);
   const [loading, setLoading]   = useState(true);
-  const [date, setDate]         = useState(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate]         = useState(() => formatAppDate());
 
   const loadData = async () => {
     setLoading(true);

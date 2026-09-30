@@ -10,6 +10,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { auditApi } from "@/lib/api";
+import { formatAppDate } from "@/lib/date";
 
 export const Route = createFileRoute("/admin/audit")({
   component: AuditPage,
@@ -99,7 +100,7 @@ function AuditPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `audit_logs_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute("download", `audit_logs_${formatAppDate()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

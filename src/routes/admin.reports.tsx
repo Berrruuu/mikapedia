@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { apiFetch, API_BASE } from "@/lib/auth";
 import { reportsApi, type AttendanceReport, type ComplianceReport, type ExecutionReport, type LeaderboardEntry, type SessionReport } from "@/lib/api";
+import { formatAppDate } from "@/lib/date";
 
 export const Route = createFileRoute("/admin/reports")({
   component: ReportsPage,
@@ -39,7 +40,7 @@ const REPORT_TYPES = [
 function ReportsPage() {
   const [activeTab, setActiveTab] = useState<ReportTab>("execution");
   const [period, setPeriod] = useState<ReportPeriod>("daily");
-  const [reportDate, setReportDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [reportDate, setReportDate] = useState(() => formatAppDate());
   const [execution, setExecution] = useState<ExecutionReport | null>(null);
   const [attendance, setAttendance] = useState<AttendanceReport | null>(null);
   const [compliance, setCompliance] = useState<ComplianceReport | null>(null);

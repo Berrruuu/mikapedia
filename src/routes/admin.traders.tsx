@@ -36,6 +36,7 @@ import {
   type AttendanceScheduleEntry,
   type AttendanceRecord,
 } from "@/lib/api";
+import { formatAppDate } from "@/lib/date";
 
 export const Route = createFileRoute("/admin/traders")({
   component: TradersPage,
@@ -95,7 +96,7 @@ function TradersPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const today = new Date().toISOString().slice(0, 10);
+        const today = formatAppDate();
 
         const [users, accounts, shiftList, scheduleList, scheduleEntryList, attendanceRecords] =
           await Promise.all([
@@ -195,13 +196,13 @@ function TradersPage() {
     setScheduleNotes(schedule?.notes ?? "");
     setScheduleActive(schedule?.is_active ?? true);
     setTradingTimeframe(trader.tradingTimeframe ?? "15");
-    setScheduleStartDate(schedule?.startDate ?? today.toISOString().slice(0, 10));
-    setScheduleEndDate(schedule?.endDate ?? nextMonth.toISOString().slice(0, 10));
+    setScheduleStartDate(schedule?.startDate ?? formatAppDate(today));
+    setScheduleEndDate(schedule?.endDate ?? formatAppDate(nextMonth));
     setScheduleOpen(true);
   };
 
   const openEntryDialog = (trader: UserSummary) => {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = formatAppDate();
     const existingEntry = dailyAssignments[trader.id];
     setSelectedTrader(trader);
     setEntryId(existingEntry?.id ?? null);

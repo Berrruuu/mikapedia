@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { dashboardApi, signalsApi, notificationsApi, type AdminDashboardData, type Notification, type Signal } from "@/lib/api";
 import { apiFetch } from "@/lib/auth";
+import { formatAppDate } from "../lib/date";
 import { useWSEvent } from "@/lib/ws-context";
 
 export const Route = createFileRoute("/admin/")({
@@ -45,7 +46,11 @@ const tradingSessions = [
 ];
 
 function AdminDashboard() {
-  const now = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  const now = new Date().toLocaleTimeString("en-GB", {
+    timeZone: "Asia/Jakarta",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
   const [dashboard, setDashboard] = useState<AdminDashboardData | null>(null);
   const [signalTimeline, setSignalTimeline] = useState<Signal[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -161,7 +166,7 @@ function AdminDashboard() {
 
   const handleExportDashboard = async () => {
     try {
-      const date = new Date().toISOString().slice(0, 10);
+      const date = formatAppDate();
       const response = await apiFetch(`/reports/export/session/?format=xlsx&date=${date}`);
       if (!response.ok) {
         throw new Error("Export failed");
@@ -192,7 +197,7 @@ function AdminDashboard() {
         actions={
           <>
             <Badge variant="outline" className="gap-1.5">
-              <Clock className="h-3 w-3" /> {now} UTC
+              <Clock className="h-3 w-3" /> {now} WIB
             </Badge>
             <Button variant="outline" size="sm"><RefreshCw className="mr-1.5 h-3.5 w-3.5" />Refresh</Button>
             <Button size="sm" className="gradient-primary text-primary-foreground" onClick={() => void handleExportDashboard()}>

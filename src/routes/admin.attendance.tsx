@@ -20,6 +20,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/api";
 import { API_BASE } from "@/lib/auth";
+import { formatAppDate } from "@/lib/date";
 import { useWSEvent } from "@/lib/ws-context";
 
 export const Route = createFileRoute("/admin/attendance")({
@@ -74,7 +75,7 @@ const STATUS_TONE: Record<string, string> = {
 function AttendancePage() {
   const [summary, setSummary]   = useState<Summary | null>(null);
   const [loading, setLoading]   = useState(true);
-  const [date, setDate]         = useState(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate]         = useState(() => formatAppDate());
   const [search, setSearch]     = useState("");
 
   // Validate modal

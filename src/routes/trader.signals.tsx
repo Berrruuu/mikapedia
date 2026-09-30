@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/api";
+import { formatAppDate } from "@/lib/date";
 import { useWSEvent, useWSStatus } from "@/lib/ws-context";
 
 export const Route = createFileRoute("/trader/signals")({
@@ -55,7 +56,7 @@ function formatPrice(value: number | null) {
 function TraderSignalsPage() {
   const [signals, setSignals]   = useState<Signal[]>([]);
   const [loading, setLoading]   = useState(true);
-  const [date, setDate]         = useState(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate]         = useState(() => formatAppDate());
   const wsStatus                = useWSStatus();
   const prevCountRef            = useRef(0);
 
@@ -85,7 +86,7 @@ function TraderSignalsPage() {
   const handleSignalWS = useCallback((data: unknown) => {
     const sig = data as Signal;
     if (!sig?.id) return;
-    const sigDate = sig.sessionDate ?? new Date().toISOString().slice(0, 10);
+    const sigDate = sig.sessionDate ?? formatAppDate();
     if (sigDate !== date) return;
     setSignals((prev) => {
       const exists = prev.find((s) => s.id === sig.id);
