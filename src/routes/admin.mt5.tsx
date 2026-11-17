@@ -157,19 +157,13 @@ function MT5Page() {
   const handleDownloadHistory = async (accountId: number, userName: string) => {
     try {
       // Build URL with date range params if set
-      let url = `/api/mt5/${accountId}/export-history/`;
+      let url = `/mt5/${accountId}/export-history/`;
       const params = new URLSearchParams();
       if (exportStartDate) params.append('start_date', exportStartDate);
       if (exportEndDate) params.append('end_date', exportEndDate);
       if (params.toString()) url += `?${params.toString()}`;
 
-      // Use fetch directly for CSV file download (not api.get which parses JSON)
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      const blob = await response.blob();
+      const blob = await api.downloadFile(url);
       const url_obj = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url_obj;
@@ -193,6 +187,29 @@ function MT5Page() {
       toast.success('History downloaded');
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Download failed');
+    }
+  };
+
+  const handleDownloadJournal = async (accountId: number, userName: string) => {
+    try {
+      let query = '';
+      const params = new URLSearchParams();
+      if (exportStartDate) params.append('start_date', exportStartDate);
+      if (exportEndDate) params.append('end_date', exportEndDate);
+      if (params.toString()) query = `?${params.toString()}`;
+
+      const blob = await api.downloadFile(`/mt5/${accountId}/export-journal/${query}`);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `trading-journal-${userName}${query ? `-${exportStartDate || 'start'}_to_${exportEndDate || 'end'}` : ''}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
+      link.remove();
+      toast.success('Journal downloaded');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Journal download failed');
     }
   };
 
@@ -333,6 +350,15 @@ function MT5Page() {
                       onClick={() => handleDownloadHistory(a.id, a.user.name)}
                     >
                       <Download className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 w-7 p-0"
+                      title="Download Excel journal"
+                      onClick={() => handleDownloadJournal(a.id, a.user.name)}
+                    >
+                      <HardDriveDownload className="h-3.5 w-3.5" />
                     </Button>
                     <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => handleSyncOne(a.id)}>
                       <RefreshCw className="h-3.5 w-3.5" />

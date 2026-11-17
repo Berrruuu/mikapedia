@@ -98,6 +98,25 @@ async function request<T>(path: string, init?: RequestInit, retrying = false): P
   return json as T;
 }
 
+async function downloadFile(path: string, retrying = false): Promise<Blob> {
+  const token = getAccessToken();
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_BASE}${path}`, { headers });
+  if (res.status === 401 && !retrying) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) return downloadFile(path, true);
+  }
+  if (!res.ok) {
+    const json = await res.json().catch(() => null) as { detail?: string } | null;
+    throw new Error(json?.detail ?? `HTTP ${res.status}`);
+  }
+  return res.blob();
+}
+
 export const api = {
   get: <T>(path: string) => request<T>(path, { method: "GET" }),
   post: <T>(path: string, body: unknown) =>
@@ -105,6 +124,7 @@ export const api = {
   patch: <T>(path: string, body: unknown) =>
     request<T>(path, { method: "PATCH", body: JSON.stringify(body) }),
   del: <T>(path: string) => request<T>(path, { method: "DELETE" }),
+  downloadFile,
 };
 type PaginatedResponse<T> =
   | T[]
@@ -456,11 +476,13 @@ export interface MT5AccountOrder {
 export interface MT5AccountDeal {
   ticket: number;
   order: number;
+  position_id: number;
   symbol: string;
   type: string;
   entry: string;
   volume: number;
   price: number;
+  pip_size: number | null;
   profit: number;
   swap: number;
   commission: number;
@@ -520,6 +542,8 @@ export const mt5Api = {
     return api.post<MT5AccountDetails>(`/mt5/${id}/sync/`, {});
   },
   deals: (id: number) => api.get<MT5AccountDeal[]>(`/mt5/${id}/deals/`),
+  downloadJournal: (id: number, query = "") =>
+    api.downloadFile(`/mt5/${id}/export-journal/${query}`),
   setCredentials: async (payload: { login: number; password: string; server: string; broker?: string }) => {
     console.log('💾 MT5: Saving credentials...', { login: payload.login, server: payload.server, broker: payload.broker });
     const result = await api.post<MT5AccountDetails>("/v1/mt5/credentials/", payload);

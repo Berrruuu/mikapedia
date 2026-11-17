@@ -31,6 +31,7 @@ function TraderMT5Page() {
   const [loading, setLoading]   = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [syncing, setSyncing]   = useState(false);
+  const [downloadingJournal, setDownloadingJournal] = useState(false);
 
   const autoSyncRef = useRef(false);
   const syncingRef = useRef(false);
@@ -133,6 +134,27 @@ function TraderMT5Page() {
     }
   }, [account]);
 
+  const handleDownloadJournal = async () => {
+    if (!account) return;
+    setDownloadingJournal(true);
+    try {
+      const blob = await mt5Api.downloadJournal(account.id);
+      const objectUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = `mt5-journal-${account.accountNumber}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(objectUrl);
+      link.remove();
+      toast.success("Jurnal MT5 berhasil diunduh");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Gagal mengunduh jurnal");
+    } finally {
+      setDownloadingJournal(false);
+    }
+  };
+
   useEffect(() => {
     if (!account || account.status !== "connected") return;
 
@@ -216,6 +238,10 @@ function TraderMT5Page() {
               <Button variant="outline" size="sm" onClick={handleSync} disabled={syncing}>
                 <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${syncing ? "animate-spin" : ""}`} />
                 Sync
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleDownloadJournal} disabled={downloadingJournal}>
+                <HardDriveDownload className={`mr-1.5 h-3.5 w-3.5 ${downloadingJournal ? "animate-pulse" : ""}`} />
+                Jurnal Excel
               </Button>
               <Button variant="outline" size="sm" onClick={() => setShowCreds((v) => !v)}>
                 <Settings className="mr-1.5 h-3.5 w-3.5" />Update Credentials

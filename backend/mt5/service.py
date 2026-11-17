@@ -170,6 +170,7 @@ def _deal_to_dict(d) -> dict:
     return {
         'ticket':     d.ticket,
         'order':      d.order,
+        'position_id': getattr(d, 'position_id', 0),
         'symbol':     d.symbol,
         'type':       type_map.get(d.type, str(d.type)),
         'entry':      entry_map.get(d.entry, 'IN'),

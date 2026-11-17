@@ -6,8 +6,10 @@ from rest_framework.permissions import AllowAny
 from django.utils import timezone
 from django.http import HttpResponse
 from django.db import models
+from datetime import date
 import csv
-from .models import MT5Account, MT5Position, MT5Deal, Trade
+from .models import MT5Account, MT5Position, Trade
+from .journal import build_journal_workbook
 from .serializers import (
     MT5AccountSerializer, MT5CredentialsSerializer,
     MT5PositionSerializer, MT5OrderSerializer, MT5DealSerializer,
@@ -190,6 +192,47 @@ class MT5AccountViewSet(StandardizedModelViewSet):
         
         return response
 
+    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated], url_path='export-journal')
+    def export_journal(self, request, pk=None):
+        account = self.get_object()
+        if request.user.role not in ['owner', 'admin'] and account.user != request.user:
+            return error_response('Forbidden', status=status.HTTP_403_FORBIDDEN, code='permission_denied')
+
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+        try:
+            start = date.fromisoformat(start_date) if start_date else None
+            end = date.fromisoformat(end_date) if end_date else None
+        except ValueError:
+            return error_response(
+                'Dates must use YYYY-MM-DD format.',
+                status=status.HTTP_400_BAD_REQUEST,
+                code='validation_error',
+            )
+        if start and end and start > end:
+            return error_response(
+                'start_date must be on or before end_date.',
+                status=status.HTTP_400_BAD_REQUEST,
+                code='validation_error',
+            )
+
+        workbook_data = build_journal_workbook(account, start_date=start, end_date=end)
+        date_suffix = ''
+        if start and end:
+            date_suffix = f'_{start}_to_{end}'
+        elif start:
+            date_suffix = f'_from_{start}'
+        elif end:
+            date_suffix = f'_until_{end}'
+        response = HttpResponse(
+            workbook_data,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        response['Content-Disposition'] = (
+            f'attachment; filename="mt5_journal_{account.account_number}{date_suffix}.xlsx"'
+        )
+        return response
+
 
 # ─── EA Reporter Endpoint ─────────────────────────────────────────────────────
 # MT5 EA (Expert Advisor) calls this to push live position data to backend.
@@ -261,13 +304,14 @@ def ea_report(request):
     account.balance = request.data.get('balance', account.balance)
     account.equity = request.data.get('equity', account.equity)
     account.floating_pnl = request.data.get('floating_pnl', account.floating_pnl)
+    account.currency = request.data.get('currency', account.currency)
     account.status = 'connected'
     account.last_sync = tz.now()
     if positions_provided:
         account.open_positions = len(request.data['positions'])
     if pending_orders_provided:
         account.pending_orders = len(request.data['pending_orders'])
-    account_update_fields = ['balance', 'equity', 'floating_pnl', 'status', 'last_sync']
+    account_update_fields = ['balance', 'equity', 'floating_pnl', 'currency', 'status', 'last_sync']
     if positions_provided:
         account_update_fields.append('open_positions')
     if pending_orders_provided:
@@ -352,23 +396,28 @@ def ea_report(request):
             except Exception:
                 pass
         from mt5.models import MT5Deal
+        deal_defaults = {
+            'order': deal.get('order', 0),
+            'symbol': deal.get('symbol', ''),
+            'type': deal.get('type', 'BUY'),
+            'entry': deal.get('entry', 'IN'),
+            'volume': deal.get('volume', 0),
+            'price': deal.get('price', 0),
+            'profit': deal.get('profit', 0),
+            'swap': deal.get('swap', 0),
+            'commission': deal.get('commission', 0),
+            'comment': deal.get('comment', ''),
+            'magic': deal.get('magic', 0),
+            'time': time_deal,
+        }
+        if 'position_id' in deal:
+            deal_defaults['position_id'] = deal['position_id']
+        if 'pip_size' in deal:
+            deal_defaults['pip_size'] = deal['pip_size'] or None
         MT5Deal.objects.update_or_create(
             account=account,
             ticket=ticket,
-            defaults={
-                'order': deal.get('order', 0),
-                'symbol': deal.get('symbol', ''),
-                'type': deal.get('type', 'BUY'),
-                'entry': deal.get('entry', 'IN'),
-                'volume': deal.get('volume', 0),
-                'price': deal.get('price', 0),
-                'profit': deal.get('profit', 0),
-                'swap': deal.get('swap', 0),
-                'commission': deal.get('commission', 0),
-                'comment': deal.get('comment', ''),
-                'magic': deal.get('magic', 0),
-                'time': time_deal,
-            }
+            defaults=deal_defaults,
         )
 
     # Sync pending orders (limit/stop orders belum tersentuh)

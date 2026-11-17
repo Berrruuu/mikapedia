@@ -1,6 +1,6 @@
 //+------------------------------------------------------------------+
 //|  MikapediaReporter.mq5                                           |
-//|  Kirim data posisi + limit orders ke backend MIKAPEDIA           |
+//|  Kirim posisi, pending order, dan deal history ke MIKAPEDIA       |
 //|                                                                  |
 //|  CARA PASANG:                                                    |
 //|  1. Copy ke folder MQL5/Experts                                  |
@@ -11,38 +11,99 @@
 //|     Tambahkan URL backend ke whitelist                           |
 //+------------------------------------------------------------------+
 #property copyright "MIKAPEDIA"
-#property version   "2.00"
+#property version   "2.10"
 #property strict
 
 input string BACKEND_URL  = "https://mikapedia.online/api/v1/mt5/ea-report/";
 input string EA_TOKEN     = "mikapedia_prod_2026_7f9e2d1a6c3b8e4f";
 input int    REPORT_EVERY = 1;
+input datetime HISTORY_START_DATE = D'2000.01.01 00:00';
+input int    HISTORY_BATCH_SIZE = 100;
+input bool   RESET_HISTORY_CURSOR = false;
 
-datetime g_lastReport = 0;
+datetime g_historyCursor = 0;
+long g_lastHistoryTicket = 0;
+datetime g_pendingHistoryTime = 0;
+long g_pendingHistoryTicket = 0;
+bool g_historyProgress = false;
+bool g_historyCompleteLogged = false;
+string g_historyTimeKey = "";
+string g_historyTicketKey = "";
 
 int OnInit()
 {
-   Print("[Mikapedia] Reporter v2.0 aktif. Backend: ", BACKEND_URL);
+   string login = IntegerToString(AccountInfoInteger(ACCOUNT_LOGIN));
+   g_historyTimeKey = "MikaHistTime_" + login;
+   g_historyTicketKey = "MikaHistTicket_" + login;
+   if (RESET_HISTORY_CURSOR || !GlobalVariableCheck(g_historyTimeKey))
+   {
+      g_historyCursor = HISTORY_START_DATE;
+      g_lastHistoryTicket = 0;
+      GlobalVariableSet(g_historyTimeKey, (double)g_historyCursor);
+      GlobalVariableSet(g_historyTicketKey, 0);
+   }
+   else
+   {
+      g_historyCursor = (datetime)GlobalVariableGet(g_historyTimeKey);
+      g_lastHistoryTicket = (long)GlobalVariableGet(g_historyTicketKey);
+   }
+
+   int timerSeconds = REPORT_EVERY < 1 ? 1 : REPORT_EVERY;
+   EventSetTimer(timerSeconds);
+   Print("[Mikapedia] Reporter v2.10 aktif. Backend: ", BACKEND_URL);
    SendReport();
    return INIT_SUCCEEDED;
 }
 
-void OnTick()
+void OnDeinit(const int reason)
 {
-   if (TimeCurrent() - g_lastReport >= REPORT_EVERY)
-   {
-      SendReport();
-      g_lastReport = TimeCurrent();
-   }
+   EventKillTimer();
+}
+
+void OnTimer()
+{
+   SendReport();
+}
+
+datetime BrokerTimeToWib(datetime brokerTime)
+{
+   int brokerUtcOffset = (int)(TimeTradeServer() - TimeGMT());
+   return brokerTime - brokerUtcOffset + 7 * 3600;
+}
+
+string FormatWib(datetime brokerTime)
+{
+   MqlDateTime parts;
+   TimeToStruct(BrokerTimeToWib(brokerTime), parts);
+   return StringFormat(
+      "%04d-%02d-%02dT%02d:%02d:%02d+07:00",
+      parts.year, parts.mon, parts.day,
+      parts.hour, parts.min, parts.sec
+   );
+}
+
+double PipSizeForSymbol(string symbol)
+{
+   long calcMode = SymbolInfoInteger(symbol, SYMBOL_TRADE_CALC_MODE);
+   if (calcMode != SYMBOL_CALC_MODE_FOREX && calcMode != SYMBOL_CALC_MODE_FOREX_NO_LEVERAGE)
+      return 0.0;
+
+   double point = SymbolInfoDouble(symbol, SYMBOL_POINT);
+   int digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
+   if (point <= 0.0)
+      return 0.0;
+   return point * ((digits == 3 || digits == 5) ? 10.0 : 1.0);
 }
 
 void SendReport()
 {
+   g_historyProgress = false;
    string json = "{";
    json += "\"token\":\"" + EA_TOKEN + "\",";
    json += "\"login\":" + IntegerToString(AccountInfoInteger(ACCOUNT_LOGIN)) + ",";
    json += "\"server\":\"" + AccountInfoString(ACCOUNT_SERVER) + "\",";
    json += "\"broker\":\"" + AccountInfoString(ACCOUNT_COMPANY) + "\",";
+   json += "\"currency\":\"" + AccountInfoString(ACCOUNT_CURRENCY) + "\",";
    json += "\"balance\":" + DoubleToString(AccountInfoDouble(ACCOUNT_BALANCE), 2) + ",";
    json += "\"equity\":" + DoubleToString(AccountInfoDouble(ACCOUNT_EQUITY), 2) + ",";
    json += "\"floating_pnl\":" + DoubleToString(AccountInfoDouble(ACCOUNT_PROFIT), 2) + ",";
@@ -72,7 +133,7 @@ void SendReport()
       json += "\"swap\":"        + DoubleToString(PositionGetDouble(POSITION_SWAP),      2)        + ",";
       json += "\"comment\":\""   + PositionGetString(POSITION_COMMENT)                            + "\",";
       json += "\"magic\":"       + IntegerToString(PositionGetInteger(POSITION_MAGIC))             + ",";
-      json += "\"time_open\":\""  + TimeToString(tOpen, TIME_DATE|TIME_SECONDS)                   + "\"";
+      json += "\"time_open\":\""  + FormatWib(tOpen)                                                + "\"";
       json += "}";
    }
    json += "],";
@@ -107,47 +168,81 @@ void SendReport()
       json += "\"tp\":"        + DoubleToString(OrderGetDouble(ORDER_TP),            5)        + ",";
       json += "\"comment\":\""+ OrderGetString(ORDER_COMMENT)                                  + "\",";
       json += "\"magic\":"     + IntegerToString(OrderGetInteger(ORDER_MAGIC))                 + ",";
-      json += "\"time_setup\":\""+ TimeToString(oTime, TIME_DATE|TIME_SECONDS)                + "\"";
+      json += "\"time_setup\":\""+ FormatWib(oTime)                                             + "\"";
       json += "}";
       ordCount++;
    }
    json += "],";
 
-   // ── Recent Deals (last 24h, entry only) ──────────────────────────
+   // ── Historical deals are sent in bounded, retryable batches ──────
    json += "\"deals\":[";
-   HistorySelect(TimeCurrent() - 86400, TimeCurrent());
+   HistorySelect(g_historyCursor, TimeCurrent());
    int dealTotal = HistoryDealsTotal();
    int dealCount = 0;
-   for (int i = MathMax(0, dealTotal - 20); i < dealTotal; i++)
+   int startIndex = 0;
+   if (g_lastHistoryTicket > 0)
+   {
+      for (int i = 0; i < dealTotal; i++)
+      {
+         if ((long)HistoryDealGetTicket(i) == g_lastHistoryTicket)
+         {
+            startIndex = i + 1;
+            break;
+         }
+      }
+   }
+
+   int examined = 0;
+   for (int i = startIndex; i < dealTotal && examined < MathMax(1, HISTORY_BATCH_SIZE); i++)
    {
       ulong dTicket = HistoryDealGetTicket(i);
       if (dTicket <= 0) continue;
-      if (HistoryDealGetInteger(dTicket, DEAL_ENTRY) != DEAL_ENTRY_IN) continue;
+
+      datetime dTime = (datetime)HistoryDealGetInteger(dTicket, DEAL_TIME);
+      g_pendingHistoryTime = dTime;
+      g_pendingHistoryTicket = (long)dTicket;
+      g_historyProgress = true;
+      examined++;
+
+      long rawType = HistoryDealGetInteger(dTicket, DEAL_TYPE);
+      long rawEntry = HistoryDealGetInteger(dTicket, DEAL_ENTRY);
+      if ((rawType != DEAL_TYPE_BUY && rawType != DEAL_TYPE_SELL) ||
+          (rawEntry != DEAL_ENTRY_IN && rawEntry != DEAL_ENTRY_OUT &&
+           rawEntry != DEAL_ENTRY_INOUT && rawEntry != DEAL_ENTRY_OUT_BY))
+         continue;
 
       if (dealCount > 0) json += ",";
-      string dType  = HistoryDealGetInteger(dTicket, DEAL_TYPE) == DEAL_TYPE_BUY ? "BUY" : "SELL";
-      datetime dTime = (datetime)HistoryDealGetInteger(dTicket, DEAL_TIME);
+      string dType = rawType == DEAL_TYPE_BUY ? "BUY" : "SELL";
+      string dEntry = "IN";
+      if      (rawEntry == DEAL_ENTRY_OUT)    dEntry = "OUT";
+      else if (rawEntry == DEAL_ENTRY_INOUT)  dEntry = "INOUT";
+      else if (rawEntry == DEAL_ENTRY_OUT_BY) dEntry = "OUT_BY";
+      string dSymbol = HistoryDealGetString(dTicket, DEAL_SYMBOL);
 
       json += "{";
       json += "\"ticket\":"      + IntegerToString(dTicket)                                           + ",";
       json += "\"order\":"       + IntegerToString(HistoryDealGetInteger(dTicket, DEAL_ORDER))         + ",";
-      json += "\"symbol\":\""   + HistoryDealGetString(dTicket, DEAL_SYMBOL)                          + "\",";
+      json += "\"position_id\":" + IntegerToString(HistoryDealGetInteger(dTicket, DEAL_POSITION_ID))   + ",";
+      json += "\"symbol\":\""   + dSymbol                                                             + "\",";
       json += "\"type\":\""      + dType                                                               + "\",";
-      json += "\"entry\":\"IN\","                                                                      ;
+      json += "\"entry\":\""     + dEntry                                                              + "\",";
       json += "\"volume\":"      + DoubleToString(HistoryDealGetDouble(dTicket, DEAL_VOLUME),  2)      + ",";
       json += "\"price\":"       + DoubleToString(HistoryDealGetDouble(dTicket, DEAL_PRICE),   5)      + ",";
+      json += "\"pip_size\":"    + DoubleToString(PipSizeForSymbol(dSymbol), 8)                        + ",";
       json += "\"profit\":"      + DoubleToString(HistoryDealGetDouble(dTicket, DEAL_PROFIT),  2)      + ",";
       json += "\"swap\":"        + DoubleToString(HistoryDealGetDouble(dTicket, DEAL_SWAP),    2)      + ",";
       json += "\"commission\":"  + DoubleToString(HistoryDealGetDouble(dTicket, DEAL_COMMISSION), 2)   + ",";
       json += "\"comment\":\""  + HistoryDealGetString(dTicket, DEAL_COMMENT)                          + "\",";
-      json += "\"time\":\""      + TimeToString(dTime, TIME_DATE|TIME_SECONDS)                         + "\"";
+      json += "\"time\":\""      + FormatWib(dTime)                                                    + "\"";
       json += "}";
       dealCount++;
    }
    json += "]";
    json += "}";
 
-   string url     = BACKEND_URL + "/api/v1/mt5/ea-report/";
+   string url     = BACKEND_URL;
+   if (StringSubstr(url, StringLen(url) - 1, 1) != "/")
+      url += "/";
    string headers = "Content-Type: application/json\r\nngrok-skip-browser-warning: 1\r\n";
    char   postData[];
    char   result[];
@@ -159,4 +254,18 @@ void SendReport()
       Print("[Mikapedia] WebRequest error — tambahkan URL ke whitelist (Tools→Options→Expert Advisors)");
    else if (res != 200)
       Print("[Mikapedia] HTTP ", res, " — ", CharArrayToString(result));
+   else if (g_historyProgress)
+   {
+      g_historyCursor = g_pendingHistoryTime;
+      g_lastHistoryTicket = g_pendingHistoryTicket;
+      GlobalVariableSet(g_historyTimeKey, (double)g_historyCursor);
+      GlobalVariableSet(g_historyTicketKey, (double)g_lastHistoryTicket);
+      g_historyCompleteLogged = false;
+      Print("[Mikapedia] Deal history batch synced: ", dealCount, " deals.");
+   }
+   else if (!g_historyCompleteLogged)
+   {
+      Print("[Mikapedia] Deal history is up to date.");
+      g_historyCompleteLogged = true;
+   }
 }

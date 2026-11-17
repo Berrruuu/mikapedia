@@ -102,11 +102,16 @@ cat backend/.env | grep EA_INTEGRATION_TOKEN
    BACKEND_URL: https://mikapedia.online/api/v1/mt5/ea-report/
    EA_TOKEN: [PASTE TOKEN DARI STEP 1]  ⚠️ WAJIB!
    REPORT_EVERY: 1
+   HISTORY_START_DATE: 2000.01.01
+   HISTORY_BATCH_SIZE: 100
+   RESET_HISTORY_CURSOR: false
    ```
 5. Tab `Common`:
    - ☑ Allow algo trading
    - ☑ Allow WebRequest
 6. Klik `OK`
+
+EA akan mengirim histori deal sejak `HISTORY_START_DATE` secara bertahap (maksimal 100 deal per laporan) dan mengulang batch jika backend belum menerima laporan. Biarkan terminal MT5 tetap berjalan sampai histori awal selesai dikirim. Untuk mengirim ulang histori dari awal, ubah `RESET_HISTORY_CURSOR` menjadi `true` sekali, pasang ulang EA, lalu kembalikan ke `false`.
 
 ### Step 6: Verify EA Running
 
@@ -134,6 +139,10 @@ cat backend/.env | grep EA_INTEGRATION_TOKEN
 3. **Check AutoTrading button (toolbar):**
    - Button harus **HIJAU** (enabled)
    - Kalau merah, klik untuk enable
+
+### Riwayat dan Jurnal Excel
+
+EA mengirim deal masuk dan keluar, bukan hanya posisi yang baru dibuka. Di halaman MetaTrader 5, klik **Jurnal Excel** untuk mengunduh jurnal dengan sesi WIB dan tab tambahan `MT5 Deals` yang memuat rincian deal mentah. Posisi yang belum ditutup tetap tersedia di tab deal mentah, tetapi belum dimasukkan sebagai hasil jurnal.
 
 ## 🐛 Troubleshooting
 

@@ -75,6 +75,7 @@ Setelah berhasil connect, kamu akan lihat:
 - **Open Positions**: List semua posisi yang masih terbuka
 - **Pending Orders**: List semua limit/stop order yang belum tersentuh
 - **Deal History**: History transaksi yang sudah closed
+- **Jurnal Excel**: Unduh jurnal posisi yang sudah selesai dengan sesi WIB, P/L bersih, pips, dan saldo berjalan. File juga menyertakan sheet `MT5 Deals` untuk rincian deal masuk/keluar.
 
 ### 6. Auto Sync
 

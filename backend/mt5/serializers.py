@@ -35,8 +35,8 @@ class MT5OrderSerializer(serializers.ModelSerializer):
 class MT5DealSerializer(serializers.ModelSerializer):
     class Meta:
         model = MT5Deal
-        fields = ['ticket', 'order', 'symbol', 'type', 'entry',
-                  'volume', 'price', 'profit', 'swap', 'commission',
+        fields = ['ticket', 'order', 'position_id', 'symbol', 'type', 'entry',
+                  'volume', 'price', 'pip_size', 'profit', 'swap', 'commission',
                   'comment', 'magic', 'time']
 
 

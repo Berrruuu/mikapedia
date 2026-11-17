@@ -101,26 +101,32 @@ class MT5Repository:
                     deal_time = datetime.fromisoformat(dd['time'])
                 except Exception:
                     pass
-            deal, created = MT5Deal.objects.get_or_create(
+            defaults = {
+                'order': dd.get('order', 0),
+                'symbol': dd['symbol'],
+                'type': dd['type'],
+                'entry': dd.get('entry', 'IN'),
+                'volume': dd['volume'],
+                'price': dd['price'],
+                'profit': dd.get('profit', 0),
+                'swap': dd.get('swap', 0),
+                'commission': dd.get('commission', 0),
+                'comment': dd.get('comment', ''),
+                'magic': dd.get('magic', 0),
+                'time': deal_time,
+            }
+            if 'position_id' in dd:
+                defaults['position_id'] = dd['position_id']
+            if 'pip_size' in dd:
+                defaults['pip_size'] = dd['pip_size'] or None
+
+            deal, created = MT5Deal.objects.update_or_create(
                 account=account,
                 ticket=dd['ticket'],
-                defaults={
-                    'order': dd.get('order', 0),
-                    'symbol': dd['symbol'],
-                    'type': dd['type'],
-                    'entry': dd.get('entry', 'IN'),
-                    'volume': dd['volume'],
-                    'price': dd['price'],
-                    'profit': dd.get('profit', 0),
-                    'swap': dd.get('swap', 0),
-                    'commission': dd.get('commission', 0),
-                    'comment': dd.get('comment', ''),
-                    'magic': dd.get('magic', 0),
-                    'time': deal_time,
-                },
+                defaults=defaults,
             )
 
-            if created:
+            if created and deal.entry == 'IN':
                 self._sync_trade_from_deal(account, deal)
 
     def _sync_trade_from_deal(self, account, deal):

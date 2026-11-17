@@ -1,12 +1,16 @@
+from datetime import datetime, timedelta
+from io import BytesIO
+
 from django.test import TestCase, override_settings
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from rest_framework.test import APIRequestFactory
+from openpyxl import load_workbook
+from rest_framework.test import APIRequestFactory, force_authenticate
 from unittest.mock import patch
 
 from .models import MT5Account, MT5Deal, MT5Order, MT5Position, Trade
 from .services import MT5Service
-from .views import ea_report
+from .views import MT5AccountViewSet, ea_report
 
 
 class MT5CredentialsTests(TestCase):
@@ -240,3 +244,106 @@ class MT5CredentialsTests(TestCase):
         self.assertIsNotNone(open_trade.close_time)
         self.assertEqual(pending_trade.status, 'cancelled')
         self.assertIsNotNone(pending_trade.cancelled_at)
+
+    @override_settings(EA_INTEGRATION_TOKEN='test-ea-token')
+    def test_ea_report_upserts_deal_position_and_pip_metadata(self):
+        payload = {
+            'token': 'test-ea-token',
+            'login': self.account.login,
+            'server': self.account.server,
+            'currency': 'EUR',
+            'positions': [],
+            'pending_orders': [],
+            'deals': [{
+                'ticket': 101,
+                'order': 201,
+                'position_id': 301,
+                'symbol': 'EURUSD',
+                'type': 'BUY',
+                'entry': 'OUT',
+                'volume': 0.1,
+                'price': 1.102,
+                'pip_size': 0.0001,
+                'profit': 19.5,
+                'swap': -0.2,
+                'commission': -1,
+                'time': '2026-07-27T19:00:00+07:00',
+            }],
+        }
+
+        for profit in (19.5, 20.5):
+            payload['deals'][0]['profit'] = profit
+            request = APIRequestFactory().post(
+                '/api/v1/mt5/ea-report/',
+                payload,
+                format='json',
+            )
+            response = ea_report(request)
+            self.assertEqual(response.status_code, 200)
+
+        deal = MT5Deal.objects.get(account=self.account, ticket=101)
+        self.assertEqual(MT5Deal.objects.filter(account=self.account).count(), 1)
+        self.assertEqual(deal.position_id, 301)
+        self.assertEqual(deal.pip_size, 0.0001)
+        self.assertEqual(deal.profit, 20.5)
+        self.account.refresh_from_db()
+        self.assertEqual(self.account.currency, 'EUR')
+
+    def test_export_journal_uses_closed_mt5_positions_and_template_columns(self):
+        close_time = timezone.make_aware(datetime(2026, 7, 27, 19, 0))
+        MT5Deal.objects.create(
+            account=self.account,
+            ticket=100,
+            order=200,
+            position_id=300,
+            symbol='EURUSD',
+            type='BUY',
+            entry='IN',
+            volume=0.1,
+            price=1.1,
+            pip_size=0.0001,
+            commission=-0.5,
+            time=close_time - timedelta(minutes=5),
+        )
+        MT5Deal.objects.create(
+            account=self.account,
+            ticket=101,
+            order=201,
+            position_id=300,
+            symbol='EURUSD',
+            type='BUY',
+            entry='OUT',
+            volume=0.1,
+            price=1.102,
+            pip_size=0.0001,
+            profit=19.5,
+            swap=-0.2,
+            commission=-0.5,
+            time=close_time,
+        )
+        request = APIRequestFactory().get(
+            f'/api/mt5/{self.account.pk}/export-journal/'
+        )
+        force_authenticate(request, user=self.user)
+        response = MT5AccountViewSet.as_view(
+            {'get': 'export_journal'}
+        )(request, pk=self.account.pk)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response['Content-Type'],
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        workbook = load_workbook(BytesIO(response.content), data_only=False)
+        journal = workbook['0']
+        self.assertEqual(
+            [journal.cell(4, column).value for column in range(1, 7)],
+            ['DATE', 'SESION', 'PROFIT/LOSS', 'PIPS', 'BALANCE', 'NET P/L'],
+        )
+        self.assertEqual(journal['D1'].value, 'EUR')
+        self.assertEqual(journal['B5'].value, 'NEWYORK')
+        self.assertEqual(journal['C5'].value, 'PROFIT')
+        self.assertAlmostEqual(journal['D5'].value, 20)
+        self.assertAlmostEqual(journal['F5'].value, 18.3)
+        self.assertEqual(journal['E5'].value, '=$B$1+SUM($F$5:F5)')
+        self.assertEqual(workbook['MT5 Deals'].max_row, 3)
