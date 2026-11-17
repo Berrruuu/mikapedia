@@ -1,5 +1,6 @@
 import logging
 
+from django.db import transaction
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
@@ -37,21 +38,57 @@ class MT5Service:
         """
         login = data['login']
         broker = data.get('broker', '')
-        existing = MT5Account.objects.filter(login=login, broker=broker).exclude(user=user).first()
-        if existing is not None:
-            raise ValidationError('MT5 account login already linked to another user.')
-
         encrypted_pw = mt5_service.encrypt_password(data['password'])
-        account, created = self.repository.create_or_update_account(
-            user=user,
-            login=login,
-            password_encrypted=encrypted_pw,
-            server=data['server'],
-            broker=broker,
-            account_number=str(login),
-            status='pending',  # Will be 'connected' once EA pushes data
-            error_message='Waiting for EA to push data...',
-        )
+        with transaction.atomic():
+            existing = MT5Account.objects.filter(login=login, broker=broker).exclude(user=user).first()
+            if existing is not None:
+                raise ValidationError('MT5 account login already linked to another user.')
+
+            current_account = self.repository.get_account_for_user(user)
+            account_changed = current_account is not None and (
+                current_account.login != login
+                or current_account.server != data['server']
+                or current_account.broker != broker
+            )
+
+            defaults = {
+                'login': login,
+                'password_encrypted': encrypted_pw,
+                'server': data['server'],
+                'broker': broker,
+                'account_number': str(login),
+                'status': 'pending',
+                'error_message': 'Waiting for EA to push data...',
+            }
+            if account_changed:
+                defaults.update({
+                    'last_sync': None,
+                    'last_error_at': None,
+                    'is_demo': False,
+                    'balance': 0,
+                    'equity': 0,
+                    'floating_pnl': 0,
+                    'margin': 0,
+                    'free_margin': 0,
+                    'margin_level': 0,
+                    'margin_call_level': 0,
+                    'drawdown': 0,
+                    'open_positions': 0,
+                    'pending_orders': 0,
+                    'currency': 'USD',
+                    'leverage': 100,
+                    'company': '',
+                })
+
+            account, created = self.repository.create_or_update_account(
+                user=user,
+                **defaults,
+            )
+
+            if account_changed:
+                account.positions.all().delete()
+                account.orders.all().delete()
+                account.deals.all().delete()
         
         # Don't call sync_account() here - let EA push real data
         # If you need immediate sync for testing, uncomment:

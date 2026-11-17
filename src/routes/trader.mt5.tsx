@@ -14,41 +14,16 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { mt5Api } from "@/lib/api";
+import {
+  mt5Api,
+  type MT5AccountDeal as MT5Deal,
+  type MT5AccountDetails as MT5Account,
+} from "@/lib/api";
 import { useWSEvent } from "@/lib/ws-context";
 
 export const Route = createFileRoute("/trader/mt5")({
   component: TraderMT5Page,
 });
-
-interface MT5Position {
-  ticket: number; symbol: string; type: string;
-  lotSize: number; entryPrice: number; currentPrice: number;
-  stopLoss: number | null; takeProfit: number | null;
-  floatingPnl: number; swap: number; timeOpen: string | null;
-}
-interface MT5Order {
-  ticket: number; symbol: string; type: string;
-  lotSize: number; price: number;
-  stopLoss: number | null; takeProfit: number | null;
-  timeSetup: string | null;
-}
-interface MT5Deal {
-  ticket: number; symbol: string; type: string; entry: string;
-  volume: number; price: number; profit: number; swap: number;
-  commission: number; time: string | null;
-}
-interface MT5Account {
-  id: number; login: number; accountNumber: string;
-  server: string; broker: string; status: string;
-  isDemo: boolean; currency: string; leverage: number; company: string;
-  balance: number; equity: number; floatingPnl: number;
-  margin: number; freeMargin: number; marginLevel: number;
-  drawdown: number; openPositions: number; pendingOrders: number;
-  lastSync: string | null; errorMessage: string;
-  positions: MT5Position[];
-  orders: MT5Order[];
-}
 
 function TraderMT5Page() {
   const [account, setAccount]   = useState<MT5Account | null>(null);
@@ -68,6 +43,10 @@ function TraderMT5Page() {
   const [broker, setBroker]         = useState("");
   const [showPw, setShowPw]         = useState(false);
   const [savingCreds, setSavingCreds] = useState(false);
+  const accountId = account?.id;
+  const accountIdentity = account
+    ? `${account.login}:${account.server}:${account.broker}`
+    : null;
 
   const fetchAccount = async (silent = false) => {
     if (!silent) setLoading(true);
@@ -88,16 +67,25 @@ function TraderMT5Page() {
     }
   };
 
-  const fetchDeals = async () => {
-    if (!account) return;
-    try {
-      const data = await mt5Api.deals(account.id);
-      setDeals(data);
-    } catch { /* ignore */ }
-  };
-
   useEffect(() => { void fetchAccount(); }, []);
-  useEffect(() => { if (account) void fetchDeals(); }, [account?.id]);
+  useEffect(() => {
+    if (accountId === undefined) {
+      setDeals([]);
+      return;
+    }
+
+    let active = true;
+    setDeals([]);
+    void mt5Api.deals(accountId)
+      .then((data) => {
+        if (active) setDeals(data);
+      })
+      .catch(() => {});
+
+    return () => {
+      active = false;
+    };
+  }, [accountId, accountIdentity]);
   useEffect(() => {
     if (!account) return;
     setLogin(String(account.login));
@@ -119,7 +107,12 @@ function TraderMT5Page() {
   const handleMT5WS = useCallback((data: unknown) => {
     const acc = data as MT5Account;
     if (!acc?.id) return;
-    if (account && acc.id !== account.id) return;
+    if (account && (
+      acc.id !== account.id
+      || acc.login !== account.login
+      || acc.server !== account.server
+      || acc.broker !== account.broker
+    )) return;
     setAccount(acc);
   }, [account]);
   useWSEvent("mt5_update", handleMT5WS);
@@ -171,11 +164,14 @@ function TraderMT5Page() {
       const data = await mt5Api.setCredentials({
         login: parseInt(login, 10), password, server, broker,
       });
+      setDeals([]);
       setAccount(data);
       setNotFound(false);
       setShowCreds(false);
       setPassword("");
-      toast.success(`Connected: ${data.accountNumber} @ ${data.server}`);
+      toast.success(data.status === "connected"
+        ? `Connected: ${data.accountNumber} @ ${data.server}`
+        : `Akun MT5 ${data.accountNumber} tersimpan. Menunggu data dari EA.`);
       
       // ⚠️ DISABLED: Don't force refresh after save, EA will push data
       // Forcing refresh triggers sync endpoint which generates simulation data

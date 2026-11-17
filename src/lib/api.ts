@@ -428,6 +428,71 @@ export interface MT5Account {
   positions: MT5Position[];
 }
 
+export interface MT5AccountPosition {
+  ticket: number;
+  symbol: string;
+  type: string;
+  lotSize: number;
+  entryPrice: number;
+  currentPrice: number;
+  stopLoss: number | null;
+  takeProfit: number | null;
+  floatingPnl: number;
+  swap: number;
+  timeOpen: string | null;
+}
+
+export interface MT5AccountOrder {
+  ticket: number;
+  symbol: string;
+  type: string;
+  lotSize: number;
+  price: number;
+  stopLoss: number | null;
+  takeProfit: number | null;
+  timeSetup: string | null;
+}
+
+export interface MT5AccountDeal {
+  ticket: number;
+  order: number;
+  symbol: string;
+  type: string;
+  entry: string;
+  volume: number;
+  price: number;
+  profit: number;
+  swap: number;
+  commission: number;
+  time: string | null;
+}
+
+export interface MT5AccountDetails {
+  id: number;
+  login: number;
+  accountNumber: string;
+  server: string;
+  broker: string;
+  status: "connected" | "disconnected" | "error" | "pending";
+  isDemo: boolean;
+  currency: string;
+  leverage: number;
+  company: string;
+  balance: number;
+  equity: number;
+  floatingPnl: number;
+  margin: number;
+  freeMargin: number;
+  marginLevel: number;
+  drawdown: number;
+  openPositions: number;
+  pendingOrders: number;
+  lastSync: string | null;
+  errorMessage: string;
+  positions: MT5AccountPosition[];
+  orders: MT5AccountOrder[];
+}
+
 export interface MT5Position {
   id: number;
   symbol: string;
@@ -444,7 +509,7 @@ export const mt5Api = {
   list: () => api.get<MT5Account[]>("/mt5/"),
   me: async () => {
     console.log('🔍 MT5: Fetching account data from /v1/mt5/me/');
-    const result = await api.get<MT5Account>("/v1/mt5/me/");
+    const result = await api.get<MT5AccountDetails>("/v1/mt5/me/");
     console.log('✓ MT5: Account data received:', result);
     return result;
   },
@@ -452,12 +517,12 @@ export const mt5Api = {
   syncAll: () => api.post<unknown>("/mt5/sync-all/", {}),
   syncOne: (id: number) => {
     console.log(`🔄 MT5: Syncing account ${id}`);
-    return api.post<MT5Account>(`/mt5/${id}/sync/`, {});
+    return api.post<MT5AccountDetails>(`/mt5/${id}/sync/`, {});
   },
-  deals: (id: number) => api.get<unknown[]>(`/mt5/${id}/deals/`),
+  deals: (id: number) => api.get<MT5AccountDeal[]>(`/mt5/${id}/deals/`),
   setCredentials: async (payload: { login: number; password: string; server: string; broker?: string }) => {
     console.log('💾 MT5: Saving credentials...', { login: payload.login, server: payload.server, broker: payload.broker });
-    const result = await api.post<MT5Account>("/v1/mt5/credentials/", payload);
+    const result = await api.post<MT5AccountDetails>("/v1/mt5/credentials/", payload);
     console.log('✓ MT5: Credentials saved, account created:', result);
     return result;
   },
