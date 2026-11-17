@@ -6,9 +6,9 @@ from rest_framework.permissions import AllowAny
 from django.utils import timezone
 from django.http import HttpResponse
 from django.db import models
-from datetime import date
+from datetime import date, datetime, time, timedelta
 import csv
-from .models import MT5Account, MT5Position, Trade
+from .models import MT5Account, MT5Deal, MT5Position, Trade
 from .journal import build_journal_workbook
 from .serializers import (
     MT5AccountSerializer, MT5CredentialsSerializer,
@@ -128,8 +128,7 @@ class MT5AccountViewSet(StandardizedModelViewSet):
     def export_history(self, request, pk=None):
         """
         GET /api/mt5/{id}/export-history/?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD
-        Exports trading history for this account as CSV
-        Supports optional date range filtering
+        Exports MT5 deal history for this account as CSV.
         Admin, owner, or account owner can download their own history
         """
         account = self.get_object()
@@ -138,20 +137,44 @@ class MT5AccountViewSet(StandardizedModelViewSet):
         if request.user.role not in ['owner', 'admin'] and account.user != request.user:
             return error_response('Forbidden', status=status.HTTP_403_FORBIDDEN, code='permission_denied')
         
-        # Get date range from query params
-        start_date = request.query_params.get('start_date')
-        end_date = request.query_params.get('end_date')
-        
-        # Build trades queryset
-        trades = Trade.objects.filter(account=account).select_related('signal')
-        
-        # Apply date range filter if provided
+        try:
+            start_date = (
+                date.fromisoformat(request.query_params['start_date'])
+                if request.query_params.get('start_date') else None
+            )
+            end_date = (
+                date.fromisoformat(request.query_params['end_date'])
+                if request.query_params.get('end_date') else None
+            )
+        except ValueError:
+            return error_response(
+                'Dates must use YYYY-MM-DD format.',
+                status=status.HTTP_400_BAD_REQUEST,
+                code='validation_error',
+            )
+        if start_date and end_date and start_date > end_date:
+            return error_response(
+                'start_date must be on or before end_date.',
+                status=status.HTTP_400_BAD_REQUEST,
+                code='validation_error',
+            )
+
+        deals = MT5Deal.objects.filter(account=account)
         if start_date:
-            trades = trades.filter(open_time__gte=f'{start_date} 00:00:00')
+            local_start = timezone.make_aware(datetime.combine(start_date, time.min))
+            deals = deals.filter(time__gte=local_start)
         if end_date:
-            trades = trades.filter(open_time__lte=f'{end_date} 23:59:59')
-        
-        trades = trades.order_by('-open_time')
+            local_end = timezone.make_aware(
+                datetime.combine(end_date + timedelta(days=1), time.min)
+            )
+            deals = deals.filter(time__lt=local_end)
+        deals = deals.order_by('-time', '-ticket')
+        if not deals.exists():
+            return error_response(
+                'Belum ada deal MT5 tersimpan untuk rentang ini. Pasang dan jalankan EA MikapediaReporter terbaru di MT5 untuk mengirim riwayat.',
+                status=status.HTTP_404_NOT_FOUND,
+                code='mt5_history_unavailable',
+            )
         
         # Create CSV response
         date_suffix = ''
@@ -167,27 +190,28 @@ class MT5AccountViewSet(StandardizedModelViewSet):
         
         writer = csv.writer(response)
         writer.writerow([
-            'Ticket', 'Symbol', 'Type', 'Volume', 'Entry Price', 'Exit Price',
-            'Stop Loss', 'Take Profit', 'Open Time', 'Close Time', 'P/L',
-            'Status', 'Order Type', 'Signal ID'
+            'Deal Ticket', 'Order Ticket', 'Position ID', 'Symbol', 'Type',
+            'Entry/Exit', 'Volume', 'Price', 'Profit', 'Swap', 'Commission',
+            'Net P/L', 'Time', 'Comment',
         ])
-        
-        for trade in trades:
+
+        for deal in deals:
+            local_time = timezone.localtime(deal.time) if deal.time else None
             writer.writerow([
-                trade.ticket,
-                trade.symbol,
-                trade.direction,
-                float(trade.volume),
-                float(trade.entry_price),
-                float(trade.exit_price) if trade.exit_price else '',
-                float(trade.stop_loss) if trade.stop_loss else '',
-                float(trade.take_profit) if trade.take_profit else '',
-                trade.open_time.isoformat() if trade.open_time else '',
-                trade.close_time.isoformat() if trade.close_time else '',
-                float(trade.pnl),
-                trade.status,
-                trade.order_type,
-                trade.signal_id if trade.signal_id else '',
+                deal.ticket,
+                deal.order,
+                deal.position_id or '',
+                deal.symbol,
+                deal.type,
+                deal.entry,
+                deal.volume,
+                deal.price,
+                deal.profit,
+                deal.swap,
+                deal.commission,
+                deal.profit + deal.swap + deal.commission,
+                local_time.isoformat() if local_time else '',
+                deal.comment,
             ])
         
         return response
@@ -214,6 +238,13 @@ class MT5AccountViewSet(StandardizedModelViewSet):
                 'start_date must be on or before end_date.',
                 status=status.HTTP_400_BAD_REQUEST,
                 code='validation_error',
+            )
+
+        if not MT5Deal.objects.filter(account=account).exists():
+            return error_response(
+                'Belum ada deal MT5 tersimpan. Jalankan EA MikapediaReporter terbaru di MT5 agar histori dikirim ke server, lalu unduh kembali.',
+                status=status.HTTP_404_NOT_FOUND,
+                code='mt5_history_unavailable',
             )
 
         workbook_data = build_journal_workbook(account, start_date=start, end_date=end)

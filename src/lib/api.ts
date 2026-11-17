@@ -111,8 +111,11 @@ async function downloadFile(path: string, retrying = false): Promise<Blob> {
     if (refreshed) return downloadFile(path, true);
   }
   if (!res.ok) {
-    const json = await res.json().catch(() => null) as { detail?: string } | null;
-    throw new Error(json?.detail ?? `HTTP ${res.status}`);
+    const json = await res.json().catch(() => null) as {
+      detail?: string;
+      error?: { message?: string };
+    } | null;
+    throw new Error(json?.detail ?? json?.error?.message ?? `HTTP ${res.status}`);
   }
   return res.blob();
 }

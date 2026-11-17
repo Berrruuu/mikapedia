@@ -347,3 +347,46 @@ class MT5CredentialsTests(TestCase):
         self.assertAlmostEqual(journal['F5'].value, 18.3)
         self.assertEqual(journal['E5'].value, '=$B$1+SUM($F$5:F5)')
         self.assertEqual(workbook['MT5 Deals'].max_row, 3)
+
+    def test_export_history_csv_uses_saved_mt5_deals(self):
+        MT5Deal.objects.create(
+            account=self.account,
+            ticket=901,
+            order=902,
+            position_id=903,
+            symbol='EURUSD',
+            type='SELL',
+            entry='OUT',
+            volume=0.2,
+            price=1.09,
+            profit=25,
+            swap=-1,
+            commission=-0.5,
+            time=timezone.now(),
+        )
+        request = APIRequestFactory().get(
+            f'/api/mt5/{self.account.pk}/export-history/'
+        )
+        force_authenticate(request, user=self.user)
+        response = MT5AccountViewSet.as_view(
+            {'get': 'export_history'}
+        )(request, pk=self.account.pk)
+
+        self.assertEqual(response.status_code, 200)
+        rows = response.content.decode().splitlines()
+        self.assertIn('Position ID', rows[0])
+        self.assertIn('Deal Ticket', rows[0])
+        self.assertIn('901,902,903,EURUSD,SELL,OUT,0.2,1.09,25.0,-1.0,-0.5,23.5', rows[1])
+
+    def test_export_journal_explains_when_no_mt5_deals_are_saved(self):
+        request = APIRequestFactory().get(
+            f'/api/mt5/{self.account.pk}/export-journal/'
+        )
+        force_authenticate(request, user=self.user)
+        response = MT5AccountViewSet.as_view(
+            {'get': 'export_journal'}
+        )(request, pk=self.account.pk)
+
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(response.data['success'])
+        self.assertIn('EA MikapediaReporter', response.data['error']['message'])
