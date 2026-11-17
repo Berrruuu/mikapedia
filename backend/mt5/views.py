@@ -238,6 +238,8 @@ def ea_report(request):
     login = request.data.get('login')
     server = request.data.get('server', '')
     broker = request.data.get('broker', '')
+    positions_provided = 'positions' in request.data
+    pending_orders_provided = 'pending_orders' in request.data
 
     if not login:
         return error_response('login is required.', status=status.HTTP_400_BAD_REQUEST, code='validation_error')
@@ -261,9 +263,16 @@ def ea_report(request):
     account.floating_pnl = request.data.get('floating_pnl', account.floating_pnl)
     account.status = 'connected'
     account.last_sync = tz.now()
-    account.open_positions = len(request.data.get('positions', []))
-    account.pending_orders = len(request.data.get('pending_orders', []))
-    account.save(update_fields=['balance', 'equity', 'floating_pnl', 'status', 'last_sync', 'open_positions', 'pending_orders'])
+    if positions_provided:
+        account.open_positions = len(request.data['positions'])
+    if pending_orders_provided:
+        account.pending_orders = len(request.data['pending_orders'])
+    account_update_fields = ['balance', 'equity', 'floating_pnl', 'status', 'last_sync']
+    if positions_provided:
+        account_update_fields.append('open_positions')
+    if pending_orders_provided:
+        account_update_fields.append('pending_orders')
+    account.save(update_fields=account_update_fields)
 
     # Sync positions from EA payload
     positions_data = request.data.get('positions', [])
@@ -320,8 +329,15 @@ def ea_report(request):
         )
 
     # Remove positions no longer open
-    if tickets_seen:
+    if positions_provided:
         account.positions.exclude(ticket__in=tickets_seen).delete()
+        Trade.objects.filter(
+            account=account,
+            status='open',
+        ).exclude(ticket__in=tickets_seen).update(
+            status='closed',
+            close_time=timezone.now(),
+        )
 
     # Sync deals
     deals_data = request.data.get('deals', [])
@@ -417,7 +433,7 @@ def ea_report(request):
 
     # Mark pending orders that disappeared (cancelled or expired) as cancelled
     from django.utils import timezone as tz
-    if pending_orders_data:  # only if EA sent orders data
+    if pending_orders_provided:
         # Update Trade model
         Trade.objects.filter(
             account=account,

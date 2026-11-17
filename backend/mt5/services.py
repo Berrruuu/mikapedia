@@ -89,6 +89,15 @@ class MT5Service:
                 account.positions.all().delete()
                 account.orders.all().delete()
                 account.deals.all().delete()
+                timestamp = timezone.now()
+                account.trades.filter(status='open').update(
+                    status='closed',
+                    close_time=timestamp,
+                )
+                account.trades.filter(status='pending').update(
+                    status='cancelled',
+                    cancelled_at=timestamp,
+                )
         
         # Don't call sync_account() here - let EA push real data
         # If you need immediate sync for testing, uncomment:
@@ -120,6 +129,7 @@ class MT5Service:
                 account.pk
             )
             account.refresh_from_db()
+            self._reconcile_trades_with_snapshot(account)
             
             # Broadcast current data from database
             try:
@@ -142,6 +152,7 @@ class MT5Service:
                 )
                 # Just refresh account from database and return
                 account.refresh_from_db()
+                self._reconcile_trades_with_snapshot(account)
                 
                 # Broadcast current data
                 try:
@@ -189,6 +200,7 @@ class MT5Service:
             self.repository.prune_orders(account, order_tickets)
 
             self.repository.sync_deals(account, snapshot.get('deals', []))
+            self._reconcile_trades_with_snapshot(account)
 
             try:
                 broadcast_mt5(str(account.user.id), MT5AccountSerializer(account).data)
@@ -211,6 +223,26 @@ class MT5Service:
             account.last_error_at = timezone.now()
             account.save(update_fields=['status', 'error_message', 'last_error_at'])
             return account
+
+    @staticmethod
+    def _reconcile_trades_with_snapshot(account: MT5Account) -> None:
+        """Close stale trade records that are absent from the latest MT5 snapshot."""
+        timestamp = timezone.now()
+        position_tickets = account.positions.values_list('ticket', flat=True)
+        account.trades.filter(status='open').exclude(
+            ticket__in=position_tickets,
+        ).update(
+            status='closed',
+            close_time=timestamp,
+        )
+
+        order_tickets = account.orders.values_list('ticket', flat=True)
+        account.trades.filter(status='pending').exclude(
+            ticket__in=order_tickets,
+        ).update(
+            status='cancelled',
+            cancelled_at=timestamp,
+        )
 
     def get_summary(self):
         accounts = MT5Account.objects.all()
