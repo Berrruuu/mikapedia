@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from rest_framework import serializers
 from .models import (
     BacktestJournal, BacktestTrade, MT5Account, MT5Position, MT5Order, MT5Deal,
@@ -10,7 +12,7 @@ class BacktestJournalSerializer(serializers.ModelSerializer):
         source='starting_balance',
         max_digits=16,
         decimal_places=2,
-        min_value=0.01,
+        min_value=Decimal('0.01'),
     )
     createdAt = serializers.DateTimeField(source='created_at', read_only=True)
     updatedAt = serializers.DateTimeField(source='updated_at', read_only=True)
