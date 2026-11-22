@@ -9,7 +9,7 @@ from django.db import models
 from datetime import date, datetime, time, timedelta
 import csv
 from .models import MT5Account, MT5Deal, MT5Position, Trade
-from .journal import build_journal_workbook
+from .journal import build_journal_workbook, get_account_timeframe, session_for
 from .serializers import (
     MT5AccountSerializer, MT5CredentialsSerializer,
     MT5PositionSerializer, MT5OrderSerializer, MT5DealSerializer,
@@ -189,10 +189,11 @@ class MT5AccountViewSet(StandardizedModelViewSet):
         response['Content-Disposition'] = f'attachment; filename="trading_history_{account.account_number}{date_suffix}_{timezone.now().date()}.csv"'
         
         writer = csv.writer(response)
+        timeframe = get_account_timeframe(account)
         writer.writerow([
             'Deal Ticket', 'Order Ticket', 'Position ID', 'Symbol', 'Type',
             'Entry/Exit', 'Volume', 'Price', 'Profit', 'Swap', 'Commission',
-            'Net P/L', 'Time', 'Comment',
+            'Net P/L', 'Session', 'Time', 'Comment',
         ])
 
         for deal in deals:
@@ -210,6 +211,7 @@ class MT5AccountViewSet(StandardizedModelViewSet):
                 deal.swap,
                 deal.commission,
                 deal.profit + deal.swap + deal.commission,
+                session_for(local_time, timeframe) if local_time else 'MIDNIGHT',
                 local_time.isoformat() if local_time else '',
                 deal.comment,
             ])

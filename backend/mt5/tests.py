@@ -11,6 +11,7 @@ from unittest.mock import patch
 from .models import MT5Account, MT5Deal, MT5Order, MT5Position, Trade
 from .services import MT5Service
 from .views import MT5AccountViewSet, ea_report
+from .journal import session_for
 
 
 class MT5CredentialsTests(TestCase):
@@ -346,7 +347,30 @@ class MT5CredentialsTests(TestCase):
         self.assertAlmostEqual(journal['D5'].value, 20)
         self.assertAlmostEqual(journal['F5'].value, 18.3)
         self.assertEqual(journal['E5'].value, '=$B$1+SUM($F$5:F5)')
+        self.assertEqual(journal['G5'].value, 'TOTAL')
+        self.assertEqual(journal['H5'].value, '=COUNTA(A5:A5)')
+        self.assertEqual(journal['G6'].value, 'TP')
+        self.assertEqual(journal['G11'].value, None)
         self.assertEqual(workbook['MT5 Deals'].max_row, 3)
+
+    def test_session_boundaries_follow_m5_and_m15_timeframes(self):
+        m5_10_05 = timezone.make_aware(datetime(2026, 7, 27, 10, 5))
+        m5_10_06 = timezone.make_aware(datetime(2026, 7, 27, 10, 6))
+        m5_23_05 = timezone.make_aware(datetime(2026, 7, 27, 23, 5))
+        m5_23_06 = timezone.make_aware(datetime(2026, 7, 27, 23, 6))
+        m15_10_15 = timezone.make_aware(datetime(2026, 7, 27, 10, 15))
+        m15_10_16 = timezone.make_aware(datetime(2026, 7, 27, 10, 16))
+        m15_23_15 = timezone.make_aware(datetime(2026, 7, 27, 23, 15))
+        m15_23_16 = timezone.make_aware(datetime(2026, 7, 27, 23, 16))
+
+        self.assertEqual(session_for(m5_10_05, '5'), 'ASIA')
+        self.assertEqual(session_for(m5_10_06, '5'), 'LONDON')
+        self.assertEqual(session_for(m5_23_05, '5'), 'NEWYORK')
+        self.assertEqual(session_for(m5_23_06, '5'), 'MIDNIGHT')
+        self.assertEqual(session_for(m15_10_15, '15'), 'ASIA')
+        self.assertEqual(session_for(m15_10_16, '15'), 'LONDON')
+        self.assertEqual(session_for(m15_23_15, '15'), 'NEWYORK')
+        self.assertEqual(session_for(m15_23_16, '15'), 'MIDNIGHT')
 
     def test_export_history_csv_uses_saved_mt5_deals(self):
         MT5Deal.objects.create(

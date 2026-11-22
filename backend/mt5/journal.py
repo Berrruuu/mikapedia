@@ -19,11 +19,38 @@ PIP_CURRENCIES = {
     'HUF', 'JPY', 'MXN', 'NOK', 'NZD', 'PLN', 'SEK', 'SGD', 'TRY',
     'USD', 'ZAR',
 }
-SESSION_RANGES = (
-    (time(6), time(10), 'ASIA'),
-    (time(10), time(18), 'LONDON'),
-    (time(18), time(23), 'NEWYORK'),
-)
+SESSION_ASIA_END_BY_TIMEFRAME = {
+    '5': time(10, 5),
+    '15': time(10, 15),
+}
+SESSION_NEW_YORK_END_BY_TIMEFRAME = {
+    '5': time(23, 5),
+    '15': time(23, 15),
+}
+
+
+def get_account_timeframe(account: MT5Account) -> str:
+    profile = getattr(account, 'trader_profile', None)
+    if profile is None:
+        profile = getattr(getattr(account, 'user', None), 'trader_profile', None)
+    timeframe = getattr(profile, 'allowed_timeframe', '15')
+    return timeframe if timeframe in ('5', '15') else '15'
+
+
+def session_for(value: datetime, timeframe: str = '15') -> str:
+    local_time = value.timetz().replace(tzinfo=None)
+    if timeframe not in ('5', '15'):
+        timeframe = '15'
+
+    asia_end = SESSION_ASIA_END_BY_TIMEFRAME[timeframe]
+    new_york_end = SESSION_NEW_YORK_END_BY_TIMEFRAME[timeframe]
+    if time(6) <= local_time <= asia_end:
+        return 'ASIA'
+    if asia_end < local_time < time(18):
+        return 'LONDON'
+    if time(18) <= local_time <= new_york_end:
+        return 'NEWYORK'
+    return 'MIDNIGHT'
 
 
 @dataclass(frozen=True)
@@ -44,12 +71,8 @@ def _local_time(value: datetime | None) -> datetime | None:
     return value.replace(tzinfo=JAKARTA)
 
 
-def _session_for(value: datetime) -> str:
-    local_time = value.timetz().replace(tzinfo=None)
-    for start, end, session in SESSION_RANGES:
-        if start <= local_time < end:
-            return session
-    return 'MIDNIGHT'
+def _session_for(value: datetime, timeframe: str = '15') -> str:
+    return session_for(value, timeframe)
 
 
 def _pip_size_for(deal: MT5Deal) -> float | None:
@@ -65,7 +88,7 @@ def _pip_size_for(deal: MT5Deal) -> float | None:
     return 0.01 if quote == 'JPY' else 0.0001
 
 
-def _closed_positions(deals: list[MT5Deal]) -> list[JournalRow]:
+def _closed_positions(deals: list[MT5Deal], timeframe: str = '15') -> list[JournalRow]:
     grouped: dict[int, list[MT5Deal]] = defaultdict(list)
     for deal in deals:
         if deal.position_id:
@@ -113,7 +136,7 @@ def _closed_positions(deals: list[MT5Deal]) -> list[JournalRow]:
         )
         journal_rows.append(JournalRow(
             close_time=close_time,
-            session=_session_for(close_time),
+            session=_session_for(close_time, timeframe),
             result='PROFIT' if net_profit >= 0 else 'LOSS',
             pips=pips,
             net_profit=net_profit,
@@ -142,11 +165,14 @@ def build_journal_workbook(
     start_date: date | None = None,
     end_date: date | None = None,
 ) -> bytes:
+    timeframe = get_account_timeframe(account)
+    asia_end = SESSION_ASIA_END_BY_TIMEFRAME[timeframe].strftime('%H:%M')
+    new_york_end = SESSION_NEW_YORK_END_BY_TIMEFRAME[timeframe].strftime('%H:%M')
     all_deals = list(
         MT5Deal.objects.filter(account=account).order_by('time', 'ticket')
     )
     closed_positions = [
-        row for row in _closed_positions(all_deals)
+        row for row in _closed_positions(all_deals, timeframe)
         if _in_date_range(row.close_time, start_date, end_date)
     ]
     raw_deals = []
@@ -165,7 +191,7 @@ def build_journal_workbook(
     journal['D1'] = account.currency
     journal['A2'] = 'MT5 Account'
     journal['B2'] = account.account_number
-    journal['A3'] = 'Sesi WIB: Asia 06:00-10:00; London 10:00-18:00; New York 18:00-23:00; Midnight 23:00-06:00'
+    journal['A3'] = f'Sesi WIB M{timeframe}: Asia 06:00-{asia_end}; London {asia_end}-18:00; New York 18:00-{new_york_end}; Midnight {new_york_end}-06:00'
     journal.merge_cells('A3:F3')
     journal['A3'].font = Font(italic=True, color='666666')
 
@@ -189,46 +215,24 @@ def build_journal_workbook(
         )
 
     last_row = max(5, 4 + len(closed_positions))
-    journal['G4'] = 'TOTAL'
-    journal['H4'] = f'=COUNTA(A5:A{last_row})'
+    journal['G5'] = 'TOTAL'
+    journal['H5'] = f'=COUNTA(A5:A{last_row})'
+    for cell in (journal['G5'], journal['H5']):
+        cell.fill = PatternFill('solid', fgColor='17365D')
+        cell.font = Font(color='FFFFFF', bold=True)
+        cell.alignment = Alignment(horizontal='center', vertical='center')
     overall_summary = (
         ('TP', f'=COUNTIF(C5:C{last_row},"PROFIT")'),
         ('LOSS', f'=COUNTIF(C5:C{last_row},"LOSS")'),
         ('NETT', f'=SUM(F5:F{last_row})'),
-        ('PROBABILITAS', f'=IFERROR(COUNTIF(C5:C{last_row},"PROFIT")/H4,0)'),
+        ('PROBABILITAS', f'=IFERROR(COUNTIF(C5:C{last_row},"PROFIT")/H5,0)'),
         ('PROFIT', f'=SUMIF(C5:C{last_row},"PROFIT",F5:F{last_row})'),
     )
-    for row_number, (label, formula) in enumerate(overall_summary, start=5):
+    for row_number, (label, formula) in enumerate(overall_summary, start=6):
         journal.cell(row_number, 7, label)
         journal.cell(row_number, 8, formula)
 
-    for session, heading_row in (
-        ('ASIA', 11),
-        ('LONDON', 19),
-        ('NEWYORK', 27),
-        ('MIDNIGHT', 35),
-    ):
-        journal.cell(heading_row, 7, session)
-        session_summary = (
-            ('TOTAL', f'=COUNTIF(B5:B{last_row},G{heading_row})'),
-            ('TP', f'=COUNTIFS(B5:B{last_row},G{heading_row},C5:C{last_row},"PROFIT")'),
-            ('LOSS', f'=COUNTIFS(B5:B{last_row},G{heading_row},C5:C{last_row},"LOSS")'),
-            (
-                'NETT',
-                f'=COUNTIFS(B5:B{last_row},G{heading_row},C5:C{last_row},"PROFIT")'
-                f'-COUNTIFS(B5:B{last_row},G{heading_row},C5:C{last_row},"LOSS")',
-            ),
-            (
-                'PROBABILITAS',
-                f'=IFERROR(COUNTIFS(B5:B{last_row},G{heading_row},C5:C{last_row},"PROFIT")'
-                f'/COUNTIF(B5:B{last_row},G{heading_row}),0)',
-            ),
-            ('PROFIT', f'=SUMIF(B5:B{last_row},G{heading_row},F5:F{last_row})'),
-        )
-        for offset, (label, formula) in enumerate(session_summary, start=1):
-            journal.cell(heading_row + offset, 7, label)
-            journal.cell(heading_row + offset, 8, formula)
-    _style_header(journal, 4, 8)
+    _style_header(journal, 4, len(headers))
 
     widths = {1: 19, 2: 14, 3: 16, 4: 12, 5: 16, 6: 16, 7: 18, 8: 16}
     for column, width in widths.items():
