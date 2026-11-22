@@ -555,6 +555,65 @@ export const mt5Api = {
   },
 };
 
+export interface BacktestJournal {
+  id: string;
+  name: string;
+  startingBalance: string;
+  currency: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BacktestTrade {
+  id: string;
+  tradeDate: string;
+  session: "ASIA" | "LONDON" | "NEWYORK" | "MIDNIGHT";
+  result: "PROFIT" | "LOSS" | "BREAKEVEN";
+  pips: string | null;
+  balance: string;
+  netPl: string;
+}
+
+export interface BacktestMetrics {
+  totalTrades: number;
+  winningTrades: number;
+  losingTrades: number;
+  breakevenTrades: number;
+  winRate: number;
+  grossProfit: number;
+  grossLoss: number;
+  netProfit: number;
+  endingBalance: number;
+  maxDrawdown: number;
+  maxDrawdownPercent: number;
+  maxConsecutiveLosses: number;
+}
+
+export interface BacktestJournalDetail {
+  journal: BacktestJournal;
+  trades: BacktestTrade[];
+  metrics: BacktestMetrics;
+}
+
+export const backtestApi = {
+  list: () => api.get<BacktestJournal[]>("/mt5/backtests/"),
+  create: (payload: { name: string; startingBalance: string; currency: string }) =>
+    api.post<BacktestJournal>("/mt5/backtests/", payload),
+  get: (id: string) => api.get<BacktestJournalDetail>(`/mt5/backtests/${id}/`),
+  addTrade: (
+    journalId: string,
+    payload: {
+      tradeDate: string;
+      session: BacktestTrade["session"];
+      pips: string | null;
+      netPl: string;
+    },
+  ) => api.post<BacktestTrade>(`/mt5/backtests/${journalId}/trades/`, payload),
+  deleteTrade: (journalId: string, tradeId: string) =>
+    api.del<void>(`/mt5/backtests/${journalId}/trades/${tradeId}/`),
+  delete: (id: string) => api.del<void>(`/mt5/backtests/${id}/`),
+};
+
 // ─── Compliance ───────────────────────────────────────────────────────────────
 
 export interface ComplianceRecord {

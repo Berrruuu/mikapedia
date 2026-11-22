@@ -1,18 +1,24 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, generics
+from rest_framework.views import APIView
 from rest_framework.decorators import action, api_view, permission_classes, parser_classes
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db import models
 from datetime import date, datetime, time, timedelta
 import csv
-from .models import MT5Account, MT5Deal, MT5Position, Trade
+from .models import (
+    BacktestJournal, BacktestTrade, MT5Account, MT5Deal, MT5Position, Trade,
+)
 from .journal import build_journal_workbook, get_account_timeframe, session_for
+from .backtest import calculate_backtest_metrics
 from .serializers import (
     MT5AccountSerializer, MT5CredentialsSerializer,
     MT5PositionSerializer, MT5OrderSerializer, MT5DealSerializer,
+    BacktestJournalSerializer, BacktestTradeSerializer,
 )
 from .services import MT5Service
 from common.api import StandardizedModelViewSet
@@ -23,6 +29,96 @@ from common.permissions import IsOwnerOrAdmin, IsAdminRole
 import logging
 
 logger = logging.getLogger('mt5.views')
+
+
+def _serialize_backtest_trades(journal):
+    trades = journal.trades.all().order_by('trade_date', 'created_at', 'id')
+    balance = journal.starting_balance
+    result = []
+    for trade in trades:
+        balance += trade.net_pl
+        trade_data = BacktestTradeSerializer(trade).data
+        trade_data['balance'] = str(balance)
+        result.append(trade_data)
+    return result
+
+
+class BacktestJournalListCreateView(generics.ListCreateAPIView):
+    serializer_class = BacktestJournalSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return BacktestJournal.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class BacktestJournalDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_journal(self, request, journal_id):
+        return get_object_or_404(
+            BacktestJournal,
+            pk=journal_id,
+            user=request.user,
+        )
+
+    def get(self, request, journal_id):
+        journal = self.get_journal(request, journal_id)
+        return Response({
+            'journal': BacktestJournalSerializer(journal).data,
+            'trades': _serialize_backtest_trades(journal),
+            'metrics': calculate_backtest_metrics(journal),
+        })
+
+    def delete(self, request, journal_id):
+        journal = self.get_journal(request, journal_id)
+        journal.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class BacktestTradeListCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_journal(self, request, journal_id):
+        return get_object_or_404(
+            BacktestJournal,
+            pk=journal_id,
+            user=request.user,
+        )
+
+    def get(self, request, journal_id):
+        return Response(_serialize_backtest_trades(self.get_journal(request, journal_id)))
+
+    def post(self, request, journal_id):
+        journal = self.get_journal(request, journal_id)
+        serializer = BacktestTradeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(journal=journal)
+        journal.updated_at = timezone.now()
+        journal.save(update_fields=['updated_at'])
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class BacktestTradeDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, journal_id, trade_id):
+        trade = get_object_or_404(
+            BacktestTrade,
+            pk=trade_id,
+            journal_id=journal_id,
+            journal__user=request.user,
+        )
+        journal = trade.journal
+        trade.delete()
+        journal.updated_at = timezone.now()
+        journal.save(update_fields=['updated_at'])
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class MT5AccountViewSet(StandardizedModelViewSet):

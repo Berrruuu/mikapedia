@@ -3,12 +3,13 @@ from io import BytesIO
 
 from django.test import TestCase, override_settings
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from django.utils import timezone
 from openpyxl import load_workbook
-from rest_framework.test import APIRequestFactory, force_authenticate
+from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from unittest.mock import patch
 
-from .models import MT5Account, MT5Deal, MT5Order, MT5Position, Trade
+from .models import BacktestJournal, MT5Account, MT5Deal, MT5Order, MT5Position, Trade
 from .services import MT5Service
 from .views import MT5AccountViewSet, ea_report
 from .journal import session_for
@@ -414,3 +415,97 @@ class MT5CredentialsTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertFalse(response.data['success'])
         self.assertIn('EA MikapediaReporter', response.data['error']['message'])
+
+
+class BacktestJournalApiTests(APITestCase):
+    def setUp(self):
+        user_model = get_user_model()
+        self.user = user_model.objects.create_user(
+            username='backtest-trader',
+            email='backtest-trader@example.com',
+            password='secret',
+            role='trader',
+        )
+        self.other_user = user_model.objects.create_user(
+            username='other-trader',
+            email='other-trader@example.com',
+            password='secret',
+            role='trader',
+        )
+        self.client.force_authenticate(user=self.user)
+
+    def create_journal(self):
+        response = self.client.post(
+            reverse('backtest-list'),
+            {
+                'name': 'EURUSD M15',
+                'startingBalance': '1000.00',
+                'currency': 'USD',
+            },
+            format='json',
+        )
+        self.assertEqual(response.status_code, 201)
+        return response.data
+
+    def create_trade(self, journal_id, day, net_pl, session='ASIA'):
+        return self.client.post(
+            reverse('backtest-trades', kwargs={'journal_id': journal_id}),
+            {
+                'tradeDate': f'2026-11-{day:02d}T10:00:00Z',
+                'session': session,
+                'pips': '12.50',
+                'netPl': str(net_pl),
+            },
+            format='json',
+        )
+
+    def test_journal_returns_balance_drawdown_profit_and_loss_streak_metrics(self):
+        journal = self.create_journal()
+        journal_id = journal['id']
+        self.assertEqual(self.create_trade(journal_id, 1, '-100').status_code, 201)
+        self.assertEqual(self.create_trade(journal_id, 2, '-25').status_code, 201)
+        self.assertEqual(self.create_trade(journal_id, 3, '50').status_code, 201)
+        self.assertEqual(self.create_trade(journal_id, 4, '-75').status_code, 201)
+
+        response = self.client.get(
+            reverse('backtest-detail', kwargs={'journal_id': journal_id})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['metrics']['grossProfit'], 50.0)
+        self.assertEqual(response.data['metrics']['grossLoss'], 200.0)
+        self.assertEqual(response.data['metrics']['netProfit'], -150.0)
+        self.assertEqual(response.data['metrics']['maxDrawdown'], 150.0)
+        self.assertEqual(response.data['metrics']['maxDrawdownPercent'], 15.0)
+        self.assertEqual(response.data['metrics']['maxConsecutiveLosses'], 2)
+        self.assertEqual(
+            [trade['balance'] for trade in response.data['trades']],
+            ['900.00', '875.00', '925.00', '850.00'],
+        )
+
+    def test_journal_and_trades_are_private_to_their_owner(self):
+        journal = self.create_journal()
+        journal_id = journal['id']
+        self.create_trade(journal_id, 1, '10')
+
+        self.client.force_authenticate(user=self.other_user)
+        response = self.client.get(
+            reverse('backtest-detail', kwargs={'journal_id': journal_id})
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(self.client.get(reverse('backtest-list')).data, [])
+
+    def test_trade_rejects_unknown_session(self):
+        journal = self.create_journal()
+        response = self.client.post(
+            reverse('backtest-trades', kwargs={'journal_id': journal['id']}),
+            {
+                'tradeDate': '2026-11-01T10:00:00Z',
+                'session': 'TOKYO',
+                'netPl': '10.00',
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, 400)

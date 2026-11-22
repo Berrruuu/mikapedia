@@ -1,6 +1,41 @@
 from rest_framework import serializers
-from .models import MT5Account, MT5Position, MT5Order, MT5Deal
+from .models import (
+    BacktestJournal, BacktestTrade, MT5Account, MT5Position, MT5Order, MT5Deal,
+)
 from users.serializers import UserSerializer
+
+
+class BacktestJournalSerializer(serializers.ModelSerializer):
+    startingBalance = serializers.DecimalField(
+        source='starting_balance',
+        max_digits=16,
+        decimal_places=2,
+        min_value=0.01,
+    )
+    createdAt = serializers.DateTimeField(source='created_at', read_only=True)
+    updatedAt = serializers.DateTimeField(source='updated_at', read_only=True)
+
+    class Meta:
+        model = BacktestJournal
+        fields = ['id', 'name', 'startingBalance', 'currency', 'createdAt', 'updatedAt']
+
+
+class BacktestTradeSerializer(serializers.ModelSerializer):
+    tradeDate = serializers.DateTimeField(source='trade_date')
+    netPl = serializers.DecimalField(source='net_pl', max_digits=16, decimal_places=2)
+    result = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BacktestTrade
+        fields = ['id', 'tradeDate', 'session', 'result', 'pips', 'netPl']
+        read_only_fields = ['id', 'result']
+
+    def get_result(self, obj):
+        if obj.net_pl > 0:
+            return 'PROFIT'
+        if obj.net_pl < 0:
+            return 'LOSS'
+        return 'BREAKEVEN'
 
 
 class MT5PositionSerializer(serializers.ModelSerializer):

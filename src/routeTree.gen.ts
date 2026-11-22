@@ -16,6 +16,7 @@ import { Route as TraderRouteImport } from './routes/trader'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
 import { Route as AdminAuditRouteImport } from './routes/admin.audit'
+import { Route as AdminBacktestRouteImport } from './routes/admin.backtest'
 import { Route as AdminChartRouteImport } from './routes/admin.chart'
 import { Route as AdminComplianceRouteImport } from './routes/admin.compliance'
 import { Route as AdminLeaderboardRouteImport } from './routes/admin.leaderboard'
@@ -27,6 +28,7 @@ import { Route as AdminTradersRouteImport } from './routes/admin.traders'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as TraderIndexRouteImport } from './routes/trader.index'
 import { Route as TraderAttendanceRouteImport } from './routes/trader.attendance'
+import { Route as TraderBacktestRouteImport } from './routes/trader.backtest'
 import { Route as TraderChartRouteImport } from './routes/trader.chart'
 import { Route as TraderChecklistRouteImport } from './routes/trader.checklist'
 import { Route as TraderMt5RouteImport } from './routes/trader.mt5'
@@ -69,6 +71,11 @@ const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
 const AdminAuditRoute = AdminAuditRouteImport.update({
   id: '/audit',
   path: '/audit',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBacktestRoute = AdminBacktestRouteImport.update({
+  id: '/backtest',
+  path: '/backtest',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminChartRoute = AdminChartRouteImport.update({
@@ -126,6 +133,11 @@ const TraderAttendanceRoute = TraderAttendanceRouteImport.update({
   path: '/attendance',
   getParentRoute: () => TraderRoute,
 } as any)
+const TraderBacktestRoute = TraderBacktestRouteImport.update({
+  id: '/backtest',
+  path: '/backtest',
+  getParentRoute: () => TraderRoute,
+} as any)
 const TraderChartRoute = TraderChartRouteImport.update({
   id: '/chart',
   path: '/chart',
@@ -174,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/trader': typeof TraderRouteWithChildren
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/backtest': typeof AdminBacktestRoute
   '/admin/chart': typeof AdminChartRoute
   '/admin/compliance': typeof AdminComplianceRoute
   '/admin/leaderboard': typeof AdminLeaderboardRoute
@@ -184,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/admin/traders': typeof AdminTradersRoute
   '/admin/users': typeof AdminUsersRoute
   '/trader/attendance': typeof TraderAttendanceRoute
+  '/trader/backtest': typeof TraderBacktestRoute
   '/trader/chart': typeof TraderChartRoute
   '/trader/checklist': typeof TraderChecklistRoute
   '/trader/mt5': typeof TraderMt5Route
@@ -200,6 +214,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/backtest': typeof AdminBacktestRoute
   '/admin/chart': typeof AdminChartRoute
   '/admin/compliance': typeof AdminComplianceRoute
   '/admin/leaderboard': typeof AdminLeaderboardRoute
@@ -210,6 +225,7 @@ export interface FileRoutesByTo {
   '/admin/traders': typeof AdminTradersRoute
   '/admin/users': typeof AdminUsersRoute
   '/trader/attendance': typeof TraderAttendanceRoute
+  '/trader/backtest': typeof TraderBacktestRoute
   '/trader/chart': typeof TraderChartRoute
   '/trader/checklist': typeof TraderChecklistRoute
   '/trader/mt5': typeof TraderMt5Route
@@ -229,6 +245,7 @@ export interface FileRoutesById {
   '/trader': typeof TraderRouteWithChildren
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/backtest': typeof AdminBacktestRoute
   '/admin/chart': typeof AdminChartRoute
   '/admin/compliance': typeof AdminComplianceRoute
   '/admin/leaderboard': typeof AdminLeaderboardRoute
@@ -239,6 +256,7 @@ export interface FileRoutesById {
   '/admin/traders': typeof AdminTradersRoute
   '/admin/users': typeof AdminUsersRoute
   '/trader/attendance': typeof TraderAttendanceRoute
+  '/trader/backtest': typeof TraderBacktestRoute
   '/trader/chart': typeof TraderChartRoute
   '/trader/checklist': typeof TraderChecklistRoute
   '/trader/mt5': typeof TraderMt5Route
@@ -259,6 +277,7 @@ export interface FileRouteTypes {
     | '/trader'
     | '/admin/attendance'
     | '/admin/audit'
+    | '/admin/backtest'
     | '/admin/chart'
     | '/admin/compliance'
     | '/admin/leaderboard'
@@ -269,6 +288,7 @@ export interface FileRouteTypes {
     | '/admin/traders'
     | '/admin/users'
     | '/trader/attendance'
+    | '/trader/backtest'
     | '/trader/chart'
     | '/trader/checklist'
     | '/trader/mt5'
@@ -285,6 +305,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/admin/attendance'
     | '/admin/audit'
+    | '/admin/backtest'
     | '/admin/chart'
     | '/admin/compliance'
     | '/admin/leaderboard'
@@ -295,6 +316,7 @@ export interface FileRouteTypes {
     | '/admin/traders'
     | '/admin/users'
     | '/trader/attendance'
+    | '/trader/backtest'
     | '/trader/chart'
     | '/trader/checklist'
     | '/trader/mt5'
@@ -313,6 +335,7 @@ export interface FileRouteTypes {
     | '/trader'
     | '/admin/attendance'
     | '/admin/audit'
+    | '/admin/backtest'
     | '/admin/chart'
     | '/admin/compliance'
     | '/admin/leaderboard'
@@ -323,6 +346,7 @@ export interface FileRouteTypes {
     | '/admin/traders'
     | '/admin/users'
     | '/trader/attendance'
+    | '/trader/backtest'
     | '/trader/chart'
     | '/trader/checklist'
     | '/trader/mt5'
@@ -391,6 +415,13 @@ declare module '@tanstack/react-router' {
       path: '/audit'
       fullPath: '/admin/audit'
       preLoaderRoute: typeof AdminAuditRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/backtest': {
+      id: '/admin/backtest'
+      path: '/backtest'
+      fullPath: '/admin/backtest'
+      preLoaderRoute: typeof AdminBacktestRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/chart': {
@@ -470,6 +501,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TraderAttendanceRouteImport
       parentRoute: typeof TraderRoute
     }
+    '/trader/backtest': {
+      id: '/trader/backtest'
+      path: '/backtest'
+      fullPath: '/trader/backtest'
+      preLoaderRoute: typeof TraderBacktestRouteImport
+      parentRoute: typeof TraderRoute
+    }
     '/trader/chart': {
       id: '/trader/chart'
       path: '/chart'
@@ -532,6 +570,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminAttendanceRoute: typeof AdminAttendanceRoute
   AdminAuditRoute: typeof AdminAuditRoute
+  AdminBacktestRoute: typeof AdminBacktestRoute
   AdminChartRoute: typeof AdminChartRoute
   AdminComplianceRoute: typeof AdminComplianceRoute
   AdminLeaderboardRoute: typeof AdminLeaderboardRoute
@@ -549,6 +588,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAttendanceRoute: AdminAttendanceRoute,
   AdminAuditRoute: AdminAuditRoute,
+  AdminBacktestRoute: AdminBacktestRoute,
   AdminChartRoute: AdminChartRoute,
   AdminComplianceRoute: AdminComplianceRoute,
   AdminLeaderboardRoute: AdminLeaderboardRoute,
@@ -567,6 +607,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface TraderRouteChildren {
   TraderAttendanceRoute: typeof TraderAttendanceRoute
+  TraderBacktestRoute: typeof TraderBacktestRoute
   TraderChartRoute: typeof TraderChartRoute
   TraderChecklistRoute: typeof TraderChecklistRoute
   TraderMt5Route: typeof TraderMt5Route
@@ -578,6 +619,7 @@ interface TraderRouteChildren {
 
 const TraderRouteChildren: TraderRouteChildren = {
   TraderAttendanceRoute: TraderAttendanceRoute,
+  TraderBacktestRoute: TraderBacktestRoute,
   TraderChartRoute: TraderChartRoute,
   TraderChecklistRoute: TraderChecklistRoute,
   TraderMt5Route: TraderMt5Route,
