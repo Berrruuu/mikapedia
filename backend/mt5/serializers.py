@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from rest_framework import serializers
+from .backtest import calculate_trade_net_pl
 from .models import (
     BacktestJournal, BacktestTrade, MT5Account, MT5Position, MT5Order, MT5Deal,
 )
@@ -14,17 +15,48 @@ class BacktestJournalSerializer(serializers.ModelSerializer):
         decimal_places=2,
         min_value=Decimal('0.01'),
     )
+    currency = serializers.CharField(read_only=True)
+    symbol = serializers.CharField(max_length=20)
+    lotSize = serializers.DecimalField(
+        source='lot_size',
+        max_digits=10,
+        decimal_places=2,
+        min_value=Decimal('0.01'),
+    )
+    pipValueUsdPerLot = serializers.DecimalField(
+        source='pip_value_usd_per_lot',
+        max_digits=16,
+        decimal_places=4,
+        min_value=Decimal('0.0001'),
+    )
     createdAt = serializers.DateTimeField(source='created_at', read_only=True)
     updatedAt = serializers.DateTimeField(source='updated_at', read_only=True)
 
     class Meta:
         model = BacktestJournal
-        fields = ['id', 'name', 'startingBalance', 'currency', 'createdAt', 'updatedAt']
+        fields = [
+            'id', 'name', 'startingBalance', 'currency', 'symbol', 'lotSize',
+            'pipValueUsdPerLot', 'createdAt', 'updatedAt',
+        ]
+
+    def validate_symbol(self, value):
+        return value.strip().upper()
 
 
 class BacktestTradeSerializer(serializers.ModelSerializer):
     tradeDate = serializers.DateTimeField(source='trade_date')
-    netPl = serializers.DecimalField(source='net_pl', max_digits=16, decimal_places=2)
+    pips = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        required=True,
+        allow_null=False,
+    )
+    netPl = serializers.DecimalField(
+        source='net_pl',
+        max_digits=16,
+        decimal_places=2,
+        read_only=True,
+    )
     result = serializers.SerializerMethodField()
 
     class Meta:
@@ -38,6 +70,34 @@ class BacktestTradeSerializer(serializers.ModelSerializer):
         if obj.net_pl < 0:
             return 'LOSS'
         return 'BREAKEVEN'
+
+    def create(self, validated_data):
+        journal = validated_data.pop('journal')
+        if (
+            journal.currency != 'USD'
+            or not journal.symbol
+            or journal.lot_size is None
+            or journal.pip_value_usd_per_lot is None
+        ):
+            raise serializers.ValidationError({
+                'pips': 'This journal needs a USD symbol, lot size, and pip value before adding trades.'
+            })
+
+        calculated_net_pl = calculate_trade_net_pl(
+            validated_data['pips'],
+            journal.lot_size,
+            journal.pip_value_usd_per_lot,
+        )
+        try:
+            validated_data['net_pl'] = serializers.DecimalField(
+                max_digits=16,
+                decimal_places=2,
+            ).run_validation(calculated_net_pl)
+        except serializers.ValidationError as exc:
+            raise serializers.ValidationError({
+                'pips': 'Calculated NET P/L is outside the supported range.'
+            }) from exc
+        return BacktestTrade.objects.create(journal=journal, **validated_data)
 
 
 class MT5PositionSerializer(serializers.ModelSerializer):

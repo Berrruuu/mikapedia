@@ -1,4 +1,13 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP, localcontext
+
+
+def calculate_trade_net_pl(pips, lot_size, pip_value_usd_per_lot):
+    with localcontext() as context:
+        context.prec = 50
+        return (pips * lot_size * pip_value_usd_per_lot).quantize(
+            Decimal('0.01'),
+            rounding=ROUND_HALF_UP,
+        )
 
 
 def calculate_backtest_metrics(journal):

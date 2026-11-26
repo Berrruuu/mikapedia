@@ -560,6 +560,9 @@ export interface BacktestJournal {
   name: string;
   startingBalance: string;
   currency: string;
+  symbol: string;
+  lotSize: string | null;
+  pipValueUsdPerLot: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -597,7 +600,13 @@ export interface BacktestJournalDetail {
 
 export const backtestApi = {
   list: () => api.get<BacktestJournal[]>("/mt5/backtests/"),
-  create: (payload: { name: string; startingBalance: string; currency: string }) =>
+  create: (payload: {
+    name: string;
+    startingBalance: string;
+    symbol: string;
+    lotSize: string;
+    pipValueUsdPerLot: string;
+  }) =>
     api.post<BacktestJournal>("/mt5/backtests/", payload),
   get: (id: string) => api.get<BacktestJournalDetail>(`/mt5/backtests/${id}/`),
   addTrade: (
@@ -605,8 +614,7 @@ export const backtestApi = {
     payload: {
       tradeDate: string;
       session: BacktestTrade["session"];
-      pips: string | null;
-      netPl: string;
+      pips: string;
     },
   ) => api.post<BacktestTrade>(`/mt5/backtests/${journalId}/trades/`, payload),
   deleteTrade: (journalId: string, tradeId: string) =>

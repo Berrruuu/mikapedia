@@ -52,11 +52,12 @@ export function BacktestPage() {
   const [saving, setSaving] = useState(false);
   const [journalName, setJournalName] = useState("");
   const [startingBalance, setStartingBalance] = useState("");
-  const [currency, setCurrency] = useState("USD");
+  const [symbol, setSymbol] = useState("");
+  const [lotSize, setLotSize] = useState("");
+  const [pipValueUsdPerLot, setPipValueUsdPerLot] = useState("");
   const [tradeDate, setTradeDate] = useState(localDateTimeValue);
   const [session, setSession] = useState<BacktestTrade["session"]>("ASIA");
   const [pips, setPips] = useState("");
-  const [netPl, setNetPl] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -122,9 +123,19 @@ export function BacktestPage() {
   const createJournal = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const balance = Number(startingBalance);
-    const journalCurrency = currency.trim().toUpperCase();
-    if (!journalName.trim() || !Number.isFinite(balance) || balance <= 0 || !journalCurrency) {
-      toast.error("Isi nama jurnal, modal awal di atas 0, dan mata uang.");
+    const parsedLotSize = Number(lotSize);
+    const parsedPipValue = Number(pipValueUsdPerLot);
+    if (
+      !journalName.trim() ||
+      !Number.isFinite(balance) ||
+      balance <= 0 ||
+      !symbol.trim() ||
+      !Number.isFinite(parsedLotSize) ||
+      parsedLotSize <= 0 ||
+      !Number.isFinite(parsedPipValue) ||
+      parsedPipValue <= 0
+    ) {
+      toast.error("Isi nama jurnal, modal, simbol, lot, dan nilai pip per lot yang valid.");
       return;
     }
 
@@ -133,13 +144,18 @@ export function BacktestPage() {
       const journal = await backtestApi.create({
         name: journalName.trim(),
         startingBalance: balance.toFixed(2),
-        currency: journalCurrency,
+        symbol: symbol.trim().toUpperCase(),
+        lotSize: parsedLotSize.toFixed(2),
+        pipValueUsdPerLot: parsedPipValue.toFixed(4),
       });
       setJournalError("");
       setJournals((current) => [journal, ...current]);
       setSelectedId(journal.id);
       setJournalName("");
       setStartingBalance("");
+      setSymbol("");
+      setLotSize("");
+      setPipValueUsdPerLot("");
       toast.success("Jurnal backtest berhasil dibuat.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Gagal membuat jurnal backtest");
@@ -150,14 +166,9 @@ export function BacktestPage() {
 
   const addTrade = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const parsedNetPl = Number(netPl);
-    const parsedPips = pips.trim() ? Number(pips) : null;
-    if (!selectedId || !tradeDate || !Number.isFinite(parsedNetPl)) {
-      toast.error("Tanggal dan NET P/L harus diisi dengan angka yang valid.");
-      return;
-    }
-    if (parsedPips !== null && !Number.isFinite(parsedPips)) {
-      toast.error("PIPS harus berupa angka yang valid.");
+    const parsedPips = Number(pips);
+    if (!selectedId || !tradeDate || !pips.trim() || !Number.isFinite(parsedPips)) {
+      toast.error("Tanggal dan PIPS harus diisi dengan angka yang valid.");
       return;
     }
 
@@ -166,14 +177,12 @@ export function BacktestPage() {
       await backtestApi.addTrade(selectedId, {
         tradeDate: new Date(`${tradeDate}:00+07:00`).toISOString(),
         session,
-        pips: parsedPips === null ? null : parsedPips.toFixed(2),
-        netPl: parsedNetPl.toFixed(2),
+        pips: parsedPips.toFixed(2),
       });
       const updated = await backtestApi.get(selectedId);
       setDetail(updated);
       setTradeDate(localDateTimeValue());
       setPips("");
-      setNetPl("");
       toast.success("Trade ditambahkan ke jurnal.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Gagal menambahkan trade");
@@ -208,6 +217,12 @@ export function BacktestPage() {
 
   const selectedJournal = detail?.journal;
   const metrics = detail?.metrics;
+  const hasPipSetup =
+    !!selectedJournal &&
+    selectedJournal.currency === "USD" &&
+    !!selectedJournal.symbol &&
+    Number(selectedJournal.lotSize) > 0 &&
+    Number(selectedJournal.pipValueUsdPerLot) > 0;
 
   return (
     <>
@@ -221,10 +236,10 @@ export function BacktestPage() {
         <div className="mb-4">
           <h2 className="text-sm font-semibold">Buat jurnal backtest</h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Setiap jurnal menyimpan skenario dan modal awal yang terpisah.
+            Isi konfigurasi simbol satu kali. P/L dan balance dihitung dalam USD.
           </p>
         </div>
-        <form onSubmit={createJournal} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <form onSubmit={createJournal} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <Input
             aria-label="Nama jurnal"
             placeholder="Nama jurnal (contoh: EURUSD M15)"
@@ -244,11 +259,31 @@ export function BacktestPage() {
             required
           />
           <Input
-            aria-label="Mata uang"
-            placeholder="Mata uang"
-            value={currency}
-            onChange={(event) => setCurrency(event.target.value)}
-            maxLength={10}
+            aria-label="Symbol"
+            placeholder="Symbol (contoh: XAUUSD)"
+            value={symbol}
+            onChange={(event) => setSymbol(event.target.value)}
+            maxLength={20}
+            required
+          />
+          <Input
+            aria-label="Lot"
+            type="number"
+            min="0.01"
+            step="0.01"
+            placeholder="Lot"
+            value={lotSize}
+            onChange={(event) => setLotSize(event.target.value)}
+            required
+          />
+          <Input
+            aria-label="Nilai satu pip per lot dalam USD"
+            type="number"
+            min="0.0001"
+            step="0.0001"
+            placeholder="Nilai 1 pip/lot (USD)"
+            value={pipValueUsdPerLot}
+            onChange={(event) => setPipValueUsdPerLot(event.target.value)}
             required
           />
           <Button
@@ -281,9 +316,16 @@ export function BacktestPage() {
           </div>
           {selectedJournal && (
             <div className="flex items-center justify-between gap-3 sm:justify-end">
-              <span className="text-xs text-muted-foreground">
-                Modal awal {money(selectedJournal.startingBalance, selectedJournal.currency)}
-              </span>
+              <div className="text-right text-xs text-muted-foreground">
+                <div>
+                  Modal awal {money(selectedJournal.startingBalance, selectedJournal.currency)}
+                </div>
+                <div>
+                  {selectedJournal.symbol || "Konfigurasi belum lengkap"} · Lot{" "}
+                  {selectedJournal.lotSize ?? "—"} · Pip USD{" "}
+                  {selectedJournal.pipValueUsdPerLot ?? "—"}
+                </div>
+              </div>
               <Button
                 type="button"
                 variant="ghost"
@@ -349,7 +391,7 @@ export function BacktestPage() {
               accent="success"
             />
             <StatCard
-              label="Net P/L"
+              label="Net P/L (estimasi)"
               value={money(metrics?.netProfit ?? 0, selectedJournal?.currency ?? "USD")}
               icon={<Wallet className="h-4 w-4" />}
               accent={(metrics?.netProfit ?? 0) >= 0 ? "success" : "destructive"}
@@ -389,67 +431,67 @@ export function BacktestPage() {
             />
           </div>
 
-          <Card className="mb-6 p-5">
-            <div className="mb-4">
-              <h2 className="text-sm font-semibold">Tambah trade</h2>
-              <p className="mt-1 text-xs text-muted-foreground">
-                PROFIT/LOSS dan BALANCE dihitung otomatis dari NET P/L.
-              </p>
-            </div>
-            <form onSubmit={addTrade} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-              <Input
-                aria-label="Tanggal trade"
-                type="datetime-local"
-                value={tradeDate}
-                onChange={(event) => setTradeDate(event.target.value)}
-                required
-              />
-              <select
-                aria-label="Sesi trade"
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-                value={session}
-                onChange={(event) => setSession(event.target.value as BacktestTrade["session"])}
-              >
-                {SESSION_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <Input
-                aria-label="Pips"
-                type="number"
-                step="any"
-                placeholder="PIPS (opsional)"
-                value={pips}
-                onChange={(event) => setPips(event.target.value)}
-              />
-              <Input
-                aria-label="Net profit loss"
-                type="number"
-                step="0.01"
-                placeholder="NET P/L"
-                value={netPl}
-                onChange={(event) => setNetPl(event.target.value)}
-                required
-              />
-              <Button
-                type="submit"
-                disabled={saving}
-                className="gradient-primary text-primary-foreground lg:col-span-2"
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Tambah trade
-              </Button>
-            </form>
-          </Card>
+          {hasPipSetup ? (
+            <Card className="mb-6 p-5">
+              <div className="mb-4">
+                <h2 className="text-sm font-semibold">Tambah trade</h2>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  NET P/L estimasi = PIPS × lot × nilai 1 pip per lot. Gunakan PIPS negatif untuk
+                  loss. Komisi dan swap belum termasuk.
+                </p>
+              </div>
+              <form onSubmit={addTrade} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <Input
+                  aria-label="Tanggal trade"
+                  type="datetime-local"
+                  value={tradeDate}
+                  onChange={(event) => setTradeDate(event.target.value)}
+                  required
+                />
+                <select
+                  aria-label="Sesi trade"
+                  className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  value={session}
+                  onChange={(event) => setSession(event.target.value as BacktestTrade["session"])}
+                >
+                  {SESSION_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <Input
+                  aria-label="Pips"
+                  type="number"
+                  step="0.01"
+                  placeholder="PIPS (minus untuk loss)"
+                  value={pips}
+                  onChange={(event) => setPips(event.target.value)}
+                  required
+                />
+                <Button
+                  type="submit"
+                  disabled={saving}
+                  className="gradient-primary text-primary-foreground"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Tambah trade
+                </Button>
+              </form>
+            </Card>
+          ) : (
+            <Card className="mb-6 border-warning/40 p-5 text-sm text-muted-foreground">
+              Jurnal ini belum memiliki konfigurasi simbol, lot, dan nilai pip USD. Buat jurnal baru
+              dengan konfigurasi tersebut untuk mencatat trade dengan perhitungan otomatis.
+            </Card>
+          )}
 
           <Card className="overflow-hidden">
             <div className="border-b border-border px-5 py-4">
               <h2 className="text-sm font-semibold">Jurnal trade</h2>
               <p className="mt-1 text-xs text-muted-foreground">
-                Profit/loss ditentukan dari NET P/L; balance bergerak mengikuti urutan tanggal
-                trade.
+                Profit/loss mengikuti tanda PIPS; NET P/L estimasi dan balance dihitung otomatis
+                sesuai urutan tanggal trade.
               </p>
             </div>
             <div className="overflow-x-auto">
@@ -461,7 +503,7 @@ export function BacktestPage() {
                     <th className="px-4 py-3">Profit/Loss</th>
                     <th className="px-4 py-3 text-right">Pips</th>
                     <th className="px-4 py-3 text-right">Balance</th>
-                    <th className="px-4 py-3 text-right">Net P/L</th>
+                    <th className="px-4 py-3 text-right">Net P/L (estimasi)</th>
                     <th className="px-4 py-3">
                       <span className="sr-only">Aksi</span>
                     </th>

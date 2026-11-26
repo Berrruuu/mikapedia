@@ -9,7 +9,7 @@ from openpyxl import load_workbook
 from rest_framework.test import APIRequestFactory, APITestCase, force_authenticate
 from unittest.mock import patch
 
-from .models import BacktestJournal, MT5Account, MT5Deal, MT5Order, MT5Position, Trade
+from .models import MT5Account, MT5Deal, MT5Order, MT5Position, Trade
 from .services import MT5Service
 from .views import MT5AccountViewSet, ea_report
 from .journal import session_for
@@ -440,21 +440,23 @@ class BacktestJournalApiTests(APITestCase):
             {
                 'name': 'EURUSD M15',
                 'startingBalance': '1000.00',
-                'currency': 'USD',
+                'symbol': 'EURUSD',
+                'lotSize': '0.10',
+                'pipValueUsdPerLot': '10.0000',
             },
             format='json',
         )
         self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data['currency'], 'USD')
         return response.data
 
-    def create_trade(self, journal_id, day, net_pl, session='ASIA'):
+    def create_trade(self, journal_id, day, pips, session='ASIA'):
         return self.client.post(
             reverse('backtest-trades', kwargs={'journal_id': journal_id}),
             {
                 'tradeDate': f'2026-11-{day:02d}T10:00:00Z',
                 'session': session,
-                'pips': '12.50',
-                'netPl': str(net_pl),
+                'pips': str(pips),
             },
             format='json',
         )
@@ -482,6 +484,10 @@ class BacktestJournalApiTests(APITestCase):
             [trade['balance'] for trade in response.data['trades']],
             ['900.00', '875.00', '925.00', '850.00'],
         )
+        self.assertEqual(
+            [trade['netPl'] for trade in response.data['trades']],
+            ['-100.00', '-25.00', '50.00', '-75.00'],
+        )
 
     def test_journal_and_trades_are_private_to_their_owner(self):
         journal = self.create_journal()
@@ -503,7 +509,7 @@ class BacktestJournalApiTests(APITestCase):
             {
                 'tradeDate': '2026-11-01T10:00:00Z',
                 'session': 'TOKYO',
-                'netPl': '10.00',
+                'pips': '10.00',
             },
             format='json',
         )
