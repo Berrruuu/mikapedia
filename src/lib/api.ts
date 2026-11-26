@@ -606,8 +606,7 @@ export const backtestApi = {
     symbol: string;
     lotSize: string;
     pipValueUsdPerLot: string;
-  }) =>
-    api.post<BacktestJournal>("/mt5/backtests/", payload),
+  }) => api.post<BacktestJournal>("/mt5/backtests/", payload),
   get: (id: string) => api.get<BacktestJournalDetail>(`/mt5/backtests/${id}/`),
   addTrade: (
     journalId: string,
