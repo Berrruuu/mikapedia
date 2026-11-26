@@ -599,7 +599,10 @@ export interface BacktestJournalDetail {
 }
 
 export const backtestApi = {
-  list: () => api.get<BacktestJournal[]>("/mt5/backtests/"),
+  list: () =>
+    api
+      .get<PaginatedResponse<BacktestJournal>>("/mt5/backtests/")
+      .then(normalizePaginatedResponse),
   create: (payload: {
     name: string;
     startingBalance: string;

@@ -500,7 +500,9 @@ class BacktestJournalApiTests(APITestCase):
         )
 
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(self.client.get(reverse('backtest-list')).data, [])
+        list_response = self.client.get(reverse('backtest-list'))
+        self.assertEqual(list_response.status_code, 200)
+        self.assertEqual(list_response.data['results'], [])
 
     def test_trade_rejects_unknown_session(self):
         journal = self.create_journal()
